@@ -139,11 +139,15 @@ document.addEventListener('DOMContentLoaded', function () {
   var logoSlot = document.getElementById('logo-slot');
   var heroRole = document.getElementById('hero-role');
   var SHRINK_SCALE = 0.2;
+  var MIN_LOGO_WIDTH = 110; // px -- a pure 0.2x scale reads fine on desktop but on a
+  // narrow phone the hero wordmark itself is already fairly narrow, so 20% of it
+  // shrinks to an illegibly small logo; this floors how far it's allowed to shrink.
   var SHRINK_SCROLL_DISTANCE = 220;
   var PILL_FADE_END = 0.35; // pills/role are fully gone well before the dock completes
   var shrunk = false;
   var wordBase = null;
   var shrinkFinal = null;
+  var effectiveScale = SHRINK_SCALE;
 
   /* The entrance bounce (.is-open) is a CSS *animation* with fill-mode:both, which
      outranks inline styles for the same property for as long as it's "holding" its
@@ -172,8 +176,9 @@ document.addEventListener('DOMContentLoaded', function () {
        (its only in-flow child) switches to position:fixed and stops contributing to it --
        without this, everything below the hero would jump upward the instant it docks. */
     wordmarkSlot.style.height = wordBase.height + 'px';
-    logoSlot.style.width = (wordBase.width * SHRINK_SCALE) + 'px';
-    logoSlot.style.height = (wordBase.height * SHRINK_SCALE) + 'px';
+    effectiveScale = Math.max(SHRINK_SCALE, MIN_LOGO_WIDTH / wordBase.width);
+    logoSlot.style.width = (wordBase.width * effectiveScale) + 'px';
+    logoSlot.style.height = (wordBase.height * effectiveScale) + 'px';
   }
 
   function computeShrinkFinal(self) {
@@ -197,7 +202,7 @@ document.addEventListener('DOMContentLoaded', function () {
       margin: 0,
       x: 0,
       y: 0,
-      scale: SHRINK_SCALE,
+      scale: effectiveScale,
       transformOrigin: 'top left',
       zIndex: 60
     });
@@ -229,7 +234,7 @@ document.addEventListener('DOMContentLoaded', function () {
         gsap.set(wordmark, {
           x: shrinkFinal.x * p,
           y: shrinkFinal.y * p,
-          scale: 1 - (1 - SHRINK_SCALE) * p,
+          scale: 1 - (1 - effectiveScale) * p,
           transformOrigin: 'top left'
         });
       }
