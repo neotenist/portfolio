@@ -1,0 +1,1044 @@
+/* ---------- Fonts ---------- */
+@font-face {
+  font-family: 'PP Formula';
+  src: url('../assets/fonts/PPFormula-SemiCondensedMedium.woff2') format('woff2'),
+       url('../assets/fonts/PPFormula-SemiCondensedMedium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+/* Work Sans is fully retired -- every weight the body font is used at (400 regular
+   through 700 bold) now sources Manrope. The two provided files cover 400/500 with
+   Regular and 600/700 with Bold via weight-range @font-face declarations, so every
+   existing font-weight:500/font-medium/font-bold rule picks the right one up without
+   any changes to the rules themselves. */
+@font-face {
+  font-family: 'Manrope';
+  src: url('../assets/fonts/Manrope-Regular.woff2') format('woff2'),
+       url('../assets/fonts/Manrope-Regular.woff') format('woff');
+  font-weight: 400 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Manrope';
+  src: url('../assets/fonts/Manrope-Bold.woff2') format('woff2'),
+       url('../assets/fonts/Manrope-Bold.woff') format('woff');
+  font-weight: 600 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ---------- Tokens (copied from the live reference) ---------- */
+:root {
+  --font-display: 'PP Formula', 'Arial Narrow', sans-serif;
+  --font-body: 'Manrope', system-ui, sans-serif;
+  --ink: #111;
+  --ink-soft: #11111194;
+  --heading-color: #144631;
+  --paper: #fff;
+  --page-bg: #fff;
+  --card-bg: #fff;
+  --line: #d7d7d7;
+  --line-w: 1px;
+  --radius-pill: 999px;
+  --ease-soft: cubic-bezier(.22, 1, .36, 1);
+  --header-h: 88px;
+}
+
+/* ---------- Reset ---------- */
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--page-bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; }
+[hidden] { display: none !important; }
+ul, ol { list-style: none; margin: 0; padding: 0; }
+/* Preflight is off (see tailwind.config.js), so headings/paragraphs/etc keep the
+   browser's own default margins unless reset here -- that stray margin was stacking
+   on top of the explicit mt- / space-y- utilities throughout the CV/work/off-the-clock
+   markup, which is why spacing kept reading as "too big" in inconsistent amounts. */
+h1, h2, h3, h4, h5, h6, p, dl, dt, dd, blockquote, figure { margin: 0; }
+/* All headings green, unconditionally -- most carry a .text-ink (or similar) class
+   alongside their -display class for the old black color, which has equal CSS
+   specificity to any plain heading-class rule and would win on source order alone,
+   so this needs !important to reliably beat that everywhere rather than chasing
+   every individual class combination it's paired with. */
+h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
+
+/* These aren't real Tailwind utilities (no "ink"/"ink-soft" color or "display" font
+   family was ever registered in tailwind.config.js) -- they're plain class names
+   carried over verbatim from the reference's markup, which only works there because
+   that site's own Tailwind build has them as real theme tokens. Defining them here
+   is what actually makes text-ink-soft etc. do anything. */
+.text-ink { color: var(--ink); }
+.text-ink-soft { color: var(--ink-soft); }
+.font-display { font-family: var(--font-display); }
+/* Tailwind's border-* utilities only ever set border-WIDTH -- border-STYLE normally
+   comes from Preflight (disabled here so it doesn't fight the rest of this file), so
+   without this every `border`/`border-t`/`border-b` utility used directly in markup
+   renders with width but no visible line. */
+*, ::before, ::after { border-width: 0; border-style: solid; border-color: var(--line); }
+
+/* ---------- Page background: dot-grid + grain, exactly as on the reference ---------- */
+.paper-grid {
+  position: relative;
+  background-color: var(--page-bg);
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.028'/%3E%3C/svg%3E"),
+    linear-gradient(90deg, rgba(0,0,0,.043) 1px, rgba(0,0,0,0) 1px),
+    linear-gradient(rgba(0,0,0,.043) 1px, rgba(0,0,0,0) 1px);
+  background-size: 160px 160px, 32px 32px, 32px 32px;
+}
+
+/* ---------- Container ---------- */
+.container-page {
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: 20px;
+}
+@media (min-width: 640px) {
+  .container-page { padding-inline: 32px; }
+}
+@media (min-width: 1024px) {
+  .container-page { padding-inline: 48px; }
+}
+@media (min-width: 1280px) {
+  .container-page { max-width: 1440px; }
+}
+
+.h1-display {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  font-size: clamp(3rem, 7.5vw, 6.5rem);
+  line-height: 1.05;
+}
+.h2-display {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  font-size: clamp(2.1rem, 4.8vw, 3.75rem);
+  line-height: 1.08;
+}
+.h3-display {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  font-size: clamp(1.45rem, 2.1vw, 1.85rem);
+  line-height: 1.2;
+}
+.lead {
+  font-size: clamp(1.125rem, 1.6vw, 1.375rem);
+  line-height: 1.5;
+}
+.body-text {
+  max-width: 34em;
+  font-size: 1.0625rem;
+  line-height: 1.65;
+}
+.meta {
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+.section { padding-block: clamp(4.5rem, 9vw, 8rem); }
+.card {
+  background: var(--card-bg);
+  border: var(--line-w) solid var(--line);
+  border-radius: 0;
+  position: relative;
+}
+.text-accent { color: var(--ink); }
+.display-italic { font-family: var(--font-display); font-style: normal; font-weight: 500; }
+.pill.font-bold { font-weight: 700; }
+.text-center { text-align: center; }
+
+/* ---------- Intro Gate ---------- */
+.gate {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: var(--page-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  text-align: center;
+}
+
+.gate-lang {
+  position: absolute;
+  top: 28px;
+  right: 32px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.gate-lang-label {
+  color: var(--ink-soft);
+  margin-right: 4px;
+}
+
+.lang-btn {
+  background: none;
+  border: none;
+  padding: 4px 2px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+}
+.lang-btn[aria-pressed="true"] {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.gate-content {
+  max-width: 560px;
+  width: 100%;
+}
+
+.gate-title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.05;
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  margin: 0 0 32px;
+}
+
+.gate-form {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.gate-input {
+  flex: 1;
+  border: none;
+  border-bottom: 1.5px solid var(--ink);
+  background: transparent;
+  padding: 10px 4px;
+  font-size: 18px;
+  font-family: var(--font-body);
+  color: var(--ink);
+}
+.gate-input:focus { outline: none; border-bottom-color: var(--ink-soft); }
+.gate-input::placeholder { color: #b5b5b9; }
+
+.gate-submit {
+  background: var(--ink);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-pill);
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.gate-submit:hover { background: #2c2c2f; transform: translateY(-1px); }
+
+.gate-skip {
+  background: none;
+  border: none;
+  color: var(--ink-soft);
+  font-size: 14px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.2s ease;
+}
+.gate-skip:hover { color: var(--ink); }
+
+/* ---------- Header / Nav ---------- */
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  pointer-events: none;
+}
+.site-header::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 110px;
+  /* Eased across its whole height (100% opacity at the very top down to fully
+     transparent at the very bottom) instead of a flat plateau that then cuts off
+     abruptly -- the intermediate stops approximate an ease-out curve so the fade
+     itself reads as gradual rather than a hard edge partway down. */
+  background: linear-gradient(to bottom,
+    var(--page-bg) 0%,
+    color-mix(in srgb, var(--page-bg) 92%, transparent) 20%,
+    color-mix(in srgb, var(--page-bg) 75%, transparent) 40%,
+    color-mix(in srgb, var(--page-bg) 50%, transparent) 60%,
+    color-mix(in srgb, var(--page-bg) 25%, transparent) 80%,
+    transparent 100%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.header-inner {
+  position: relative;
+  z-index: 1;
+  height: var(--header-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  color: var(--ink);
+}
+
+.logo-slot {
+  position: relative;
+  /* .site-header is pointer-events:none (so the transparent nav never blocks clicks
+     on content behind it); only nav-right opted back in, so the logo link was
+     entirely unclickable everywhere despite the <a> being right there in the DOM. */
+  pointer-events: auto;
+}
+.logo-slot img {
+  display: block;
+  width: 180px;
+  height: auto;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+.logo-slot.is-visible img { opacity: 1; }
+
+.nav-right {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.nav-right.is-visible { opacity: 1; transform: translateY(0); }
+
+.nav-lang {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  border-radius: var(--radius-pill);
+  border: var(--line-w) solid var(--line);
+  background: var(--card-bg);
+  padding: 3px;
+}
+.nav-lang .lang-btn {
+  width: 26px;
+  border-radius: var(--radius-pill);
+  border: none;
+  padding: 3px 0;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  color: var(--ink-soft);
+  transition: color 0.2s ease, background 0.2s ease;
+  text-decoration: none;
+}
+.nav-lang .lang-btn:hover { color: var(--ink); }
+.nav-lang .lang-btn[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--paper);
+  text-decoration: none;
+}
+
+.menu-btn {
+  display: grid;
+  place-items: center;
+  height: 36px;
+  width: 36px;
+  border-radius: 50%;
+  border: none;
+  color: var(--ink);
+  background: none;
+  padding: 0;
+}
+.menu-btn-lines {
+  position: relative;
+  display: block;
+  height: 12px;
+  width: 20px;
+}
+.menu-btn-lines span {
+  position: absolute;
+  left: 0;
+  display: block;
+  height: 1.5px;
+  width: 100%;
+  background: currentColor;
+  border-radius: 1px;
+  transition: transform 0.35s var(--ease-soft), opacity 0.35s var(--ease-soft), top 0.35s var(--ease-soft);
+}
+.menu-btn-lines span:nth-child(1) { top: 0; }
+.menu-btn-lines span:nth-child(2) { top: 50%; margin-top: -0.75px; }
+.menu-btn-lines span:nth-child(3) { top: 100%; margin-top: -1.5px; }
+/* Hamburger -> X: the two outer lines meet in the middle and cross, the middle
+   line just fades out rather than trying to fake a third crossing stroke. */
+.menu-btn.is-open .menu-btn-lines span:nth-child(1) {
+  top: 50%;
+  margin-top: -0.75px;
+  transform: rotate(45deg);
+}
+.menu-btn.is-open .menu-btn-lines span:nth-child(2) {
+  opacity: 0;
+}
+.menu-btn.is-open .menu-btn-lines span:nth-child(3) {
+  top: 50%;
+  margin-top: -0.75px;
+  transform: rotate(-45deg);
+}
+
+/* ---------- Hero shell (shared reference frame the traveling head is positioned against) ---------- */
+.hero-shell { position: relative; }
+
+/* ---------- Hero ---------- */
+.hero {
+  position: relative;
+  min-height: 100svh;
+  overflow: hidden;
+  padding-top: var(--header-h);
+}
+
+.hero-inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100svh - var(--header-h));
+  padding-top: clamp(4rem, 10vh, 8rem);
+  padding-bottom: 2rem;
+}
+
+.hero-greeting {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(2rem, 5vw, 5rem);
+  line-height: 1;
+  min-height: 1.2em;
+  margin: 0;
+  color: var(--heading-color);
+}
+
+.type-cursor {
+  display: inline-block;
+  margin-left: 0.08em;
+  opacity: 0;
+}
+.type-cursor.is-blinking {
+  animation: cursor-blink 0.7s step-end infinite;
+}
+@keyframes cursor-blink {
+  0%, 48% { opacity: 1; }
+  49%, 100% { opacity: 0; }
+}
+
+.hero-wordmark-slot {
+  position: relative;
+  z-index: 20;
+  margin-top: 1.25rem;
+  width: 100%;
+}
+
+.hero-wordmark {
+  position: relative;
+  aspect-ratio: 1268 / 171;
+  width: 100%;
+  opacity: 0;
+  transform-origin: 50% 100%;
+  transform: scaleY(0.015);
+}
+.hero-wordmark img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.hero-wordmark.is-open {
+  animation: hero-wordmark-open 0.9s ease 0s 1 normal both;
+}
+@keyframes hero-wordmark-open {
+  0%   { opacity: 0; transform: scaleY(0.015); }
+  52%  { opacity: 1; transform: scaleY(1.09); }
+  68%  { transform: scaleY(0.94); }
+  82%  { transform: scaleY(1.035); }
+  92%  { transform: scaleY(0.99); }
+  100% { opacity: 1; transform: scaleY(1); }
+}
+
+.hero-pills {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  transform: translateY(135%);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  border-radius: var(--radius-pill);
+  border: var(--line-w) solid var(--line);
+  background: var(--card-bg);
+  color: var(--ink);
+  padding: 0.5rem 0.875rem;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.pill-drop { opacity: 0; }
+.is-in .pill-drop {
+  animation: pill-fall 0.9s cubic-bezier(0.34, 1.4, 0.64, 1) 0s 1 normal both;
+}
+.pill-drop:nth-child(2) { animation-delay: 0.08s; }
+@keyframes pill-fall {
+  0%   { opacity: 0; transform: translateY(-320px) rotate(0deg); }
+  60%  { opacity: 1; transform: translateY(10px) rotate(var(--rot, 0deg)); }
+  80%  { transform: translateY(-4px) rotate(var(--rot, 0deg)); }
+  100% { opacity: 1; transform: translateY(0) rotate(var(--rot, 0deg)); }
+}
+
+.hero-role {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  transform: translateY(135%);
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 1.7vw, 1.5rem);
+  color: var(--heading-color);
+  opacity: 0;
+  transition: opacity 0.5s ease 0.3s;
+}
+.hero-wordmark-slot.is-in .hero-role { opacity: 1; }
+
+.hero-head-slot {
+  margin: auto auto 0;
+  margin-top: auto;
+  transform: translateY(calc(clamp(3.5rem, 7vw, 5rem) * -1));
+  height: 62vh;
+  width: min(86vh, 90vw);
+  position: relative;
+}
+.hero-photo {
+  position: absolute;
+  z-index: 30;
+  object-fit: contain;
+  opacity: 0;
+  transform: rotate(-6deg) scale(0.94);
+  transition: opacity .5s ease, transform .5s ease;
+}
+.hero-photo.is-visible {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+/* ---------- Short version ---------- */
+.short-version {
+  position: relative;
+  min-height: 120vh;
+  overflow: hidden;
+  padding-top: max(6rem, 14vh);
+  padding-bottom: max(6rem, 14vh);
+}
+
+.short-version-inner {
+  position: relative;
+  max-width: 52rem;
+  margin-inline: auto;
+}
+
+/* Below 1024px there's no column width left for text to wrap around a floated
+   photo, so the head just docks as its own centered block sitting right above
+   the heading instead of beside it -- same JS, same travel, different landing
+   spot/size (still just an invisible sizing reference; the die-cut photo itself
+   is what actually renders). */
+.short-head-target {
+  display: block;
+  width: min(38vw, 11rem);
+  aspect-ratio: 1 / 1;
+  margin: 0 auto 0.375rem;
+}
+@media (min-width: 1024px) {
+  .short-head-target {
+    float: right;
+    margin-top: calc(clamp(5rem, 11vw, 10rem) * -1);
+    margin-right: calc(clamp(1rem, 4vw, 4rem) * -1);
+    margin-left: 1.25rem;
+    margin-bottom: 0;
+    aspect-ratio: 1 / 1;
+    height: auto;
+    width: min(34vw, 30rem);
+    shape-outside: ellipse(48% 50% at 52% 50%);
+    shape-margin: 1.25rem;
+  }
+}
+
+.short-version-heading {
+  position: relative;
+  z-index: 10;
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  font-size: clamp(2rem, 4.5vw, 3.5rem);
+  line-height: 1;
+  text-transform: none;
+  margin: 0;
+}
+
+.reveal-text {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 36px;
+  line-height: 1.28;
+  text-align: left;
+  margin: 1.6rem 0 0;
+}
+.reveal-text .word {
+  opacity: 0.16;
+  transition: opacity 220ms linear;
+}
+
+/* ---------- What I take on: folder carousel (copied 1:1 from the reference) ---------- */
+.take-on-folders {
+  --folder-blue-back: #53add0;
+  --folder-blue-front: #7ec5e2;
+  --folder-red-back: #ed2f3e;
+  --folder-red-front: #ff4b59;
+  --folder-yellow-back: #df9a00;
+  --folder-yellow-front: #ffb000;
+  --folder-green-back: #13ba4e;
+  --folder-green-front: #4cd17b;
+  --folder-pink-back: #da3c76;
+  --folder-pink-front: #f26a9c;
+  --folder-sheet: #fbf6df;
+  --folder-sheet-ink: #111;
+  padding-block: clamp(1rem, 2.5vw, 2rem) clamp(2rem, 4vw, 3.5rem);
+  overflow: clip visible;
+}
+
+.take-on-heading {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity .7s var(--ease-soft), transform .7s var(--ease-soft);
+}
+.take-on-heading.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.folder-stage {
+  cursor: grab;
+  touch-action: pan-y;
+  /* min(vw, vh) instead of vw alone -- on a wide-but-short laptop screen, vw alone
+     kept scaling the stage up even though there's little vertical room for it, which
+     is what made it look oversized on a MacBook; vh now caps it on those screens
+     while vw still governs it normally on tall/narrow (mobile) viewports. */
+  height: clamp(20rem, min(56vw, 30vh), 32rem);
+  margin-top: clamp(1.25rem, min(3.5vw, 2.5vh), 2rem);
+  position: relative;
+}
+.folder-stage.is-dragging { cursor: grabbing; }
+.folder-stage.is-dragging .folder-fan { transition: none; }
+.folder-stage.is-bouncing .folder-fan { transition: transform 0.62s cubic-bezier(0.2, 1.65, 0.35, 1); }
+.folder-stage, .folder-stage * { user-select: none; }
+
+.folder-fan {
+  position: relative;
+  transform-origin: 50% 145%;
+  width: min(100%, 1440px);
+  height: 100%;
+  margin-inline: auto;
+  transform: translateX(calc(var(--drag-x, 0px) * .5));
+  transition: transform 1.45s cubic-bezier(0.08, 0.76, 0.14, 1);
+}
+.folder-stage:not(.is-in) .folder-fan {
+  transform: translateX(calc(var(--drag-x, 0px) * .5)) rotate(-7deg);
+}
+
+.folder-position {
+  /* Card size now tracks whichever of viewport width/height is more restrictive
+     (min(vw, vh)) instead of width alone -- a wide-but-short laptop window used to
+     size the cards purely off vw and came out huge relative to how little vertical
+     room it actually had; vh now caps it there, while narrow/tall phone viewports
+     still get their size from vw same as before. */
+  --folder-gap: clamp(16rem, min(80vw, 38.5vh), 29.5rem);
+  position: absolute;
+  bottom: 4.5rem;
+  left: 50%;
+  aspect-ratio: 449 / 362;
+  width: clamp(14rem, min(70vw, 34vh), 26rem);
+  z-index: var(--folder-order);
+  opacity: 0;
+  transform-origin: 50% 235%;
+  will-change: transform;
+  /* Reverse tilt-in: each card starts rotated the OPPOSITE way (and further) from its
+     resting fan angle -- scaled by its own --folder-x, so every position swings in from
+     a different starting angle -- then settles to the gentle resting tilt below. */
+  transform:
+    translateX(calc(-50% + var(--folder-x) * var(--folder-gap)))
+    translateY(calc(var(--folder-x) * var(--folder-x) * 1.08rem + 5rem))
+    rotate(calc(var(--folder-x) * -9deg));
+  transition: opacity .7s var(--ease-soft) var(--rise-delay), transform .8s var(--ease-soft) var(--rise-delay);
+}
+
+.folder-stage.is-visible .folder-position {
+  opacity: 1;
+  transform:
+    translateX(calc(-50% + var(--folder-x) * var(--folder-gap)))
+    translateY(calc(var(--folder-x) * var(--folder-x) * 1.08rem))
+    rotate(calc(var(--folder-x) * 5deg));
+}
+.folder-stage.is-in .folder-position {
+  /* A near-even ease: the previous curve reached ~80% of the motion in the first
+     ~10% of the duration, then crawled the rest of the way -- fast start, long slow
+     tail. This ramps up more gradually and keeps moving through to the end instead. */
+  transition: opacity 0.4s ease-out, transform 1.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.folder-stage.is-settling .folder-position {
+  /* Per-card arc: a different duration and delay per position (set as inline custom
+     properties in JS) so the deck settles as a loose, staggered wave instead of every
+     card snapping to place in lockstep. */
+  transition-duration: .4s, var(--arc-duration);
+  transition-delay: 0s, var(--arc-delay);
+  transition-timing-function: ease-out, cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.folder-position > div, .folder { width: 100%; height: 100%; }
+.folder { position: relative; }
+
+.folder-back, .folder-front {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.folder-back { z-index: 1; fill: var(--folder-back); }
+.folder-front { z-index: 3; fill: var(--folder-front); }
+.folder-detail { fill: var(--folder-back); }
+
+.folder-blue   { --folder-back: var(--folder-blue-back);   --folder-front: var(--folder-blue-front); }
+.folder-red    { --folder-back: var(--folder-red-back);    --folder-front: var(--folder-red-front); }
+.folder-yellow { --folder-back: var(--folder-yellow-back); --folder-front: var(--folder-yellow-front); }
+.folder-green  { --folder-back: var(--folder-green-back);  --folder-front: var(--folder-green-front); }
+.folder-pink   { --folder-back: var(--folder-pink-back);   --folder-front: var(--folder-pink-front); }
+
+.folder-paper {
+  position: absolute;
+  top: 14.1%;
+  left: 5.35%;
+  z-index: 2;
+  width: 87.95%;
+  height: 70.2%;
+  background: var(--folder-sheet);
+  color: var(--folder-sheet-ink);
+  border-radius: 12px;
+  box-shadow: 5px 6px 25px rgba(17, 17, 17, 0.25);
+  padding: clamp(1.1rem, 2.4vw, 2rem);
+  overflow: hidden;
+  transition: transform 0.24s cubic-bezier(0.5, 0, 0.8, 0.2);
+  transform: translateY(0);
+}
+.paper-out .folder-paper {
+  transition: transform 0.43s cubic-bezier(0.2, 1.22, 0.34, 1);
+  transform: translateY(-97%);
+}
+.folder-paper h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.9rem, 3.2vw, 2.8rem);
+  line-height: 0.95;
+}
+.folder-paper p {
+  max-width: 32ch;
+  margin: clamp(0.65rem, 1.1vw, 1rem) 0 0;
+  font-size: clamp(1.35rem, 1.95vw, 1.65rem);
+  line-height: 1.35;
+}
+
+/* ---------- Generic scroll-reveal (used on every section below the fold) ---------- */
+.reveal {
+  opacity: 0;
+  transition: opacity .6s var(--ease-soft), transform .6s var(--ease-soft);
+  transform: translateY(18px);
+}
+.reveal.is-in { opacity: 1; transform: none; }
+
+/* ---------- Off the clock: icon circles ---------- */
+.clock-icon {
+  display: grid;
+  place-items: center;
+  height: 2.25rem;
+  width: 2.25rem;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: var(--line-w) solid var(--line);
+  transition: border-color .3s ease;
+}
+.group:hover .clock-icon { border-color: var(--ink); }
+.clock-icon svg { height: 1rem; width: 1rem; }
+
+/* ---------- Contact card ---------- */
+.contact-heading .underline-word { position: relative; display: inline; }
+.contact-heading .underline-word svg {
+  position: absolute;
+  left: -3px;
+  right: -3px;
+  bottom: 0;
+  height: 8px;
+  width: calc(100% + 6px);
+  pointer-events: none;
+}
+.contact-caret {
+  display: inline-block;
+  margin-left: 0.06em;
+  width: 0.06em;
+  height: 0.82em;
+  vertical-align: -0.08em;
+  background: var(--ink);
+  animation: contact-caret-blink 900ms steps(1, end) infinite;
+}
+@keyframes contact-caret-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+.contact-sub {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity .5s ease, transform .5s ease;
+}
+.contact-sub.is-in { opacity: 1; transform: none; }
+
+/* ---------- Footer ---------- */
+.site-footer-wordmark {
+  /* The SVG's own fill is a white-to-transparent gradient (top opaque, fading out
+     toward the bottom) -- inverting it turns that into black-to-transparent, which
+     is the actual fade effect, baked into the asset rather than done with a mask. */
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: invert(1);
+}
+
+/* ---------- Menu overlay ---------- */
+.menu-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: var(--page-bg);
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity .3s ease, visibility 0s linear .3s;
+}
+.menu-overlay.is-open {
+  visibility: visible;
+  opacity: 1;
+  transition: opacity .3s ease;
+}
+.menu-overlay-close {
+  display: grid;
+  place-items: center;
+  height: 36px;
+  width: 36px;
+  border: none;
+  background: none;
+  color: var(--ink);
+  padding: 0;
+}
+.menu-overlay-close svg { width: 16px; height: 16px; }
+.menu-overlay-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding-top: 2.5rem;
+}
+.menu-overlay-nav a {
+  color: var(--ink);
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.45s var(--ease-soft), transform 0.45s var(--ease-soft);
+}
+.menu-overlay-nav a.active { text-decoration: underline; text-underline-offset: 8px; }
+/* Staggered rise-in once the overlay is open, so the links arrive one after another
+   instead of all snapping in at once with the background fade. */
+.menu-overlay.is-open .menu-overlay-nav a {
+  opacity: 1;
+  transform: translateY(0);
+}
+.menu-overlay.is-open .menu-overlay-nav a:nth-child(1) { transition-delay: 0.08s; }
+.menu-overlay.is-open .menu-overlay-nav a:nth-child(2) { transition-delay: 0.14s; }
+.menu-overlay.is-open .menu-overlay-nav a:nth-child(3) { transition-delay: 0.2s; }
+
+/* ---------- CV: timeline bullet marker ---------- */
+.cv-bullet {
+  display: block;
+  margin-top: 0.7em;
+  height: var(--line-w);
+  width: 12px;
+  flex-shrink: 0;
+  background: var(--line);
+}
+
+/* ---------- Project detail pages ---------- */
+.project-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: color 0.2s ease;
+}
+.project-back:hover { color: var(--ink); }
+.project-back svg { height: 1rem; width: 1rem; }
+
+.project-hero-figure,
+.project-gallery-figure {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border: var(--line-w) solid var(--line);
+  background: var(--card-bg);
+}
+.project-hero-figure { aspect-ratio: 16 / 9; }
+.project-gallery-figure { aspect-ratio: 1 / 1; }
+.project-hero-figure img,
+.project-gallery-figure img {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
+.project-meta-dl { border-top: var(--line-w) solid var(--line); }
+.project-meta-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  border-bottom: var(--line-w) solid var(--line);
+  padding-block: 0.75rem;
+}
+.project-meta-row dd { grid-column: span 2 / span 2; font-size: 0.9375rem; }
+
+.project-gallery { display: flex; flex-direction: column; gap: 2.5rem; }
+
+.project-results { margin-top: 2rem; border-top: var(--line-w) solid var(--line); padding-top: 1.5rem; }
+.project-results ul { margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
+
+.project-nav-link { display: block; }
+.project-nav-link:hover .project-nav-title,
+.project-nav-link:hover .project-back-meta { color: var(--ink); }
+.project-nav-title { transition: color 0.2s ease; }
+.project-nav-meta { display: inline-flex; align-items: center; gap: 0.5rem; }
+.project-nav-meta svg { height: 1rem; width: 1rem; }
+
+/* ---------- Work list + hover preview ---------- */
+.work-list a {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding-block: 1.5rem;
+  border-bottom: var(--line-w) solid var(--line);
+  transition: opacity .2s ease;
+}
+.work-list li:first-child a { border-top: var(--line-w) solid var(--line); }
+.work-list .work-thumb {
+  display: block;
+  height: 4rem;
+  width: 4rem;
+  flex-shrink: 0;
+  overflow: hidden;
+  border: var(--line-w) solid var(--line);
+  background: var(--card-bg);
+}
+.work-list .work-thumb img { height: 100%; width: 100%; object-fit: cover; }
+.work-list .work-title {
+  font-family: var(--font-display);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  font-size: clamp(1.5rem, 7vw, 2rem);
+}
+.work-list .work-year { margin-left: auto; flex-shrink: 0; }
+@media (min-width: 1024px) {
+  .work-list .work-thumb { display: none; }
+  .work-list .work-title { font-size: clamp(2.25rem, 6vw, 5rem); }
+}
+.work-hover-preview {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 40;
+  pointer-events: none;
+  display: none;
+}
+@media (min-width: 1024px) {
+  .work-hover-preview { display: block; }
+}
+.work-hover-preview-box {
+  position: relative;
+  height: 250px;
+  width: 200px;
+  overflow: hidden;
+  border: var(--line-w) solid var(--line);
+  background: var(--card-bg);
+  opacity: 0;
+  transform: scale(0.92);
+  transition: opacity .2s ease, transform .2s ease;
+}
+.work-hover-preview-box.is-visible { opacity: 1; transform: scale(1); }
+.work-hover-preview-box img { position: absolute; inset: 0; height: 100%; width: 100%; object-fit: cover; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 639px) {
+  .take-on-folders { padding-block: clamp(0.75rem, 4vw, 1.5rem) 2rem; }
+  .folder-stage { height: clamp(22rem, min(118vw, 62vh), 34rem); margin-top: clamp(1rem, min(8vw, 3vh), 2rem); }
+  .folder-position {
+    /* Gap used to be ~1.1x the card width (the same ratio desktop uses to keep its
+       wide fan of cards mostly separate) -- on a phone that put adjacent cards
+       further apart than the card is wide, so the next one never even touched the
+       edge of the screen and there was nothing to signal more folders existed.
+       Shrinking the gap to well under the card width makes the neighbours overlap
+       and peek in from both edges instead. */
+    --folder-gap: min(72vw, 31vh, 21.3rem);
+    width: min(88vw, 38vh, 26rem);
+    bottom: 1.5rem;
+  }
+  .folder-paper {
+    padding: 0.75rem;
+    /* More of the card's own height than the shared 70.2% default -- needed once
+       the headline/body sizes below still don't comfortably fit at that ratio and
+       text was getting clipped by this element's overflow:hidden. */
+    height: 78%;
+  }
+  .folder-paper h3 { font-size: clamp(1.3rem, 5.6vw, 1.6rem); line-height: 1.02; }
+  .folder-paper p { font-size: clamp(0.85rem, 3.4vw, 1rem); line-height: 1.28; margin-top: 0.4rem; }
+}
+@media (max-width: 720px) {
+  .reveal-text { font-size: clamp(1.5rem, 5.5vw, 2rem); }
+}

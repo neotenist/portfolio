@@ -1,0 +1,9 @@
+.DS_Store
+node_modules/
+
+# Local tooling / agent config -- not part of the site
+.claude/
+.agents/
+design-canvas/
+skills-lock.json
+SPEC-hero-and-short-version.md
