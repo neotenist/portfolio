@@ -786,6 +786,14 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
   .oc-layout { display: grid; grid-template-columns: 1fr 2fr; align-items: start; gap: 3rem; }
 }
 .oc-heading-col { padding-top: 0.25rem; }
+@media (min-width: 1024px) {
+  /* fit-content -- the box was stretching to fill the full 2/3 grid column, so
+     centering dots+viewer inside it (justify-content:center) left uneven slack
+     on the outside that didn't match the fixed gap between dots and viewer, or
+     the box's own padding. Shrinking the box to hug its content means the
+     padding is the only outer spacing there is, on all four sides equally. */
+  .oc-stage { width: fit-content; }
+}
 /* Padding/gap/dot-width/viewer-width here are the tighter, tablet-safe values --
    the box's own share of the page (full-width until 1024px, then the 2/3 grid
    track) isn't wide enough for the roomier desktop numbers all the way from
@@ -797,11 +805,7 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
   display: flex;
   flex-wrap: wrap;
   gap: 1.5rem;
-  /* center (not flex-start) -- the dots column is much shorter than the tall 9:16
-     viewer, so flex-start left all the slack as dead space below the dots; center
-     splits it evenly above and below instead, which is most of what read as
-     "cramped/uneven" spacing inside the box. */
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   background: var(--card-bg);
   border: var(--line-w) solid var(--line);
