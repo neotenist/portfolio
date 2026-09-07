@@ -37,7 +37,7 @@
   --ink-soft: #11111194;
   --heading-color: #144631;
   --paper: #fff;
-  --page-bg: var(--line);
+  --page-bg: #ece6da;
   --card-bg: #fff;
   --line: #d7d7d7;
   --line-w: 1px;
@@ -277,21 +277,20 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
   position: absolute;
   inset: 0 0 auto 0;
   height: 110px;
-  /* --card-bg (white), not --page-bg -- the page background is now the same solid
-     color as this gradient's own color would be, so a page-bg gradient was
-     literally invisible at rest and only became visible once different-colored
-     content (a photo, a card) scrolled underneath it. White gives it a constant,
-     visible presence of its own regardless of what's behind it.
+  /* var(--page-bg) so it blends seamlessly with the page at rest -- it's only
+     meant to become visible once something else (a photo, a card) scrolls in
+     underneath the header and needs the scrim for contrast, not to be its own
+     visible stripe from the very first frame.
      Eased across its whole height (100% opacity at the very top down to fully
      transparent at the very bottom) instead of a flat plateau that then cuts off
      abruptly -- the intermediate stops approximate an ease-out curve so the fade
      itself reads as gradual rather than a hard edge partway down. */
   background: linear-gradient(to bottom,
-    var(--card-bg) 0%,
-    color-mix(in srgb, var(--card-bg) 92%, transparent) 20%,
-    color-mix(in srgb, var(--card-bg) 75%, transparent) 40%,
-    color-mix(in srgb, var(--card-bg) 50%, transparent) 60%,
-    color-mix(in srgb, var(--card-bg) 25%, transparent) 80%,
+    var(--page-bg) 0%,
+    color-mix(in srgb, var(--page-bg) 92%, transparent) 20%,
+    color-mix(in srgb, var(--page-bg) 75%, transparent) 40%,
+    color-mix(in srgb, var(--page-bg) 50%, transparent) 60%,
+    color-mix(in srgb, var(--page-bg) 25%, transparent) 80%,
     transparent 100%);
   pointer-events: none;
   z-index: -1;
@@ -344,8 +343,9 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  min-width: 34px;
+  height: 26px;
+  padding: 0 10px;
   border-radius: var(--radius-pill);
   border: none;
   font-family: var(--font-display);
@@ -377,30 +377,30 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
 .menu-btn-lines {
   position: relative;
   display: block;
-  height: 15px;
+  height: 11px;
   width: 27px;
 }
 .menu-btn-lines span {
   position: absolute;
   left: 0;
   display: block;
-  height: 2.5px;
+  height: 3px;
   width: 100%;
   background: currentColor;
   border-radius: 1.5px;
   transition: transform 0.35s var(--ease-soft), top 0.35s var(--ease-soft);
 }
 .menu-btn-lines span:nth-child(1) { top: 0; }
-.menu-btn-lines span:nth-child(2) { top: 100%; margin-top: -2.5px; }
+.menu-btn-lines span:nth-child(2) { top: 100%; margin-top: -3px; }
 /* Hamburger -> X: just the two lines meeting in the middle and crossing. */
 .menu-btn.is-open .menu-btn-lines span:nth-child(1) {
   top: 50%;
-  margin-top: -1.25px;
+  margin-top: -1.5px;
   transform: rotate(45deg);
 }
 .menu-btn.is-open .menu-btn-lines span:nth-child(2) {
   top: 50%;
-  margin-top: -1.25px;
+  margin-top: -1.5px;
   transform: rotate(-45deg);
 }
 
@@ -842,17 +842,6 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
   opacity: 1;
   transition: opacity .3s ease;
 }
-.menu-overlay-close {
-  display: grid;
-  place-items: center;
-  height: 36px;
-  width: 36px;
-  border: none;
-  background: none;
-  color: var(--ink);
-  padding: 0;
-}
-.menu-overlay-close svg { width: 16px; height: 16px; }
 .menu-overlay-nav {
   display: flex;
   flex-direction: column;
@@ -995,9 +984,9 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
 
 /* ---------- Responsive ---------- */
 @media (max-width: 639px) {
-  .nav-lang .lang-btn { width: 32px; height: 32px; font-size: 12px; }
+  .nav-lang .lang-btn { min-width: 38px; height: 30px; padding: 0 12px; font-size: 12px; }
   .menu-btn { height: 40px; width: 40px; }
-  .menu-btn-lines { height: 17px; width: 30px; }
+  .menu-btn-lines { height: 13px; width: 30px; }
   .take-on-folders { padding-block: clamp(0.75rem, 4vw, 1.5rem) 2rem; }
   .folder-stage { height: clamp(22rem, min(118vw, 62vh), 34rem); margin-top: clamp(1rem, min(8vw, 3vh), 2rem); }
   .folder-position {

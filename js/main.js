@@ -73,6 +73,17 @@ document.addEventListener('DOMContentLoaded', function () {
   var TRAVEL_FRAMES = ['assets/img/5.png', 'assets/img/6.png', 'assets/img/7-stop.png'];
   var REST_FRAME = 'assets/img/4-stop.png';
 
+  /* Swapping an <img src> mid-scroll (setHeadFrame below) forces a fresh network
+     fetch + decode the first time each frame is requested -- on a slower mobile
+     CPU that decode blocks the frame right as the scrub is trying to update,
+     which is what reads as the photo "shaking"/stuttering while traveling.
+     Warming the browser's image cache for every frame up front means every later
+     src swap is just handing back an already-decoded bitmap. */
+  INTRO_FRAMES.concat(TRAVEL_FRAMES).forEach(function (src) {
+    var img = new Image();
+    img.src = src;
+  });
+
   /* delays[i] = how long frames[i] stays on screen before advancing to frames[i+1] */
   function playStopMotion(el, frames, delays, startIndex) {
     var i = startIndex || 0;
@@ -191,7 +202,17 @@ document.addEventListener('DOMContentLoaded', function () {
     };
   }
 
+  var wordmarkHomeParent = wordmark.parentNode;
+  var heroShellEl = document.querySelector('.hero-shell');
+
   function dockWordmark() {
+    /* .hero has overflow:hidden (it clips other decorative hero content), and that
+       clips a position:fixed descendant too once you've scrolled far enough that
+       .hero's own box no longer overlaps the viewport -- the docked wordmark would
+       just vanish from the header past that point. Moving it out to .hero-shell
+       (a plain, unclipped ancestor -- same trick already used for the traveling
+       head photo) while it's docked sidesteps that entirely. */
+    if (wordmark.parentNode !== heroShellEl) heroShellEl.appendChild(wordmark);
     var logoRect = logoSlot.getBoundingClientRect();
     gsap.set(wordmark, {
       position: 'fixed',
@@ -229,6 +250,7 @@ document.addEventListener('DOMContentLoaded', function () {
       } else {
         if (shrunk) {
           shrunk = false;
+          if (wordmark.parentNode !== wordmarkHomeParent) wordmarkHomeParent.appendChild(wordmark);
           gsap.set(wordmark, { position: 'relative', top: 'auto', left: 'auto', width: '100%', height: 'auto', margin: 0, zIndex: 'auto' });
         }
         gsap.set(wordmark, {
@@ -301,12 +323,24 @@ document.addEventListener('DOMContentLoaded', function () {
     return { top: r.top - shellRect.top, left: r.left - shellRect.left, width: r.width, height: r.height };
   }
 
+  /* headEnd used to be measured fresh (two getBoundingClientRect calls) on every
+     single scroll update -- cheap on a fast desktop GPU, but that layout read
+     competing with the scrub itself for frame time is exactly the kind of thing
+     that shows up as visible jank/"shaking" on a slower mobile CPU. It doesn't
+     change shape mid-scrub, so it only needs recomputing when the page layout
+     itself actually changes (refresh/resize), not every frame. */
+  var headEnd = null;
+  function computeHeadEnd() {
+    headEnd = rectRelativeToShell(headTarget);
+  }
+
   ScrollTrigger.create({
     trigger: heroSection,
     start: 'bottom 80%',
     endTrigger: '.short-version-heading',
     end: 'top 30%',
     scrub: true,
+    onRefresh: computeHeadEnd,
     onEnter: function () {
       headStart = rectRelativeToShell(heroPhoto);
       document.querySelector('.hero-shell').appendChild(heroPhoto);
@@ -325,7 +359,7 @@ document.addEventListener('DOMContentLoaded', function () {
     },
     onUpdate: function (self) {
       if (!headTraveling || !headStart) return;
-      var headEnd = rectRelativeToShell(headTarget);
+      if (!headEnd) computeHeadEnd();
       var p = self.progress;
       gsap.set(heroPhoto, {
         top: headStart.top + (headEnd.top - headStart.top) * p,
