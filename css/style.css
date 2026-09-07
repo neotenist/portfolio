@@ -150,7 +150,7 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
 .card {
   background: var(--card-bg);
   border: var(--line-w) solid var(--line);
-  border-radius: 0;
+  border-radius: 12px;
   position: relative;
 }
 .text-accent { color: var(--ink); }
@@ -776,25 +776,62 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
    each holds 2-3 items that autoplay and loop among themselves once opened, but
    never advance to a different highlight on their own; that only happens when you
    click a different dot. A highlight's ring is green until you've opened it once
-   (tracked in sessionStorage, same gate the name-prompt uses), then it turns gray. */
-/* Centered on desktop/tablet -- dots + viewer + info together read as one fairly
-   narrow group next to a full-width heading, so centering the whole cluster (and
-   the heading above it) reads more intentional than pinning it to the left edge
-   of a much wider container. */
-.oc-section .reveal { text-align: center; }
-@media (min-width: 640px) {
-  .oc-stage { justify-content: center; }
+   (tracked in sessionStorage, same gate the name-prompt uses), then it turns gray.
+   Caption text lives as an overlay on the viewer itself at every breakpoint (see
+   .oc-caption), not in a separate text column. */
+.oc-layout { display: flex; flex-direction: column; gap: 2.5rem; }
+@media (min-width: 1024px) {
+  /* 1/3 heading, 2/3 story box -- grid (not flex-basis percentages) so the split
+     is an exact 1:2 ratio regardless of the gap between them. */
+  .oc-layout { display: grid; grid-template-columns: 1fr 2fr; align-items: start; gap: 3rem; }
 }
+.oc-heading-col { padding-top: 0.25rem; }
+/* Padding/gap/dot-width/viewer-width here are the tighter, tablet-safe values --
+   the box's own share of the page (full-width until 1024px, then the 2/3 grid
+   track) isn't wide enough for the roomier desktop numbers all the way from
+   640px up, so those only kick in once min-width:1280px guarantees the room
+   (see below). Below that, dots+viewer at these sizes fit with margin to spare
+   at every width from 640px to 1279px, verified against the container's own
+   actual (min(vw,1200)-96) content width at each breakpoint. */
 .oc-stage {
   display: flex;
-  gap: 2.25rem;
+  flex-wrap: wrap;
+  gap: 1.5rem;
   align-items: flex-start;
+  justify-content: center;
+  background: var(--card-bg);
+  border: var(--line-w) solid var(--line);
+  border-radius: 12px;
+  padding: 1.25rem;
 }
 .oc-dots {
   display: flex;
   flex-direction: column;
   gap: 0.375rem;
-  flex: 0 0 15rem;
+  /* width/max-width, not just flex-basis -- a long unbroken label ("Cooking &
+     fermenting") was still growing this column past its flex-basis despite
+     flex-grow:0 and min-width:0, so it's pinned by an explicit width as well. */
+  flex: 0 0 13rem;
+  width: 13rem;
+  max-width: 13rem;
+  min-width: 0;
+}
+@media (min-width: 1280px) {
+  /* Two columns -- a single column of 6 highlights left a lot of the wide 2/3-width
+     box empty at this size, so splitting into a 2x3 grid fills it out. Fixed 9.5rem
+     columns (not an auto-fit minmax) so the block has a known, budgeted width --
+     letting label text drive it wider broke the side-by-side fit with the viewer
+     between 1024-1279px, which is why this only turns on once the box guarantees
+     the room this needs. */
+  .oc-stage { gap: 1.75rem; padding: 1.75rem; }
+  .oc-dots {
+    display: grid;
+    grid-template-columns: repeat(2, 9.5rem);
+    gap: 0.375rem 1rem;
+    flex: 0 0 auto;
+    width: 20rem;
+    max-width: 20rem;
+  }
 }
 .oc-dot {
   display: flex;
@@ -808,8 +845,13 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
   text-align: left;
   font-family: inherit;
   transition: background 0.2s ease;
+  /* A flex item's automatic minimum width defaults to its content's un-wrapped
+     size, which was forcing the whole column wider than its 13rem flex-basis to
+     fit "Cooking & fermenting" on one line -- 0 lets the label actually wrap
+     within the column instead of dragging the column's width along with it. */
+  min-width: 0;
 }
-.oc-dot:hover, .oc-dot.is-active { background: var(--card-bg); }
+.oc-dot:hover, .oc-dot.is-active { background: var(--page-bg); }
 .oc-ring {
   position: relative;
   flex-shrink: 0;
@@ -836,6 +878,7 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
   background-position: center;
 }
 .oc-dot-label {
+  min-width: 0;
   font-family: var(--font-body);
   font-weight: 600;
   font-size: 0.85rem;
@@ -847,11 +890,18 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
 .oc-viewer {
   position: relative;
   flex: none;
-  width: min(21rem, 92vw);
+  width: min(18rem, 92vw);
   aspect-ratio: 9 / 16;
   border-radius: 18px;
   overflow: hidden;
   background: var(--ink);
+}
+@media (min-width: 1280px) {
+  /* Placed after the base rule (not inside the earlier 1280px block above) --
+     source order between two same-specificity rules matters, and nesting this
+     in that earlier block put it before the base rule in the file, so the base
+     rule's 18rem was winning even at 1280px+ despite the media query matching. */
+  .oc-viewer { width: min(21rem, 92vw); }
 }
 .oc-progress {
   position: absolute;
@@ -893,67 +943,46 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
 .oc-ph-4 { background: linear-gradient(155deg, #3f3a24, #857a4a); }
 .oc-ph-5 { background: linear-gradient(155deg, #5a3420, #a5673a); }
 
-/* Editorial column: fills the dead space beside the (fairly narrow, 9:16) viewer
-   with a proper, larger read of whichever highlight is currently open, instead of
-   overlaying small white-on-photo text on the viewer itself. */
-.oc-info {
-  /* flex-grow:0 (not flex:1) so it takes only the width its own content/max-width
-     wants instead of stretching to fill the row -- letting .oc-stage's
-     justify-content:center above center dots+viewer+info as one natural-width
-     group instead of one edge-to-edge bar with the text column doing the
-     stretching. */
-  flex: 0 1 26rem;
-  min-width: 0;
-  max-width: 30rem;
-  padding-top: 0.5rem;
+.oc-caption {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 3;
+  padding: 18px 18px 20px;
+  background: linear-gradient(to top, rgba(0,0,0,0.68), transparent 85%);
+  color: #fff;
 }
-.oc-caption-mobile { display: none; }
-.oc-info-meta {
+.oc-caption b {
   display: block;
-  font-family: var(--font-body);
-  font-weight: 700;
-  font-size: 0.75rem;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-  color: var(--ink-soft);
-}
-.oc-info-title {
-  margin-top: 0.6rem;
   font-family: var(--font-display);
   font-weight: 500;
-  letter-spacing: -0.01em;
-  font-size: clamp(1.9rem, 2.6vw, 2.5rem);
-  line-height: 1.05;
-  color: var(--heading-color);
+  font-size: 1.1rem;
+  margin-bottom: 4px;
 }
-.oc-info-text {
-  margin-top: 1.1rem;
-  max-width: 38ch;
-  font-size: 1.05rem;
-  line-height: 1.6;
-  color: var(--ink-soft);
-}
-
-@media (min-width: 640px) and (max-width: 1023px) {
-  /* Dots (240px) + viewer (336px) + two gaps already use up nearly all the room a
-     tablet-width container has, so the info column was being squeezed down to a
-     sliver ("Music" / "&" / "DJing" each on their own line). Wrapping it onto its
-     own full-width row below the dots+viewer row keeps the exact same large-column
-     typography (this isn't the mobile overlay), just gives it room to breathe. */
-  .oc-stage { flex-wrap: wrap; }
-  .oc-info {
-    flex: 0 0 100%;
-    max-width: 32rem;
-    margin-inline: auto;
-    text-align: center;
-    padding-top: 1.5rem;
-  }
-  .oc-info-text { margin-inline: auto; }
-}
+.oc-caption p { font-size: 0.88rem; line-height: 1.4; opacity: 0.92; }
 
 @media (max-width: 639px) {
-  .oc-stage { flex-direction: column; gap: 1.1rem; justify-content: flex-start; }
-  .oc-viewer { margin-inline: auto; }
+  .oc-stage { flex-direction: column; gap: 1.1rem; justify-content: flex-start; padding: 1.25rem; }
+  /* 100% (not the base rule's 92vw) so the viewer sizes to the card's own inner
+     width now that the card's padding, not the viewport edge, is what insets it --
+     92vw was wider than the card's content box and overflowed its rounded corner. */
+  .oc-viewer { width: 100%; margin-inline: auto; }
+  /* Bleeds out to the box's true right edge (cancelling .oc-stage's own padding)
+     so the row of dots runs edge-to-edge instead of stopping short inside the
+     card's padding -- about 4 highlights show in full, the next one is cropped
+     right at that edge and faded out by the gradient below, signalling there's
+     more to swipe to rather than looking like an accidental clip. */
+  /* calc(100% + padding), not width:100% plus a negative margin -- a flex item
+     aligned via align-items:flex-start doesn't get pushed outward by a trailing
+     negative margin (nothing on the cross axis competes for that space), so the
+     margin approach silently did nothing; sizing the box itself past 100% is what
+     actually reaches the card's true right edge. */
+  .oc-dots-wrap { position: relative; width: calc(100% + 1.25rem); overflow: hidden; }
+  .oc-dots-wrap::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0; bottom: 2px;
+    width: 3rem;
+    background: linear-gradient(to right, transparent, var(--card-bg));
+    pointer-events: none;
+  }
   .oc-dots {
     flex-direction: row;
     flex: none;
@@ -962,15 +991,16 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     padding-bottom: 2px;
-    gap: 1rem;
+    padding-right: 1.25rem;
+    gap: 0.625rem;
   }
   .oc-dots::-webkit-scrollbar { display: none; }
   .oc-dot {
     flex-direction: column;
-    flex: 0 0 4.6rem;
-    width: 4.6rem;
-    gap: 0.4rem;
-    padding: 0.2rem;
+    flex: 0 0 4rem;
+    width: 4rem;
+    gap: 0.35rem;
+    padding: 0.15rem;
     border-radius: 14px;
   }
   .oc-dot-label {
@@ -982,26 +1012,7 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
     text-align: center;
     line-height: 1.2;
   }
-  .oc-ring { height: 58px; width: 58px; }
-  /* The side column doesn't fit next to a full-width viewer on a phone, so its
-     text moves into an overlay on the photo instead (below) rather than a
-     separate block underneath. */
-  .oc-info { display: none; }
-  .oc-caption-mobile {
-    display: block;
-    position: absolute; left: 0; right: 0; bottom: 0; z-index: 3;
-    padding: 18px 18px 20px;
-    background: linear-gradient(to top, rgba(0,0,0,0.68), transparent 85%);
-    color: #fff;
-  }
-  .oc-caption-mobile b {
-    display: block;
-    font-family: var(--font-display);
-    font-weight: 500;
-    font-size: 1.1rem;
-    margin-bottom: 4px;
-  }
-  .oc-caption-mobile p { font-size: 0.88rem; line-height: 1.4; opacity: 0.92; }
+  .oc-ring { height: 54px; width: 54px; }
 }
 
 /* ---------- Contact card ---------- */

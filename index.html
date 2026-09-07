@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Maxine Hargrove — Portfolio</title>
   <link rel="stylesheet" href="css/tailwind.css?v=3">
-  <link rel="stylesheet" href="css/style.css?v=37">
+  <link rel="stylesheet" href="css/style.css?v=52">
 </head>
 <body>
 
@@ -193,15 +193,15 @@
           <h2 class="h2-display text-ink" data-en="Things on the shelf" data-de="Steht im Regal">Things on the shelf</h2>
         </div>
         <div class="mt-10 grid gap-3 md:grid-cols-3 md:gap-4">
-          <div class="flex items-baseline justify-between gap-6 bg-[var(--card-bg)] rounded-xl p-6">
+          <div class="flex items-baseline justify-between gap-6 bg-[var(--card-bg)] rounded-xl border border-[var(--line)] p-6">
             <p class="h3-display text-ink">German Brand Award</p>
             <p class="meta shrink-0 text-ink-soft">2016</p>
           </div>
-          <div class="flex items-baseline justify-between gap-6 bg-[var(--card-bg)] rounded-xl p-6">
+          <div class="flex items-baseline justify-between gap-6 bg-[var(--card-bg)] rounded-xl border border-[var(--line)] p-6">
             <p class="h3-display text-ink">German Design Award, Special Mention</p>
             <p class="meta shrink-0 text-ink-soft">2015</p>
           </div>
-          <div class="flex items-baseline justify-between gap-6 bg-[var(--card-bg)] rounded-xl p-6">
+          <div class="flex items-baseline justify-between gap-6 bg-[var(--card-bg)] rounded-xl border border-[var(--line)] p-6">
             <p class="h3-display text-ink" data-en="Top apprentice of the year, IHK Regensburg" data-de="Kammerbeste der IHK Regensburg">Top apprentice of the year, IHK Regensburg</p>
             <p class="meta shrink-0 text-ink-soft">2014</p>
           </div>
@@ -210,11 +210,13 @@
 
       <!-- OFF THE CLOCK -->
       <section class="container-page section border-b-0 oc-section">
-        <div class="reveal">
-          <h2 class="h2-display text-ink" data-en="Off the clock" data-de="Nach Feierabend">Off the clock</h2>
-        </div>
-        <div class="mt-10 oc-stage" id="ocStage">
-          <div class="oc-dots" id="ocDots">
+        <div class="oc-layout">
+          <div class="reveal oc-heading-col">
+            <h2 class="h2-display text-ink" data-en="Off the clock" data-de="Nach Feierabend">Off the clock</h2>
+          </div>
+          <div class="oc-stage" id="ocStage">
+            <div class="oc-dots-wrap">
+            <div class="oc-dots" id="ocDots">
             <button type="button" class="oc-dot is-active" data-oc-index="0">
               <span class="oc-ring"><span class="oc-thumb oc-ph-0"></span></span>
               <span class="oc-dot-label" data-en="Music &amp; DJing" data-de="Musik &amp; DJing">Music &amp; DJing</span>
@@ -239,6 +241,7 @@
               <span class="oc-ring"><span class="oc-thumb oc-ph-5"></span></span>
               <span class="oc-dot-label" data-en="Coffee nerd" data-de="Kaffee-Nerd">Coffee nerd</span>
             </button>
+            </div>
           </div>
           <div class="oc-viewer" id="ocViewer">
             <div class="oc-progress" id="ocProgress"></div>
@@ -247,18 +250,11 @@
               <img class="oc-media-img" id="ocMediaImg" alt="" hidden>
               <video class="oc-media-video" id="ocMediaVideo" muted playsinline hidden></video>
             </div>
-            <!-- Mobile only (see CSS): the same caption as .oc-info, overlaid on the
-                 photo instead of living in a side column that doesn't fit next to a
-                 full-width viewer on a phone. -->
-            <div class="oc-caption-mobile">
-              <b id="ocCapTitleMobile"></b>
-              <p id="ocCapTextMobile"></p>
+            <div class="oc-caption" aria-live="polite">
+              <b id="ocCapTitle"></b>
+              <p id="ocCapText"></p>
             </div>
           </div>
-          <div class="oc-info" aria-live="polite">
-            <span class="oc-info-meta" id="ocInfoMeta"></span>
-            <h3 class="oc-info-title" id="ocCapTitle"></h3>
-            <p class="oc-info-text" id="ocCapText"></p>
           </div>
         </div>
       </section>
@@ -325,6 +321,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="js/site.js?v=6"></script>
-  <script src="js/main.js?v=24"></script>
+  <script src="js/main.js?v=25"></script>
 </body>
 </html>

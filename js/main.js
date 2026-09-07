@@ -602,9 +602,6 @@ document.addEventListener('DOMContentLoaded', function () {
     var ocMediaVideo = document.getElementById('ocMediaVideo');
     var ocCapTitle = document.getElementById('ocCapTitle');
     var ocCapText = document.getElementById('ocCapText');
-    var ocCapTitleMobile = document.getElementById('ocCapTitleMobile');
-    var ocCapTextMobile = document.getElementById('ocCapTextMobile');
-    var ocInfoMeta = document.getElementById('ocInfoMeta');
 
     /* Fill in each item's `src` (and set type: 'video' where it applies) once real
        photos/clips exist -- until then an item just renders as its highlight's
@@ -655,22 +652,8 @@ document.addEventListener('DOMContentLoaded', function () {
     function ocRenderCaption() {
       var cat = ocCategories[ocCatIndex];
       var lang = ocLang();
-      var title = cat.title[lang] || cat.title.en;
-      var text = cat.text[lang] || cat.text.en;
-      ocCapTitle.textContent = title;
-      ocCapText.textContent = text;
-      /* Same caption, duplicated into the mobile-only overlay inside the viewer
-         (see CSS) -- .oc-info is hidden there instead of reused, since it isn't
-         positioned to sit on top of the photo. */
-      ocCapTitleMobile.textContent = title;
-      ocCapTextMobile.textContent = text;
-    }
-
-    function ocRenderMeta() {
-      var total = ocCategories[ocCatIndex].items.length;
-      var n = String(ocItemIndex + 1);
-      var t = String(total);
-      ocInfoMeta.textContent = (n.length < 2 ? '0' + n : n) + ' / ' + (t.length < 2 ? '0' + t : t);
+      ocCapTitle.textContent = cat.title[lang] || cat.title.en;
+      ocCapText.textContent = cat.text[lang] || cat.text.en;
     }
 
     function ocMarkSeen(catIndex) {
@@ -685,7 +668,6 @@ document.addEventListener('DOMContentLoaded', function () {
       var cat = ocCategories[ocCatIndex];
       ocItemIndex = (i + cat.items.length) % cat.items.length;
       var item = cat.items[ocItemIndex];
-      ocRenderMeta();
 
       ocMediaImg.hidden = true;
       ocMediaVideo.hidden = true;
