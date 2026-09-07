@@ -786,31 +786,25 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
   .oc-layout { display: grid; grid-template-columns: 1fr 2fr; align-items: start; gap: 3rem; }
 }
 .oc-heading-col { padding-top: 0.25rem; }
-@media (min-width: 1024px) {
-  /* fit-content -- the box was stretching to fill the full 2/3 grid column, so
-     centering dots+viewer inside it (justify-content:center) left uneven slack
-     on the outside that didn't match the fixed gap between dots and viewer, or
-     the box's own padding. Shrinking the box to hug its content means the
-     padding is the only outer spacing there is, on all four sides equally. */
-  .oc-stage { width: fit-content; }
-}
-/* Padding/gap/dot-width/viewer-width here are the tighter, tablet-safe values --
-   the box's own share of the page (full-width until 1024px, then the 2/3 grid
-   track) isn't wide enough for the roomier desktop numbers all the way from
-   640px up, so those only kick in once min-width:1280px guarantees the room
-   (see below). Below that, dots+viewer at these sizes fit with margin to spare
-   at every width from 640px to 1279px, verified against the container's own
-   actual (min(vw,1200)-96) content width at each breakpoint. */
+/* The box stays the full width of its grid column (matching every other
+   full-width white box on the page) -- shrinking it to hug its content was the
+   wrong fix for uneven spacing and left it narrower than everything around it.
+   Instead: no horizontal padding on the box itself, and justify-content:
+   space-evenly distributes whatever width is left over into three EQUAL gaps
+   (left edge / between dots and viewer / right edge) at any box width, rather
+   than one fixed gap plus separately-computed padding that only matched it by
+   coincidence at one specific viewport. Vertical padding is still a plain fixed
+   value since the box's height already hugs its tallest child. */
 .oc-stage {
   display: flex;
   flex-wrap: wrap;
-  gap: 1.5rem;
   align-items: flex-start;
-  justify-content: center;
+  justify-content: space-evenly;
   background: var(--card-bg);
   border: var(--line-w) solid var(--line);
   border-radius: 12px;
-  padding: 1.25rem;
+  padding-block: 1.5rem;
+  padding-inline: 0;
 }
 .oc-dots {
   display: flex;
@@ -819,29 +813,30 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
   /* width/max-width, not just flex-basis -- a long unbroken label ("Cooking &
      fermenting") was still growing this column past its flex-basis despite
      flex-grow:0 and min-width:0, so it's pinned by an explicit width as well. */
-  flex: 0 0 13rem;
-  width: 13rem;
-  max-width: 13rem;
+  flex: 0 0 14rem;
+  width: 14rem;
+  max-width: 14rem;
   min-width: 0;
 }
 @media (min-width: 1280px) {
   /* Two columns -- a single column of 6 highlights left a lot of the wide 2/3-width
-     box empty at this size, so splitting into a 2x3 grid fills it out. Fixed 9.5rem
+     box empty at this size, so splitting into a 2x3 grid fills it out. Fixed 10rem
      columns (not an auto-fit minmax) so the block has a known, budgeted width --
      letting label text drive it wider broke the side-by-side fit with the viewer
      between 1024-1279px, which is why this only turns on once the box guarantees
-     the room this needs. */
-  .oc-stage { gap: 1.75rem; padding: 1.75rem; }
+     the room this needs. Bigger than the 1024-1279 tier's columns because there's
+     more box width here for the highlights to actually grow into. */
+  .oc-stage { padding-block: 2rem; }
   .oc-dots {
     display: grid;
-    grid-template-columns: repeat(2, 9.5rem);
+    grid-template-columns: repeat(2, 10rem);
     /* Uniform in both directions (was 0.375rem row / 1rem column) -- the mismatch
        between a tight row-gap and a much wider column-gap is what read as
        "cramped and uneven" between highlights. */
-    gap: 0.875rem;
+    gap: 1rem;
     flex: 0 0 auto;
-    width: 20rem;
-    max-width: 20rem;
+    width: 21rem;
+    max-width: 21rem;
   }
 }
 .oc-dot {
@@ -867,8 +862,8 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
   position: relative;
   flex-shrink: 0;
   display: block;
-  height: 52px;
-  width: 52px;
+  height: 56px;
+  width: 56px;
   aspect-ratio: 1 / 1;
   border-radius: 50%;
   background: conic-gradient(var(--heading-color), #4c8f6f, var(--heading-color));
@@ -879,7 +874,7 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
   /* After the base rule, not inside the earlier 1280px block above -- same
      source-order gotcha as .oc-viewer below: a media-query override placed
      before the base rule in the file loses to it even when the query matches. */
-  .oc-ring { height: 58px; width: 58px; }
+  .oc-ring { height: 64px; width: 64px; }
 }
 .oc-thumb {
   /* inset (not padding on the ring + 100% here) so the gap is measured straight
