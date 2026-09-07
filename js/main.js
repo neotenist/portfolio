@@ -635,7 +635,10 @@ document.addEventListener('DOMContentLoaded', function () {
         text: { en: "I'm serious about it. Gravel bike and eMTB, both ready to get dirty.", de: 'Ich nehme das ernst. Gravelbike und eMTB, beide bereit, schmutzig zu werden.' },
         items: [
           { type: 'photo', src: 'assets/img/off-the-clock/oc-cycling-1.webp', duration: 3000 },
-          { type: 'photo', src: 'assets/img/off-the-clock/oc-cycling-2.webp', duration: 3000 }
+          { type: 'photo', src: 'assets/img/off-the-clock/oc-cycling-2.webp', duration: 3000 },
+          { type: 'photo', src: 'assets/img/off-the-clock/oc-cycling-3.webp', duration: 3000 },
+          { type: 'photo', src: 'assets/img/off-the-clock/oc-cycling-4.webp', duration: 3000 },
+          { type: 'video', src: 'assets/video/off-the-clock/oc-cycling-5.mp4', duration: 7655 }
         ] },
       { ph: 'oc-ph-3',
         thumb: 'assets/img/off-the-clock/oc-cooking-3.webp',
