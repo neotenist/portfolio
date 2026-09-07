@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Maxine Hargrove — Portfolio</title>
   <link rel="stylesheet" href="css/tailwind.css?v=3">
-  <link rel="stylesheet" href="css/style.css?v=35">
+  <link rel="stylesheet" href="css/style.css?v=37">
 </head>
 <body>
 
@@ -209,7 +209,7 @@
       </section>
 
       <!-- OFF THE CLOCK -->
-      <section class="container-page section border-b-0">
+      <section class="container-page section border-b-0 oc-section">
         <div class="reveal">
           <h2 class="h2-display text-ink" data-en="Off the clock" data-de="Nach Feierabend">Off the clock</h2>
         </div>
@@ -246,6 +246,13 @@
               <div class="oc-media-ph oc-ph-0" id="ocMediaPh"></div>
               <img class="oc-media-img" id="ocMediaImg" alt="" hidden>
               <video class="oc-media-video" id="ocMediaVideo" muted playsinline hidden></video>
+            </div>
+            <!-- Mobile only (see CSS): the same caption as .oc-info, overlaid on the
+                 photo instead of living in a side column that doesn't fit next to a
+                 full-width viewer on a phone. -->
+            <div class="oc-caption-mobile">
+              <b id="ocCapTitleMobile"></b>
+              <p id="ocCapTextMobile"></p>
             </div>
           </div>
           <div class="oc-info" aria-live="polite">
@@ -318,6 +325,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="js/site.js?v=6"></script>
-  <script src="js/main.js?v=23"></script>
+  <script src="js/main.js?v=24"></script>
 </body>
 </html>

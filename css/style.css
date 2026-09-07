@@ -777,6 +777,14 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
    never advance to a different highlight on their own; that only happens when you
    click a different dot. A highlight's ring is green until you've opened it once
    (tracked in sessionStorage, same gate the name-prompt uses), then it turns gray. */
+/* Centered on desktop/tablet -- dots + viewer + info together read as one fairly
+   narrow group next to a full-width heading, so centering the whole cluster (and
+   the heading above it) reads more intentional than pinning it to the left edge
+   of a much wider container. */
+.oc-section .reveal { text-align: center; }
+@media (min-width: 640px) {
+  .oc-stage { justify-content: center; }
+}
 .oc-stage {
   display: flex;
   gap: 2.25rem;
@@ -889,11 +897,17 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
    with a proper, larger read of whichever highlight is currently open, instead of
    overlaying small white-on-photo text on the viewer itself. */
 .oc-info {
-  flex: 1;
+  /* flex-grow:0 (not flex:1) so it takes only the width its own content/max-width
+     wants instead of stretching to fill the row -- letting .oc-stage's
+     justify-content:center above center dots+viewer+info as one natural-width
+     group instead of one edge-to-edge bar with the text column doing the
+     stretching. */
+  flex: 0 1 26rem;
   min-width: 0;
   max-width: 30rem;
   padding-top: 0.5rem;
 }
+.oc-caption-mobile { display: none; }
 .oc-info-meta {
   display: block;
   font-family: var(--font-body);
@@ -920,8 +934,25 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
   color: var(--ink-soft);
 }
 
+@media (min-width: 640px) and (max-width: 1023px) {
+  /* Dots (240px) + viewer (336px) + two gaps already use up nearly all the room a
+     tablet-width container has, so the info column was being squeezed down to a
+     sliver ("Music" / "&" / "DJing" each on their own line). Wrapping it onto its
+     own full-width row below the dots+viewer row keeps the exact same large-column
+     typography (this isn't the mobile overlay), just gives it room to breathe. */
+  .oc-stage { flex-wrap: wrap; }
+  .oc-info {
+    flex: 0 0 100%;
+    max-width: 32rem;
+    margin-inline: auto;
+    text-align: center;
+    padding-top: 1.5rem;
+  }
+  .oc-info-text { margin-inline: auto; }
+}
+
 @media (max-width: 639px) {
-  .oc-stage { flex-direction: column; gap: 1.1rem; }
+  .oc-stage { flex-direction: column; gap: 1.1rem; justify-content: flex-start; }
   .oc-viewer { margin-inline: auto; }
   .oc-dots {
     flex-direction: row;
@@ -931,30 +962,46 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     padding-bottom: 2px;
-    gap: 1.15rem;
+    gap: 1rem;
   }
   .oc-dots::-webkit-scrollbar { display: none; }
   .oc-dot {
     flex-direction: column;
-    flex: 0 0 auto;
+    flex: 0 0 4.6rem;
+    width: 4.6rem;
     gap: 0.4rem;
     padding: 0.2rem;
     border-radius: 14px;
   }
   .oc-dot-label {
-    font-size: 0.68rem;
-    white-space: nowrap;
-    max-width: 62px;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    /* Was truncating to a single ellipsised line ("Music & D...") -- letting it
+       wrap to two lines across the dot's fixed width keeps every label fully
+       legible instead of cutting most of them off. */
+    font-size: 0.7rem;
+    white-space: normal;
+    text-align: center;
+    line-height: 1.2;
   }
   .oc-ring { height: 58px; width: 58px; }
-  .oc-info {
-    max-width: none;
-    padding-top: 0;
-    text-align: center;
+  /* The side column doesn't fit next to a full-width viewer on a phone, so its
+     text moves into an overlay on the photo instead (below) rather than a
+     separate block underneath. */
+  .oc-info { display: none; }
+  .oc-caption-mobile {
+    display: block;
+    position: absolute; left: 0; right: 0; bottom: 0; z-index: 3;
+    padding: 18px 18px 20px;
+    background: linear-gradient(to top, rgba(0,0,0,0.68), transparent 85%);
+    color: #fff;
   }
-  .oc-info-text { margin-inline: auto; }
+  .oc-caption-mobile b {
+    display: block;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 1.1rem;
+    margin-bottom: 4px;
+  }
+  .oc-caption-mobile p { font-size: 0.88rem; line-height: 1.4; opacity: 0.92; }
 }
 
 /* ---------- Contact card ---------- */

@@ -602,6 +602,8 @@ document.addEventListener('DOMContentLoaded', function () {
     var ocMediaVideo = document.getElementById('ocMediaVideo');
     var ocCapTitle = document.getElementById('ocCapTitle');
     var ocCapText = document.getElementById('ocCapText');
+    var ocCapTitleMobile = document.getElementById('ocCapTitleMobile');
+    var ocCapTextMobile = document.getElementById('ocCapTextMobile');
     var ocInfoMeta = document.getElementById('ocInfoMeta');
 
     /* Fill in each item's `src` (and set type: 'video' where it applies) once real
@@ -653,8 +655,15 @@ document.addEventListener('DOMContentLoaded', function () {
     function ocRenderCaption() {
       var cat = ocCategories[ocCatIndex];
       var lang = ocLang();
-      ocCapTitle.textContent = cat.title[lang] || cat.title.en;
-      ocCapText.textContent = cat.text[lang] || cat.text.en;
+      var title = cat.title[lang] || cat.title.en;
+      var text = cat.text[lang] || cat.text.en;
+      ocCapTitle.textContent = title;
+      ocCapText.textContent = text;
+      /* Same caption, duplicated into the mobile-only overlay inside the viewer
+         (see CSS) -- .oc-info is hidden there instead of reused, since it isn't
+         positioned to sit on top of the photo. */
+      ocCapTitleMobile.textContent = title;
+      ocCapTextMobile.textContent = text;
     }
 
     function ocRenderMeta() {
