@@ -787,24 +787,24 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
 }
 .oc-heading-col { padding-top: 0.25rem; }
 /* The box stays the full width of its grid column (matching every other
-   full-width white box on the page) -- shrinking it to hug its content was the
-   wrong fix for uneven spacing and left it narrower than everything around it.
-   Instead: no horizontal padding on the box itself, and justify-content:
-   space-evenly distributes whatever width is left over into three EQUAL gaps
-   (left edge / between dots and viewer / right edge) at any box width, rather
-   than one fixed gap plus separately-computed padding that only matched it by
-   coincidence at one specific viewport. Vertical padding is still a plain fixed
-   value since the box's height already hugs its tallest child. */
+   full-width white box on the page). padding is ONE value on all four sides,
+   full stop -- no split into padding-block/padding-inline, no relying on
+   justify-content to approximate it. justify-content:space-between is what
+   makes that actually hold at any box width: with exactly two children, it
+   pins the dots column flush to the start of the padding box and the viewer
+   flush to its end, so the visible gap on every edge is exactly the padding
+   value and nothing else -- top, bottom, left and right, always identical,
+   regardless of how much (or little) leftover space ends up between the two
+   children in the middle. */
 .oc-stage {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
-  justify-content: space-evenly;
+  justify-content: space-between;
   background: var(--card-bg);
   border: var(--line-w) solid var(--line);
   border-radius: 12px;
-  padding-block: 1.5rem;
-  padding-inline: 0;
+  padding: 1.75rem;
 }
 .oc-dots {
   display: flex;
@@ -826,18 +826,25 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
      between 1024-1279px, which is why this only turns on once the box guarantees
      the room this needs. Bigger than the 1024-1279 tier's columns because there's
      more box width here for the highlights to actually grow into. */
-  .oc-stage { padding-block: 1.25rem; }
+  /* Padding shrinks a bit at this tier (still equal on all four sides) -- 12rem
+     columns plus the full-size viewer need more of the box's width than the
+     1024-1279 tier's numbers do, and at 1.75rem padding the two stopped fitting
+     side by side right at the 1280px boundary and wrapped. 1rem keeps the
+     equal-edges guarantee from space-between while leaving enough room. */
+  .oc-stage { padding: 1rem; }
   .oc-dots {
     display: grid;
-    /* 12rem, not 10rem -- measured, "fermenting" alone (the longest word in any
-       label) renders at ~72px in this font/weight/size, and 10rem's leftover
-       label width after the ring+gaps was under that, forcing a third line and
-       clipping the hover pill against its neighbors. 12rem leaves real margin. */
-    grid-template-columns: repeat(2, 12rem);
+    /* 11.5rem, not 10rem -- measured, "fermenting" alone (the longest word in
+       any label) renders at ~72px in this font/weight/size, and 10rem's
+       leftover label width after the ring+gaps was under that, forcing a third
+       line and clipping the hover pill against its neighbors. 11.5rem leaves
+       real margin without needing more width than the reduced padding above
+       can actually spare. */
+    grid-template-columns: repeat(2, 11.5rem);
     gap: 1rem;
     flex: 0 0 auto;
-    width: 25rem;
-    max-width: 25rem;
+    width: 24rem;
+    max-width: 24rem;
   }
 }
 .oc-dot {
