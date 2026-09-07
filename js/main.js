@@ -584,4 +584,122 @@ document.addEventListener('DOMContentLoaded', function () {
   folderStage.addEventListener('touchstart', folderPointerDown, { passive: true });
   window.addEventListener('touchmove', folderPointerMove, { passive: true });
   window.addEventListener('touchend', folderPointerUp);
+
+  /* ---------- OFF THE CLOCK: story-style viewer ----------
+     Dots (left on desktop/tablet, a swipeable row on mobile) plus a 16:9 viewer that
+     autoplays through every story on a loop once it scrolls into view -- there's no
+     close/pause, it just keeps running; clicking a dot jumps the loop straight to
+     that story instead of opening/closing anything. */
+  var ocStage = document.getElementById('ocStage');
+  if (ocStage) {
+    var ocDotsEls = Array.prototype.slice.call(ocStage.querySelectorAll('.oc-dot'));
+    var ocProgressEl = document.getElementById('ocProgress');
+    var ocMediaPh = document.getElementById('ocMediaPh');
+    var ocMediaImg = document.getElementById('ocMediaImg');
+    var ocMediaVideo = document.getElementById('ocMediaVideo');
+    var ocCapTitle = document.getElementById('ocCapTitle');
+    var ocCapText = document.getElementById('ocCapText');
+
+    /* Fill in `src` (and set type: 'video' where it applies) once real photos/clips
+       exist for each of these -- until then a slide just renders as its labelled
+       color placeholder. `duration` is how long a photo slide holds before
+       advancing; update it to match a video's real length once one is in place. */
+    var ocStories = [
+      { ph: 'oc-ph-0', type: 'photo', src: null, duration: 5000,
+        title: { en: 'Music & DJing', de: 'Musik & DJing' },
+        text: { en: 'Teaching myself how to DJ on the weekends. Work in progress, but the neighbours are surprisingly supportive.', de: 'Lehre mich am Wochenende das DJing. Work in progress, aber die Nachbarn sind überraschend geduldig.' } },
+      { ph: 'oc-ph-1', type: 'photo', src: null, duration: 5000,
+        title: { en: 'My dog Poppy', de: 'Mein Hund Poppy' },
+        text: { en: "Keeps me on my toes. She's only 1.5 years old and already running the show.", de: 'Hält mich auf Trab. Sie ist erst 1,5 Jahre alt und führt schon das Regiment.' } },
+      { ph: 'oc-ph-2', type: 'photo', src: null, duration: 5000,
+        title: { en: 'Cycling', de: 'Radeln' },
+        text: { en: "I'm serious about it. Gravel bike and eMTB, both ready to get dirty.", de: 'Ich nehme das ernst. Gravelbike und eMTB, beide bereit, schmutzig zu werden.' } },
+      { ph: 'oc-ph-3', type: 'photo', src: null, duration: 5000,
+        title: { en: 'Cooking & fermenting', de: 'Kochen & Fermentieren' },
+        text: { en: "Eating is also a hobby, but you're not supposed to say that out loud. I ferment anything that stands still long enough.", de: 'Essen ist auch ein Hobby, aber das sagt man nicht so laut. Fermentiere nebenbei alles, was lange genug stillsteht.' } },
+      { ph: 'oc-ph-4', type: 'photo', src: null, duration: 5000,
+        title: { en: 'Hiking', de: 'Wandern' },
+        text: { en: 'More like a long walk, really. But being outside is the whole point.', de: 'Eher ein langer Spaziergang, ehrlich gesagt. Aber draußen sein zählt.' } },
+      { ph: 'oc-ph-5', type: 'photo', src: null, duration: 5000,
+        title: { en: 'Coffee nerd', de: 'Kaffee-Nerd' },
+        text: { en: 'Yes, the obnoxious type. Italian-style espresso machine, keeps me up and running.', de: 'Ja, der lästige Typ. Italienische Espressomaschine, hält mich wach und am Laufen.' } }
+    ];
+
+    var ocIndex = 0;
+    var ocTimer = null;
+    var ocStarted = false;
+
+    function ocLang() {
+      return (window.Site && window.Site.state && window.Site.state.lang) || 'en';
+    }
+
+    function ocRenderCaption() {
+      var s = ocStories[ocIndex];
+      var lang = ocLang();
+      ocCapTitle.textContent = s.title[lang] || s.title.en;
+      ocCapText.textContent = s.text[lang] || s.text.en;
+    }
+
+    function ocShow(i) {
+      clearTimeout(ocTimer);
+      ocIndex = (i + ocStories.length) % ocStories.length;
+      var s = ocStories[ocIndex];
+
+      ocDotsEls.forEach(function (d, di) { d.classList.toggle('is-active', di === ocIndex); });
+      ocRenderCaption();
+
+      ocMediaImg.hidden = true;
+      ocMediaVideo.hidden = true;
+      ocMediaVideo.pause();
+      ocMediaPh.hidden = true;
+
+      if (s.src && s.type === 'video') {
+        ocMediaVideo.hidden = false;
+        ocMediaVideo.src = s.src;
+        ocMediaVideo.currentTime = 0;
+        ocMediaVideo.play();
+      } else if (s.src) {
+        ocMediaImg.hidden = false;
+        ocMediaImg.src = s.src;
+      } else {
+        ocMediaPh.hidden = false;
+        ocMediaPh.className = 'oc-media-ph ' + s.ph;
+      }
+
+      var bars = ocProgressEl.children;
+      for (var b = 0; b < bars.length; b++) {
+        bars[b].classList.remove('is-filling');
+        bars[b].classList.toggle('is-done', b < ocIndex);
+        bars[b].classList.toggle('is-active', b === ocIndex);
+      }
+      var activeBar = bars[ocIndex];
+      var duration = s.duration || 5000;
+      activeBar.style.setProperty('--fill-duration', (duration / 1000) + 's');
+      requestAnimationFrame(function () { activeBar.classList.add('is-filling'); });
+      ocTimer = setTimeout(function () { ocShow(ocIndex + 1); }, duration);
+    }
+
+    ocProgressEl.innerHTML = ocStories.map(function () { return '<i></i>'; }).join('');
+
+    ocDotsEls.forEach(function (dot, i) {
+      dot.addEventListener('click', function () { ocShow(i); });
+    });
+
+    /* A real video's own natural end is the truer cue to advance than the guessed
+       duration above -- harmless if both fire, since ocShow() clears the pending
+       timer as soon as it's called either way. */
+    ocMediaVideo.addEventListener('ended', function () { ocShow(ocIndex + 1); });
+
+    document.addEventListener('site:langchange', ocRenderCaption);
+
+    var ocObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting || ocStarted) return;
+        ocStarted = true;
+        ocObserver.disconnect();
+        ocShow(0);
+      });
+    }, { threshold: 0.3 });
+    ocObserver.observe(ocStage);
+  }
 });

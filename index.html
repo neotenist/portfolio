@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Maxine Hargrove — Portfolio</title>
   <link rel="stylesheet" href="css/tailwind.css?v=3">
-  <link rel="stylesheet" href="css/style.css?v=30">
+  <link rel="stylesheet" href="css/style.css?v=32">
 </head>
 <body>
 
@@ -213,69 +213,45 @@
         <div class="reveal">
           <h2 class="h2-display text-ink" data-en="Off the clock" data-de="Nach Feierabend">Off the clock</h2>
         </div>
-        <div class="mt-10 border-t border-[var(--line)]">
-
-          <article class="group grid gap-3 border-b border-[var(--line)] py-7 last:border-b-0 md:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] md:items-start md:gap-10">
-            <div class="flex items-center gap-3">
-              <div class="clock-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7" cy="14" r="2.5"></circle><path d="M9.5 14V5l6-2v9"></path><circle cx="15.5" cy="12" r="2"></circle></svg></div>
-              <span class="font-display text-lg leading-tight tracking-tight" data-en="Music &amp; DJing" data-de="Musik &amp; DJing">Music &amp; DJing</span>
+        <div class="mt-10 oc-stage" id="ocStage">
+          <div class="oc-dots" id="ocDots">
+            <button type="button" class="oc-dot is-active" data-oc-index="0">
+              <span class="oc-ring"><span class="oc-thumb oc-ph-0"></span></span>
+              <span class="oc-dot-label" data-en="Music &amp; DJing" data-de="Musik &amp; DJing">Music &amp; DJing</span>
+            </button>
+            <button type="button" class="oc-dot" data-oc-index="1">
+              <span class="oc-ring"><span class="oc-thumb oc-ph-1"></span></span>
+              <span class="oc-dot-label" data-en="My dog Poppy" data-de="Mein Hund Poppy">My dog Poppy</span>
+            </button>
+            <button type="button" class="oc-dot" data-oc-index="2">
+              <span class="oc-ring"><span class="oc-thumb oc-ph-2"></span></span>
+              <span class="oc-dot-label" data-en="Cycling" data-de="Radeln">Cycling</span>
+            </button>
+            <button type="button" class="oc-dot" data-oc-index="3">
+              <span class="oc-ring"><span class="oc-thumb oc-ph-3"></span></span>
+              <span class="oc-dot-label" data-en="Cooking &amp; fermenting" data-de="Kochen &amp; Fermentieren">Cooking &amp; fermenting</span>
+            </button>
+            <button type="button" class="oc-dot" data-oc-index="4">
+              <span class="oc-ring"><span class="oc-thumb oc-ph-4"></span></span>
+              <span class="oc-dot-label" data-en="Hiking" data-de="Wandern">Hiking</span>
+            </button>
+            <button type="button" class="oc-dot" data-oc-index="5">
+              <span class="oc-ring"><span class="oc-thumb oc-ph-5"></span></span>
+              <span class="oc-dot-label" data-en="Coffee nerd" data-de="Kaffee-Nerd">Coffee nerd</span>
+            </button>
+          </div>
+          <div class="oc-viewer" id="ocViewer" aria-live="polite">
+            <div class="oc-progress" id="ocProgress"></div>
+            <div class="oc-media">
+              <div class="oc-media-ph oc-ph-0" id="ocMediaPh"></div>
+              <img class="oc-media-img" id="ocMediaImg" alt="" hidden>
+              <video class="oc-media-video" id="ocMediaVideo" muted playsinline hidden></video>
             </div>
-            <div class="flex items-start gap-5">
-              <p class="max-w-[52ch] leading-relaxed text-ink-soft" style="font-size:clamp(1.0625rem, 1.3vw, 1.25rem)" data-en="Teaching myself how to DJ on the weekends. Work in progress, but the neighbours are surprisingly supportive." data-de="Lehre mich am Wochenende das DJing. Work in progress, aber die Nachbarn sind überraschend geduldig.">Teaching myself how to DJ on the weekends. Work in progress, but the neighbours are surprisingly supportive.</p>
+            <div class="oc-caption">
+              <b id="ocCapTitle"></b>
+              <p id="ocCapText"></p>
             </div>
-          </article>
-
-          <article class="group grid gap-3 border-b border-[var(--line)] py-7 last:border-b-0 md:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] md:items-start md:gap-10">
-            <div class="flex items-center gap-3">
-              <div class="clock-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6c0-2 1.5-3 3-3s3 1 3 3"></path><path d="M4 8c0-1.5 1-2.5 2.5-2.5h7c1.5 0 2.5 1 2.5 2.5v3c0 2.5-2 4.5-4.5 4.5h-3C5.5 15.5 4 13.5 4 11V8Z"></path><path d="M7 11h1.5"></path><path d="M11.5 11H13"></path><path d="M8.5 13.5h3"></path></svg></div>
-              <span class="font-display text-lg leading-tight tracking-tight" data-en="My dog Poppy" data-de="Mein Hund Poppy">My dog Poppy</span>
-            </div>
-            <div class="flex items-start gap-5">
-              <p class="max-w-[52ch] leading-relaxed text-ink-soft" style="font-size:clamp(1.0625rem, 1.3vw, 1.25rem)" data-en="Keeps me on my toes. She's only 1.5 years old and already running the show." data-de="Hält mich auf Trab. Sie ist erst 1,5 Jahre alt und führt schon das Regiment.">Keeps me on my toes. She's only 1.5 years old and already running the show.</p>
-              <img src="assets/img/poppy-portrait.png" alt="Poppy" class="h-16 w-16 shrink-0 rounded-full border-2 border-[var(--line)] object-cover">
-            </div>
-          </article>
-
-          <article class="group grid gap-3 border-b border-[var(--line)] py-7 last:border-b-0 md:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] md:items-start md:gap-10">
-            <div class="flex items-center gap-3">
-              <div class="clock-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5" cy="13" r="2.5"></circle><circle cx="15" cy="13" r="2.5"></circle><path d="M7.5 13 9 8h3l1.5 5M9 8l2.5-2M11.5 6l1.5 1"></path></svg></div>
-              <span class="font-display text-lg leading-tight tracking-tight" data-en="Cycling" data-de="Radeln">Cycling</span>
-            </div>
-            <div class="flex items-start gap-5">
-              <p class="max-w-[52ch] leading-relaxed text-ink-soft" style="font-size:clamp(1.0625rem, 1.3vw, 1.25rem)" data-en="I'm serious about it. Gravel bike and eMTB, both ready to get dirty." data-de="Ich nehme das ernst. Gravelbike und eMTB, beide bereit, schmutzig zu werden.">I'm serious about it. Gravel bike and eMTB, both ready to get dirty.</p>
-            </div>
-          </article>
-
-          <article class="group grid gap-3 border-b border-[var(--line)] py-7 last:border-b-0 md:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] md:items-start md:gap-10">
-            <div class="flex items-center gap-3">
-              <div class="clock-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 13h8M7 13V7a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6M6 13c-1.5 0-2.5-1-2.5-2.5S4.5 8 6 8"></path><path d="M14 13c1.5 0 2.5-1 2.5-2.5S15.5 8 14 8"></path><path d="M8 17h4"></path></svg></div>
-              <span class="font-display text-lg leading-tight tracking-tight" data-en="Cooking &amp; fermenting" data-de="Kochen &amp; Fermentieren">Cooking &amp; fermenting</span>
-            </div>
-            <div class="flex items-start gap-5">
-              <p class="max-w-[52ch] leading-relaxed text-ink-soft" style="font-size:clamp(1.0625rem, 1.3vw, 1.25rem)" data-en="Eating is also a hobby, but you're not supposed to say that out loud. I ferment anything that stands still long enough." data-de="Essen ist auch ein Hobby, aber das sagt man nicht so laut. Fermentiere nebenbei alles, was lange genug stillsteht.">Eating is also a hobby, but you're not supposed to say that out loud. I ferment anything that stands still long enough.</p>
-            </div>
-          </article>
-
-          <article class="group grid gap-3 border-b border-[var(--line)] py-7 last:border-b-0 md:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] md:items-start md:gap-10">
-            <div class="flex items-center gap-3">
-              <div class="clock-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 16 7 9l3 4 4-6 3 4"></path><path d="M7 9V6a2 2 0 0 1 4 0v1"></path></svg></div>
-              <span class="font-display text-lg leading-tight tracking-tight" data-en="Hiking" data-de="Wandern">Hiking</span>
-            </div>
-            <div class="flex items-start gap-5">
-              <p class="max-w-[52ch] leading-relaxed text-ink-soft" style="font-size:clamp(1.0625rem, 1.3vw, 1.25rem)" data-en="More like a long walk, really. But being outside is the whole point." data-de="Eher ein langer Spaziergang, ehrlich gesagt. Aber draußen sein zählt.">More like a long walk, really. But being outside is the whole point.</p>
-            </div>
-          </article>
-
-          <article class="group grid gap-3 border-b border-[var(--line)] py-7 last:border-b-0 md:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] md:items-start md:gap-10">
-            <div class="flex items-center gap-3">
-              <div class="clock-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h10v7a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V4Z"></path><path d="M14 6h2a1.5 1.5 0 0 1 0 3h-2"></path><path d="M6 17h6"></path></svg></div>
-              <span class="font-display text-lg leading-tight tracking-tight" data-en="Coffee nerd" data-de="Kaffee-Nerd">Coffee nerd</span>
-            </div>
-            <div class="flex items-start gap-5">
-              <p class="max-w-[52ch] leading-relaxed text-ink-soft" style="font-size:clamp(1.0625rem, 1.3vw, 1.25rem)" data-en="Yes, the obnoxious type. Italian-style espresso machine, keeps me up and running." data-de="Ja, der lästige Typ. Italienische Espressomaschine, hält mich wach und am Laufen.">Yes, the obnoxious type. Italian-style espresso machine, keeps me up and running.</p>
-            </div>
-          </article>
-
+          </div>
         </div>
       </section>
 
@@ -341,6 +317,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="js/site.js?v=6"></script>
-  <script src="js/main.js?v=20"></script>
+  <script src="js/main.js?v=21"></script>
 </body>
 </html>
