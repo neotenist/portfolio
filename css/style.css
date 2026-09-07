@@ -826,17 +826,18 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
      between 1024-1279px, which is why this only turns on once the box guarantees
      the room this needs. Bigger than the 1024-1279 tier's columns because there's
      more box width here for the highlights to actually grow into. */
-  .oc-stage { padding-block: 2rem; }
+  .oc-stage { padding-block: 1.25rem; }
   .oc-dots {
     display: grid;
-    grid-template-columns: repeat(2, 10rem);
-    /* Uniform in both directions (was 0.375rem row / 1rem column) -- the mismatch
-       between a tight row-gap and a much wider column-gap is what read as
-       "cramped and uneven" between highlights. */
+    /* 12rem, not 10rem -- measured, "fermenting" alone (the longest word in any
+       label) renders at ~72px in this font/weight/size, and 10rem's leftover
+       label width after the ring+gaps was under that, forcing a third line and
+       clipping the hover pill against its neighbors. 12rem leaves real margin. */
+    grid-template-columns: repeat(2, 12rem);
     gap: 1rem;
     flex: 0 0 auto;
-    width: 21rem;
-    max-width: 21rem;
+    width: 25rem;
+    max-width: 25rem;
   }
 }
 .oc-dot {
