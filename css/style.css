@@ -1336,37 +1336,39 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
 .cv-item-panel { overflow: hidden; min-height: 0; }
 .cv-item-panel-inner { padding-bottom: 2.5rem; }
 
-/* A real bento mosaic, not just a uniform 2-up grid -- a narrow column (role
-   stacked on tools, both naturally short) sits beside one tall wide cell
-   (the description, which is the one block whose length actually varies a
-   lot role to role), with the worth-mentioning story as a full-width strip
-   underneath. Mixed cell sizes is the whole point of "bento"; four identical
-   boxes in a grid just reads as a table with extra steps. */
+/* A real bento mosaic needs every card to size to its OWN content -- the
+   previous version used CSS Grid row-spanning to let one tall "description"
+   cell share row tracks with the shorter cards beside it, but shared row
+   tracks size to whichever cell in that row needs the most height, which
+   forced the short cards to sit inside oversized rows (visible as dead space
+   inside a card) or, once that was patched by shrinking a card's own width,
+   left it misaligned with everything around it.
+   The fix: two independent grid columns, nothing spans rows. The left column
+   is its own flex stack (Context, Tools, Worth mentioning), each card sized
+   purely by its own content with a consistent gap between them, sharing one
+   left/right edge. The right column is the single tall "What I did" card.
+   Neither column's height leaks into the other's card sizing -- whichever
+   column is taller just leaves normal whitespace beside the shorter one,
+   which is how any ordinary two-column layout looks, not a broken card. */
 .cv-bento {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
-  grid-template-areas: "meta desc" "tools desc" "worth worth";
+  grid-template-columns: minmax(220px, 1fr) minmax(0, 1.6fr);
+  align-items: start;
   gap: 0.75rem;
 }
-.cv-bento.no-desc { grid-template-areas: "meta tools" "worth worth"; }
-.cv-bento-meta { grid-area: meta; }
-.cv-bento-tools { grid-area: tools; }
-.cv-bento-desc { grid-area: desc; }
-/* justify-self:start + a real reading measure, not stretch -- the "worth
-   mentioning" text is one or two short paragraphs, and a card that stretches
-   across the full meta+desc width just to hold them reads as a box that's
-   mostly empty on the right. Sizing it to what the text actually needs reads
-   as a considered card instead of a stretched one. */
-.cv-bento-worth {
-  grid-area: worth;
-  justify-self: start;
-  width: 100%;
-  max-width: 34rem;
-}
+.cv-bento-side { display: flex; flex-direction: column; gap: 0.75rem; min-width: 0; }
+/* The one role with no "What I did" bullets (the apprenticeship) has no wide
+   column to sit beside, so it drops the two-column split entirely: Context
+   and Tools become a plain side-by-side row, Worth mentioning spans under
+   both, full width -- still every card sized to its own content, just
+   arranged for a single-column-worth of material instead of two. */
+.cv-bento.no-desc { display: flex; flex-direction: column; gap: 0.75rem; }
+.cv-bento.no-desc .cv-bento-row { display: flex; gap: 0.75rem; }
+.cv-bento.no-desc .cv-bento-meta, .cv-bento.no-desc .cv-bento-tools { flex: 1 1 0; min-width: 0; }
 /* card-bg, not page-bg -- the page itself already sits on page-bg, so a cell
    filled with that same color rendered as invisible whitespace instead of a
    box; card-bg (white) plus the border is what actually reads as one. */
-.cv-bento > div { background: var(--card-bg); border: var(--line-w) solid var(--line); border-radius: 12px; padding: 1.25rem 1.5rem; }
+.cv-bento-meta, .cv-bento-tools, .cv-bento-desc, .cv-bento-worth { background: var(--card-bg); border: var(--line-w) solid var(--line); border-radius: 12px; padding: 1.25rem 1.5rem; }
 .cv-bento-meta p { margin-top: 0.25rem; }
 .cv-bento h4 {
   font-family: var(--font-body);
@@ -1392,6 +1394,7 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
 .cv-award-badge { flex: none; display: flex; height: 3rem; width: 3rem; align-items: center; justify-content: center; border-radius: 50%; border: var(--line-w) solid var(--line); background: var(--card-bg); font-family: var(--font-display); font-size: 1.05rem; color: var(--ink-soft); }
 
 @media (max-width: 767px) {
-  .cv-bento, .cv-bento.no-desc { grid-template-columns: 1fr; grid-template-areas: "meta" "tools" "desc" "worth"; }
+  .cv-bento { grid-template-columns: 1fr; }
+  .cv-bento.no-desc .cv-bento-row { flex-direction: column; }
   .cv-item-head { align-items: flex-start; }
 }
