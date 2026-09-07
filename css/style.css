@@ -818,28 +818,25 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
   max-width: 14rem;
   min-width: 0;
 }
-@media (min-width: 1280px) {
+@media (min-width: 1360px) {
   /* Two columns -- a single column of 6 highlights left a lot of the wide 2/3-width
-     box empty at this size, so splitting into a 2x3 grid fills it out. Fixed 10rem
-     columns (not an auto-fit minmax) so the block has a known, budgeted width --
-     letting label text drive it wider broke the side-by-side fit with the viewer
-     between 1024-1279px, which is why this only turns on once the box guarantees
-     the room this needs. Bigger than the 1024-1279 tier's columns because there's
-     more box width here for the highlights to actually grow into. */
-  /* Padding shrinks a bit at this tier (still equal on all four sides) -- 12rem
-     columns plus the full-size viewer need more of the box's width than the
-     1024-1279 tier's numbers do, and at 1.75rem padding the two stopped fitting
-     side by side right at the 1280px boundary and wrapped. 1rem keeps the
-     equal-edges guarantee from space-between while leaving enough room. */
-  .oc-stage { padding: 1rem; }
+     box empty at this size, so splitting into a 2x3 grid fills it out. Fixed
+     11.5rem columns (not an auto-fit minmax) so the block has a known, budgeted
+     width -- letting label text drive it wider broke the side-by-side fit with
+     the viewer. Bigger than the 1024-1359 tier's columns because there's more
+     box width here for the highlights to actually grow into.
+     1360px, not 1280px -- at 1280 there wasn't enough box width left for these
+     columns plus the full-size viewer AND the same 1.75rem padding as every
+     other tier, so padding had to shrink to 1rem to keep both fitting, which
+     looked visibly thinner than the rest of the page. Moving the breakpoint out
+     to where the box is actually wide enough means padding never has to shrink
+     at all -- it stays 1.75rem everywhere from 1024px up. */
   .oc-dots {
     display: grid;
     /* 11.5rem, not 10rem -- measured, "fermenting" alone (the longest word in
        any label) renders at ~72px in this font/weight/size, and 10rem's
        leftover label width after the ring+gaps was under that, forcing a third
-       line and clipping the hover pill against its neighbors. 11.5rem leaves
-       real margin without needing more width than the reduced padding above
-       can actually spare. */
+       line and clipping the hover pill against its neighbors. */
     grid-template-columns: repeat(2, 11.5rem);
     gap: 1rem;
     flex: 0 0 auto;
@@ -878,8 +875,8 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
   transition: background 0.25s ease;
 }
 .oc-dot.is-seen .oc-ring { background: var(--line); }
-@media (min-width: 1280px) {
-  /* After the base rule, not inside the earlier 1280px block above -- same
+@media (min-width: 1360px) {
+  /* After the base rule, not inside the earlier 1360px block above -- same
      source-order gotcha as .oc-viewer below: a media-query override placed
      before the base rule in the file loses to it even when the query matches. */
   .oc-ring { height: 64px; width: 64px; }
@@ -916,11 +913,11 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
   overflow: hidden;
   background: var(--ink);
 }
-@media (min-width: 1280px) {
-  /* Placed after the base rule (not inside the earlier 1280px block above) --
+@media (min-width: 1360px) {
+  /* Placed after the base rule (not inside the earlier 1360px block above) --
      source order between two same-specificity rules matters, and nesting this
      in that earlier block put it before the base rule in the file, so the base
-     rule's 18rem was winning even at 1280px+ despite the media query matching. */
+     rule's 18rem was winning even at 1360px+ despite the media query matching. */
   .oc-viewer { width: min(21rem, 92vw); }
 }
 .oc-progress {
