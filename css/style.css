@@ -771,10 +771,12 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
 }
 .reveal.is-in { opacity: 1; transform: none; }
 
-/* ---------- Off the clock: story-style viewer ----------
-   Dots on the left (top row, swipeable, on mobile), a 16:9 viewer on the right that
-   autoplays through every story on a loop once it scrolls into view and never
-   stops/closes on its own -- clicking a dot just jumps the loop to that story. */
+/* ---------- Off the clock: story-highlight viewer ----------
+   Dots on the left (top row, swipeable, on mobile) are highlights, Instagram-style --
+   each holds 2-3 items that autoplay and loop among themselves once opened, but
+   never advance to a different highlight on their own; that only happens when you
+   click a different dot. A highlight's ring is green until you've opened it once
+   (tracked in sessionStorage, same gate the name-prompt uses), then it turns gray. */
 .oc-stage {
   display: flex;
   gap: 2.25rem;
@@ -807,12 +809,10 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
   width: 52px;
   border-radius: 50%;
   padding: 2.5px;
-  background: var(--line);
+  background: conic-gradient(var(--heading-color), #4c8f6f, var(--heading-color));
   transition: background 0.25s ease;
 }
-.oc-dot.is-active .oc-ring {
-  background: conic-gradient(var(--heading-color), #4c8f6f, var(--heading-color));
-}
+.oc-dot.is-seen .oc-ring { background: var(--line); }
 .oc-thumb {
   display: block;
   height: 100%;
@@ -833,9 +833,9 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
 
 .oc-viewer {
   position: relative;
-  flex: 1;
-  min-width: 0;
-  aspect-ratio: 16 / 9;
+  flex: none;
+  width: min(21rem, 92vw);
+  aspect-ratio: 9 / 16;
   border-radius: 18px;
   overflow: hidden;
   background: var(--ink);
@@ -897,16 +897,7 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
 
 @media (max-width: 639px) {
   .oc-stage { flex-direction: column; gap: 1.1rem; }
-  .oc-viewer {
-    /* flex:1 sizes along whichever axis is the main one -- in the row layout
-       (desktop/tablet) that's width, which is what it's for, but .oc-stage
-       switches to a column here, so the SAME flex:1 was trying to grow the
-       viewer's height instead and left its width (and therefore its
-       aspect-ratio-derived height) at 0. Just give it the full row width
-       directly instead of leaning on flex-basis for it. */
-    flex: none;
-    width: 100%;
-  }
+  .oc-viewer { margin-inline: auto; }
   .oc-dots {
     flex-direction: row;
     flex: none;
