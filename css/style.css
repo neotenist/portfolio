@@ -1336,12 +1336,27 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
 .cv-item-panel { overflow: hidden; min-height: 0; }
 .cv-item-panel-inner { padding-bottom: 2.5rem; }
 
-.cv-bento { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+/* A real bento mosaic, not just a uniform 2-up grid -- a narrow column (role
+   stacked on tools, both naturally short) sits beside one tall wide cell
+   (the description, which is the one block whose length actually varies a
+   lot role to role), with the worth-mentioning story as a full-width strip
+   underneath. Mixed cell sizes is the whole point of "bento"; four identical
+   boxes in a grid just reads as a table with extra steps. */
+.cv-bento {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+  grid-template-areas: "meta desc" "tools desc" "worth worth";
+  gap: 0.75rem;
+}
+.cv-bento.no-desc { grid-template-areas: "meta tools" "worth worth"; }
+.cv-bento-meta { grid-area: meta; }
+.cv-bento-tools { grid-area: tools; }
+.cv-bento-desc { grid-area: desc; }
+.cv-bento-worth { grid-area: worth; }
 /* card-bg, not page-bg -- the page itself already sits on page-bg, so a cell
    filled with that same color rendered as invisible whitespace instead of a
    box; card-bg (white) plus the border is what actually reads as one. */
 .cv-bento > div { background: var(--card-bg); border: var(--line-w) solid var(--line); border-radius: 12px; padding: 1.25rem 1.5rem; }
-.cv-bento-desc, .cv-bento-worth, .cv-bento-tools { grid-column: 1 / -1; }
 .cv-bento-meta p { margin-top: 0.25rem; }
 .cv-bento h4 {
   font-family: var(--font-body);
@@ -1367,7 +1382,6 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
 .cv-award-badge { flex: none; display: flex; height: 3rem; width: 3rem; align-items: center; justify-content: center; border-radius: 50%; border: var(--line-w) solid var(--line); background: var(--card-bg); font-family: var(--font-display); font-size: 1.05rem; color: var(--ink-soft); }
 
 @media (max-width: 767px) {
-  .cv-bento { grid-template-columns: 1fr; }
-  .cv-bento-meta, .cv-bento-tools { grid-column: 1 / -1; }
+  .cv-bento, .cv-bento.no-desc { grid-template-columns: 1fr; grid-template-areas: "meta" "tools" "desc" "worth"; }
   .cv-item-head { align-items: flex-start; }
 }
