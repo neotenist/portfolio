@@ -803,22 +803,27 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
 }
 .oc-dot:hover, .oc-dot.is-active { background: var(--card-bg); }
 .oc-ring {
+  position: relative;
   flex-shrink: 0;
   display: block;
   height: 52px;
   width: 52px;
+  aspect-ratio: 1 / 1;
   border-radius: 50%;
-  padding: 2.5px;
   background: conic-gradient(var(--heading-color), #4c8f6f, var(--heading-color));
   transition: background 0.25s ease;
 }
 .oc-dot.is-seen .oc-ring { background: var(--line); }
 .oc-thumb {
+  /* inset (not padding on the ring + 100% here) so the gap is measured straight
+     from this element's own box on every side -- padding-based rings can end up
+     very slightly unequal side to side once a flex/aspect-ratio box rounds to a
+     fraction of a pixel, which is what read as a "thicker on one side" ring. */
+  position: absolute;
+  inset: 3px;
   display: block;
-  height: 100%;
-  width: 100%;
   border-radius: 50%;
-  border: 2.5px solid var(--page-bg);
+  border: 2px solid var(--page-bg);
   background-size: cover;
   background-position: center;
 }
