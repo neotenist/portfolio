@@ -610,6 +610,7 @@ document.addEventListener('DOMContentLoaded', function () {
        "Music & DJing" carries the same text. */
     var ocCategories = [
       { ph: 'oc-ph-0',
+        thumb: 'assets/img/off-the-clock/oc-music-1.webp',
         title: { en: 'Music & DJing', de: 'Musik & DJing' },
         text: { en: 'Teaching myself how to DJ on the weekends. Work in progress, but the neighbours are surprisingly supportive.', de: 'Lehre mich am Wochenende das DJing. Work in progress, aber die Nachbarn sind überraschend geduldig.' },
         items: [
@@ -617,6 +618,7 @@ document.addEventListener('DOMContentLoaded', function () {
           { type: 'video', src: 'assets/video/off-the-clock/oc-music-2.mp4', duration: 15333 }
         ] },
       { ph: 'oc-ph-1',
+        thumb: 'assets/img/off-the-clock/oc-dog-2.webp',
         title: { en: 'My dog Poppy', de: 'Mein Hund Poppy' },
         text: { en: "Keeps me on my toes. She's only 1.5 years old and already running the show.", de: 'Hält mich auf Trab. Sie ist erst 1,5 Jahre alt und führt schon das Regiment.' },
         items: [
@@ -628,6 +630,7 @@ document.addEventListener('DOMContentLoaded', function () {
           { type: 'photo', src: 'assets/img/off-the-clock/oc-dog-6.webp', duration: 3000 }
         ] },
       { ph: 'oc-ph-2',
+        thumb: 'assets/img/off-the-clock/oc-cycling-2.webp',
         title: { en: 'Cycling', de: 'Radeln' },
         text: { en: "I'm serious about it. Gravel bike and eMTB, both ready to get dirty.", de: 'Ich nehme das ernst. Gravelbike und eMTB, beide bereit, schmutzig zu werden.' },
         items: [
@@ -635,6 +638,7 @@ document.addEventListener('DOMContentLoaded', function () {
           { type: 'photo', src: 'assets/img/off-the-clock/oc-cycling-2.webp', duration: 3000 }
         ] },
       { ph: 'oc-ph-3',
+        thumb: 'assets/img/off-the-clock/oc-cooking-3.webp',
         title: { en: 'Cooking & fermenting', de: 'Kochen & Fermentieren' },
         text: { en: "Eating is also a hobby, but you're not supposed to say that out loud. I ferment anything that stands still long enough.", de: 'Essen ist auch ein Hobby, aber das sagt man nicht so laut. Fermentiere nebenbei alles, was lange genug stillsteht.' },
         items: [
@@ -648,6 +652,7 @@ document.addEventListener('DOMContentLoaded', function () {
           { type: 'photo', src: 'assets/img/off-the-clock/oc-cooking-8.webp', duration: 3000 }
         ] },
       { ph: 'oc-ph-4',
+        thumb: 'assets/img/off-the-clock/oc-hiking-2.webp',
         title: { en: 'Hiking', de: 'Wandern' },
         text: { en: 'More like a long walk, really. But being outside is the whole point.', de: 'Eher ein langer Spaziergang, ehrlich gesagt. Aber draußen sein zählt.' },
         items: [
@@ -658,6 +663,7 @@ document.addEventListener('DOMContentLoaded', function () {
           { type: 'photo', src: 'assets/img/off-the-clock/oc-hiking-5.webp', duration: 3000 }
         ] },
       { ph: 'oc-ph-5',
+        thumb: 'assets/img/off-the-clock/oc-coffee-3.webp',
         title: { en: 'Coffee nerd', de: 'Kaffee-Nerd' },
         text: { en: 'Yes, the obnoxious type. Italian-style espresso machine, keeps me up and running.', de: 'Ja, der lästige Typ. Italienische Espressomaschine, hält mich wach und am Laufen.' },
         items: [
@@ -761,6 +767,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
     ocDotsEls.forEach(function (dot, i) {
       if (ocSeen[i]) dot.classList.add('is-seen');
+      var thumbSrc = ocCategories[i].thumb;
+      if (thumbSrc) {
+        var thumbEl = dot.querySelector('.oc-thumb');
+        /* The oc-ph-N class's `background` shorthand (the color placeholder)
+           resets background-size/position back to their initial auto/0%-0%
+           on top of .oc-thumb's own cover/center -- fine while it was just a
+           flat gradient, but it silently broke the crop once a real photo
+           replaced it, showing whatever the image's top-left corner happened
+           to be instead of a centered cover-fit. Dropping the class once a
+           real thumbnail is set removes that conflict entirely. */
+        thumbEl.classList.remove(ocCategories[i].ph);
+        thumbEl.style.backgroundImage = 'url(' + thumbSrc + ')';
+      }
       dot.addEventListener('click', function () { ocOpenCategory(i); });
     });
 
