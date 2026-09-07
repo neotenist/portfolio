@@ -946,6 +946,10 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
 }
 .oc-progress i.is-done::after { transform: scaleX(1); transition: none; }
 .oc-progress i.is-filling::after { transform: scaleX(1); }
+/* Instant, not animated -- without this, looping back to item 1 made every
+   already-full bar visibly drain backwards to empty (the base rule's
+   transition still applied once is-done/is-filling were removed). */
+.oc-progress i.is-reset::after { transform: scaleX(0); transition: none; }
 
 .oc-media, .oc-media-ph, .oc-media-img, .oc-media-video {
   position: absolute; inset: 0;

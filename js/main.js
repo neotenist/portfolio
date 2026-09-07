@@ -613,47 +613,58 @@ document.addEventListener('DOMContentLoaded', function () {
         title: { en: 'Music & DJing', de: 'Musik & DJing' },
         text: { en: 'Teaching myself how to DJ on the weekends. Work in progress, but the neighbours are surprisingly supportive.', de: 'Lehre mich am Wochenende das DJing. Work in progress, aber die Nachbarn sind überraschend geduldig.' },
         items: [
-          { type: 'photo', src: 'assets/img/off-the-clock/oc-music-1.webp', duration: 5000 },
+          { type: 'photo', src: 'assets/img/off-the-clock/oc-music-1.webp', duration: 3000 },
           { type: 'video', src: 'assets/video/off-the-clock/oc-music-2.mp4', duration: 15333 }
         ] },
       { ph: 'oc-ph-1',
         title: { en: 'My dog Poppy', de: 'Mein Hund Poppy' },
         text: { en: "Keeps me on my toes. She's only 1.5 years old and already running the show.", de: 'Hält mich auf Trab. Sie ist erst 1,5 Jahre alt und führt schon das Regiment.' },
         items: [
-          { type: 'photo', src: 'assets/img/off-the-clock/oc-dog-1.webp', duration: 5000 },
-          { type: 'photo', src: 'assets/img/off-the-clock/oc-dog-2.webp', duration: 5000 },
-          { type: 'video', src: 'assets/video/off-the-clock/oc-dog-3.mp4', duration: 4600 }
+          { type: 'photo', src: 'assets/img/off-the-clock/oc-dog-1.webp', duration: 3000 },
+          { type: 'photo', src: 'assets/img/off-the-clock/oc-dog-2.webp', duration: 3000 },
+          { type: 'video', src: 'assets/video/off-the-clock/oc-dog-3.mp4', duration: 4600 },
+          { type: 'photo', src: 'assets/img/off-the-clock/oc-dog-4.webp', duration: 3000 },
+          { type: 'photo', src: 'assets/img/off-the-clock/oc-dog-5.webp', duration: 3000 },
+          { type: 'photo', src: 'assets/img/off-the-clock/oc-dog-6.webp', duration: 3000 }
         ] },
       { ph: 'oc-ph-2',
         title: { en: 'Cycling', de: 'Radeln' },
         text: { en: "I'm serious about it. Gravel bike and eMTB, both ready to get dirty.", de: 'Ich nehme das ernst. Gravelbike und eMTB, beide bereit, schmutzig zu werden.' },
         items: [
-          { type: 'photo', src: 'assets/img/off-the-clock/oc-cycling-1.webp', duration: 5000 },
-          { type: 'photo', src: 'assets/img/off-the-clock/oc-cycling-2.webp', duration: 5000 }
+          { type: 'photo', src: 'assets/img/off-the-clock/oc-cycling-1.webp', duration: 3000 },
+          { type: 'photo', src: 'assets/img/off-the-clock/oc-cycling-2.webp', duration: 3000 }
         ] },
       { ph: 'oc-ph-3',
         title: { en: 'Cooking & fermenting', de: 'Kochen & Fermentieren' },
         text: { en: "Eating is also a hobby, but you're not supposed to say that out loud. I ferment anything that stands still long enough.", de: 'Essen ist auch ein Hobby, aber das sagt man nicht so laut. Fermentiere nebenbei alles, was lange genug stillsteht.' },
         items: [
-          { type: 'photo', src: 'assets/img/off-the-clock/oc-cooking-1.webp', duration: 5000 },
-          { type: 'photo', src: 'assets/img/off-the-clock/oc-cooking-2.webp', duration: 5000 },
-          { type: 'photo', src: 'assets/img/off-the-clock/oc-cooking-3.webp', duration: 5000 }
+          { type: 'photo', src: 'assets/img/off-the-clock/oc-cooking-1.webp', duration: 3000 },
+          { type: 'photo', src: 'assets/img/off-the-clock/oc-cooking-2.webp', duration: 3000 },
+          { type: 'photo', src: 'assets/img/off-the-clock/oc-cooking-3.webp', duration: 3000 },
+          { type: 'photo', src: 'assets/img/off-the-clock/oc-cooking-4.webp', duration: 3000 },
+          { type: 'photo', src: 'assets/img/off-the-clock/oc-cooking-5.webp', duration: 3000 },
+          { type: 'photo', src: 'assets/img/off-the-clock/oc-cooking-6.webp', duration: 3000 },
+          { type: 'photo', src: 'assets/img/off-the-clock/oc-cooking-7.webp', duration: 3000 },
+          { type: 'photo', src: 'assets/img/off-the-clock/oc-cooking-8.webp', duration: 3000 }
         ] },
       { ph: 'oc-ph-4',
         title: { en: 'Hiking', de: 'Wandern' },
         text: { en: 'More like a long walk, really. But being outside is the whole point.', de: 'Eher ein langer Spaziergang, ehrlich gesagt. Aber draußen sein zählt.' },
         items: [
-          { type: 'photo', src: 'assets/img/off-the-clock/oc-hiking-1.webp', duration: 5000 },
-          { type: 'photo', src: 'assets/img/off-the-clock/oc-hiking-2.webp', duration: 5000 },
-          { type: 'photo', src: 'assets/img/off-the-clock/oc-hiking-3.webp', duration: 5000 }
+          { type: 'photo', src: 'assets/img/off-the-clock/oc-hiking-1.webp', duration: 3000 },
+          { type: 'photo', src: 'assets/img/off-the-clock/oc-hiking-2.webp', duration: 3000 },
+          { type: 'photo', src: 'assets/img/off-the-clock/oc-hiking-3.webp', duration: 3000 },
+          { type: 'photo', src: 'assets/img/off-the-clock/oc-hiking-4.webp', duration: 3000 },
+          { type: 'photo', src: 'assets/img/off-the-clock/oc-hiking-5.webp', duration: 3000 }
         ] },
       { ph: 'oc-ph-5',
         title: { en: 'Coffee nerd', de: 'Kaffee-Nerd' },
         text: { en: 'Yes, the obnoxious type. Italian-style espresso machine, keeps me up and running.', de: 'Ja, der lästige Typ. Italienische Espressomaschine, hält mich wach und am Laufen.' },
         items: [
-          { type: 'photo', src: 'assets/img/off-the-clock/oc-coffee-1.webp', duration: 5000 },
-          { type: 'photo', src: 'assets/img/off-the-clock/oc-coffee-2.webp', duration: 5000 },
-          { type: 'photo', src: 'assets/img/off-the-clock/oc-coffee-3.webp', duration: 5000 }
+          { type: 'photo', src: 'assets/img/off-the-clock/oc-coffee-1.webp', duration: 3000 },
+          { type: 'photo', src: 'assets/img/off-the-clock/oc-coffee-2.webp', duration: 3000 },
+          { type: 'photo', src: 'assets/img/off-the-clock/oc-coffee-3.webp', duration: 3000 },
+          { type: 'photo', src: 'assets/img/off-the-clock/oc-coffee-4.webp', duration: 3000 }
         ] }
     ];
 
@@ -708,10 +719,24 @@ document.addEventListener('DOMContentLoaded', function () {
         ocMediaPh.className = 'oc-media-ph ' + cat.ph;
       }
 
+      /* Bars ahead of the active one get is-reset (transition:none, scaleX(0))
+         instead of just losing is-done/is-filling -- removing those classes
+         alone left the bar's ::after governed by the base rule's transition
+         again, so on looping back to item 0 every already-full bar visibly
+         animated backwards from full to empty instead of snapping to empty
+         like Instagram's do. */
       var bars = ocProgressEl.children;
       for (var b = 0; b < bars.length; b++) {
         bars[b].classList.remove('is-filling');
-        bars[b].classList.toggle('is-done', b < ocItemIndex);
+        if (b < ocItemIndex) {
+          bars[b].classList.remove('is-reset');
+          bars[b].classList.add('is-done');
+        } else if (b === ocItemIndex) {
+          bars[b].classList.remove('is-done', 'is-reset');
+        } else {
+          bars[b].classList.remove('is-done');
+          bars[b].classList.add('is-reset');
+        }
         bars[b].classList.toggle('is-active', b === ocItemIndex);
       }
       var activeBar = bars[ocItemIndex];
