@@ -623,7 +623,7 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
   --folder-green-front: #4cd17b;
   --folder-pink-back: #da3c76;
   --folder-pink-front: #f26a9c;
-  --folder-sheet: #fbf6df;
+  --folder-sheet: #fafaf9;
   --folder-sheet-ink: #111;
   padding-block: clamp(1rem, 2.5vw, 2rem) clamp(2rem, 4vw, 3.5rem);
   overflow: clip visible;
