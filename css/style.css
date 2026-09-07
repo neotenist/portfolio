@@ -1357,7 +1357,7 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
 .cv-bento h4 {
   font-family: var(--font-display);
   font-weight: 500;
-  font-size: 0.9375rem;
+  font-size: 1.25rem;
   letter-spacing: 0;
   text-transform: none;
   color: var(--heading-color);
