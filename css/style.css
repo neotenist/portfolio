@@ -37,7 +37,7 @@
   --ink-soft: #11111194;
   --heading-color: #144631;
   --paper: #fff;
-  --page-bg: #fff;
+  --page-bg: var(--line);
   --card-bg: #fff;
   --line: #d7d7d7;
   --line-w: 1px;
@@ -87,15 +87,10 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
    renders with width but no visible line. */
 *, ::before, ::after { border-width: 0; border-style: solid; border-color: var(--line); }
 
-/* ---------- Page background: dot-grid + grain, exactly as on the reference ---------- */
+/* ---------- Page background: solid, no grid ---------- */
 .paper-grid {
   position: relative;
   background-color: var(--page-bg);
-  background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.028'/%3E%3C/svg%3E"),
-    linear-gradient(90deg, rgba(0,0,0,.043) 1px, rgba(0,0,0,0) 1px),
-    linear-gradient(rgba(0,0,0,.043) 1px, rgba(0,0,0,0) 1px);
-  background-size: 160px 160px, 32px 32px, 32px 32px;
 }
 
 /* ---------- Container ---------- */
@@ -282,16 +277,21 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
   position: absolute;
   inset: 0 0 auto 0;
   height: 110px;
-  /* Eased across its whole height (100% opacity at the very top down to fully
+  /* --card-bg (white), not --page-bg -- the page background is now the same solid
+     color as this gradient's own color would be, so a page-bg gradient was
+     literally invisible at rest and only became visible once different-colored
+     content (a photo, a card) scrolled underneath it. White gives it a constant,
+     visible presence of its own regardless of what's behind it.
+     Eased across its whole height (100% opacity at the very top down to fully
      transparent at the very bottom) instead of a flat plateau that then cuts off
      abruptly -- the intermediate stops approximate an ease-out curve so the fade
      itself reads as gradual rather than a hard edge partway down. */
   background: linear-gradient(to bottom,
-    var(--page-bg) 0%,
-    color-mix(in srgb, var(--page-bg) 92%, transparent) 20%,
-    color-mix(in srgb, var(--page-bg) 75%, transparent) 40%,
-    color-mix(in srgb, var(--page-bg) 50%, transparent) 60%,
-    color-mix(in srgb, var(--page-bg) 25%, transparent) 80%,
+    var(--card-bg) 0%,
+    color-mix(in srgb, var(--card-bg) 92%, transparent) 20%,
+    color-mix(in srgb, var(--card-bg) 75%, transparent) 40%,
+    color-mix(in srgb, var(--card-bg) 50%, transparent) 60%,
+    color-mix(in srgb, var(--card-bg) 25%, transparent) 80%,
     transparent 100%);
   pointer-events: none;
   z-index: -1;
@@ -338,18 +338,16 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
 .nav-lang {
   display: inline-flex;
   align-items: center;
-  gap: 2px;
-  border-radius: var(--radius-pill);
-  border: var(--line-w) solid var(--line);
-  background: var(--card-bg);
-  padding: 3px;
+  gap: 4px;
 }
 .nav-lang .lang-btn {
-  width: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
   border-radius: var(--radius-pill);
   border: none;
-  padding: 3px 0;
-  text-align: center;
   font-family: var(--font-display);
   font-size: 11px;
   letter-spacing: 0.02em;
@@ -360,7 +358,7 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
 }
 .nav-lang .lang-btn:hover { color: var(--ink); }
 .nav-lang .lang-btn[aria-pressed="true"] {
-  background: var(--ink);
+  background: var(--heading-color);
   color: var(--paper);
   text-decoration: none;
 }
@@ -372,42 +370,37 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
   width: 36px;
   border-radius: 50%;
   border: none;
-  color: var(--ink);
+  color: var(--heading-color);
   background: none;
   padding: 0;
 }
 .menu-btn-lines {
   position: relative;
   display: block;
-  height: 12px;
-  width: 20px;
+  height: 15px;
+  width: 27px;
 }
 .menu-btn-lines span {
   position: absolute;
   left: 0;
   display: block;
-  height: 1.5px;
+  height: 2.5px;
   width: 100%;
   background: currentColor;
-  border-radius: 1px;
-  transition: transform 0.35s var(--ease-soft), opacity 0.35s var(--ease-soft), top 0.35s var(--ease-soft);
+  border-radius: 1.5px;
+  transition: transform 0.35s var(--ease-soft), top 0.35s var(--ease-soft);
 }
 .menu-btn-lines span:nth-child(1) { top: 0; }
-.menu-btn-lines span:nth-child(2) { top: 50%; margin-top: -0.75px; }
-.menu-btn-lines span:nth-child(3) { top: 100%; margin-top: -1.5px; }
-/* Hamburger -> X: the two outer lines meet in the middle and cross, the middle
-   line just fades out rather than trying to fake a third crossing stroke. */
+.menu-btn-lines span:nth-child(2) { top: 100%; margin-top: -2.5px; }
+/* Hamburger -> X: just the two lines meeting in the middle and crossing. */
 .menu-btn.is-open .menu-btn-lines span:nth-child(1) {
   top: 50%;
-  margin-top: -0.75px;
+  margin-top: -1.25px;
   transform: rotate(45deg);
 }
 .menu-btn.is-open .menu-btn-lines span:nth-child(2) {
-  opacity: 0;
-}
-.menu-btn.is-open .menu-btn-lines span:nth-child(3) {
   top: 50%;
-  margin-top: -0.75px;
+  margin-top: -1.25px;
   transform: rotate(-45deg);
 }
 
@@ -1002,6 +995,9 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
 
 /* ---------- Responsive ---------- */
 @media (max-width: 639px) {
+  .nav-lang .lang-btn { width: 32px; height: 32px; font-size: 12px; }
+  .menu-btn { height: 40px; width: 40px; }
+  .menu-btn-lines { height: 17px; width: 30px; }
   .take-on-folders { padding-block: clamp(0.75rem, 4vw, 1.5rem) 2rem; }
   .folder-stage { height: clamp(22rem, min(118vw, 62vh), 34rem); margin-top: clamp(1rem, min(8vw, 3vh), 2rem); }
   .folder-position {

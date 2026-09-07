@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded', function () {
   var logoSlot = document.getElementById('logo-slot');
   var heroRole = document.getElementById('hero-role');
   var SHRINK_SCALE = 0.2;
-  var MIN_LOGO_WIDTH = 110; // px -- a pure 0.2x scale reads fine on desktop but on a
+  var MIN_LOGO_WIDTH = 170; // px -- a pure 0.2x scale reads fine on desktop but on a
   // narrow phone the hero wordmark itself is already fairly narrow, so 20% of it
   // shrinks to an illegibly small logo; this floors how far it's allowed to shrink.
   var SHRINK_SCROLL_DISTANCE = 220;

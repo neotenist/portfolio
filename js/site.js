@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', function () {
         /* Matches the MIN_LOGO_WIDTH floor in main.js's homepage dock -- a flat
            20% of the header width shrinks to an illegibly small logo on a narrow
            phone, so this keeps the same minimum here for consistency across pages. */
-        var width = Math.max(inner.getBoundingClientRect().width * 0.2, 110);
+        var width = Math.max(inner.getBoundingClientRect().width * 0.2, 170);
         headerLogoImg.style.width = width + 'px';
         headerLogoImg.style.height = (width * (171 / 1268)) + 'px';
       };
