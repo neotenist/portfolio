@@ -1337,15 +1337,18 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
 .cv-item-panel-inner { padding-bottom: 2.5rem; }
 
 /* Simple, explicit 2-column split: col 1 is Context + Worth mentioning, col 2
-   is What I did + Tools. Equal-width columns (1fr 1fr), each an independent
-   flex stack so every card is exactly as tall as its own content -- no
-   spanning, no shared row tracks, nothing that can force one card into
-   another's height. flex:1 1 auto on every card fills the column's own width
-   completely (the "always use the available space" part); height stays
-   content-driven since forcing two unrelated cards to the same height is
-   what caused the empty-space problem in the first place. */
-.cv-bento { display: flex; gap: 0.75rem; align-items: flex-start; }
+   is What I did + Tools. Equal-width columns (1fr 1fr). align-items:stretch
+   (not flex-start) makes both columns the same height -- whichever is
+   naturally taller -- and within each column the second card (Worth
+   mentioning / Tools) grows to absorb the leftover space so the column's own
+   two cards still add up to that full height, instead of the column ending
+   early and leaving the page's own background visible below it. The first
+   card in each column (Context / What I did) keeps its natural height --
+   only the second one stretches, so a short "Context" note doesn't itself
+   get inflated with dead space. */
+.cv-bento { display: flex; gap: 0.75rem; align-items: stretch; }
 .cv-bento-col { display: flex; flex-direction: column; gap: 0.75rem; flex: 1 1 0; min-width: 0; }
+.cv-bento-worth, .cv-bento-tools { flex: 1 1 auto; }
 /* card-bg, not page-bg -- the page itself already sits on page-bg, so a cell
    filled with that same color rendered as invisible whitespace instead of a
    box; card-bg (white) plus the border is what actually reads as one. */
