@@ -213,4 +213,22 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     });
   }
+
+  /* ---------- CV TIMELINE: accordion ----------
+     Each role toggles independently (not exclusive-open) -- comparing two roles
+     side by side is a reasonable thing to want on a CV, so opening one doesn't
+     force-close another. The most recent role starts open since that's the one
+     a visitor is most likely to want to read first. */
+  var cvItems = document.querySelectorAll('.cv-item');
+  if (cvItems.length) {
+    cvItems[0].classList.add('is-open');
+    cvItems.forEach(function (item) {
+      var head = item.querySelector('.cv-item-head');
+      head.setAttribute('aria-expanded', item.classList.contains('is-open') ? 'true' : 'false');
+      head.addEventListener('click', function () {
+        var isOpen = item.classList.toggle('is-open');
+        head.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      });
+    });
+  }
 });

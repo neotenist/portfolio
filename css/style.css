@@ -1285,3 +1285,89 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
      heading right next to it. */
   .reveal-text { font-size: clamp(1.5rem, 5.5vw, 2rem); }
 }
+
+/* ---------- CV timeline: accordion + bento ----------
+   Each role is a single closed row (date, title, company) until clicked -- the
+   full detail for all seven roles standing open at once was the "wall of text"
+   the accordion pitch was built to fix. Open/close height is animated purely in
+   CSS via the grid-template-rows 0fr/1fr trick (no JS height measurement needed,
+   so it keeps working correctly if a language switch changes the text length). */
+.cv-item { border-bottom: var(--line-w) solid var(--line); }
+.cv-item:first-child { border-top: var(--line-w) solid var(--line); }
+
+.cv-item-head {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding-block: 1.5rem;
+  background: none;
+  border: none;
+  text-align: left;
+  font-family: inherit;
+  cursor: pointer;
+}
+.cv-item-head-left { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.25rem 0.875rem; min-width: 0; }
+.cv-item-head .meta { flex: none; }
+.cv-item-head-title { font-family: var(--font-display); font-weight: 500; color: var(--ink); font-size: clamp(1.1rem, 2.4vw, 1.375rem); }
+.cv-item-head-company { color: var(--ink-soft); font-size: 0.9375rem; }
+.cv-item-chevron {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 2rem;
+  width: 2rem;
+  border-radius: 50%;
+  border: var(--line-w) solid var(--line);
+  transition: transform 0.3s var(--ease-soft), background 0.2s ease;
+}
+.cv-item-chevron svg { height: 0.875rem; width: 0.875rem; transition: transform 0.3s var(--ease-soft); }
+.cv-item-head:hover .cv-item-chevron { background: var(--page-bg); }
+.cv-item.is-open .cv-item-chevron { transform: rotate(180deg); }
+
+.cv-item-panel-wrap {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.4s var(--ease-soft);
+}
+.cv-item.is-open .cv-item-panel-wrap { grid-template-rows: 1fr; }
+.cv-item-panel { overflow: hidden; min-height: 0; }
+.cv-item-panel-inner { padding-bottom: 2.5rem; }
+
+.cv-bento { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+/* card-bg, not page-bg -- the page itself already sits on page-bg, so a cell
+   filled with that same color rendered as invisible whitespace instead of a
+   box; card-bg (white) plus the border is what actually reads as one. */
+.cv-bento > div { background: var(--card-bg); border: var(--line-w) solid var(--line); border-radius: 12px; padding: 1.25rem 1.5rem; }
+.cv-bento-desc, .cv-bento-worth, .cv-bento-tools { grid-column: 1 / -1; }
+.cv-bento-meta p { margin-top: 0.25rem; }
+.cv-bento h4 {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.6875rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 0.75rem;
+}
+.cv-bento-desc-group + .cv-bento-desc-group { margin-top: 1.25rem; }
+.cv-bento-desc-group h5 { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-faint, var(--ink-soft)); margin-bottom: 0.625rem; }
+.cv-bento-worth p + p { margin-top: 0.875rem; }
+/* .pill's own background is card-bg (white) too, so sitting inside a now-white
+   bento cell it lost its fill contrast and read as outline-only. page-bg here
+   gives it the same cream-on-white pop it has everywhere else on the site. */
+.cv-bento-tools .pill { background: var(--page-bg); }
+.bullet-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+.bullet-list li { display: flex; gap: 0.75rem; }
+.bullet-list li::before { content: ''; display: block; margin-top: 0.7em; height: var(--line-w); width: 12px; flex-shrink: 0; background: var(--line); }
+.cv-award-row { margin-top: 1.25rem; padding-top: 1.25rem; border-top: var(--line-w) solid var(--line); display: flex; flex-wrap: wrap; gap: 1.5rem 2.5rem; }
+.cv-award { display: flex; align-items: center; gap: 0.875rem; max-width: 18rem; }
+.cv-award-badge { flex: none; display: flex; height: 3rem; width: 3rem; align-items: center; justify-content: center; border-radius: 50%; border: var(--line-w) solid var(--line); background: var(--card-bg); font-family: var(--font-display); font-size: 1.05rem; color: var(--ink-soft); }
+
+@media (max-width: 767px) {
+  .cv-bento { grid-template-columns: 1fr; }
+  .cv-bento-meta, .cv-bento-tools { grid-column: 1 / -1; }
+  .cv-item-head { align-items: flex-start; }
+}
