@@ -1352,7 +1352,17 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
 .cv-bento-meta { grid-area: meta; }
 .cv-bento-tools { grid-area: tools; }
 .cv-bento-desc { grid-area: desc; }
-.cv-bento-worth { grid-area: worth; }
+/* justify-self:start + a real reading measure, not stretch -- the "worth
+   mentioning" text is one or two short paragraphs, and a card that stretches
+   across the full meta+desc width just to hold them reads as a box that's
+   mostly empty on the right. Sizing it to what the text actually needs reads
+   as a considered card instead of a stretched one. */
+.cv-bento-worth {
+  grid-area: worth;
+  justify-self: start;
+  width: 100%;
+  max-width: 34rem;
+}
 /* card-bg, not page-bg -- the page itself already sits on page-bg, so a cell
    filled with that same color rendered as invisible whitespace instead of a
    box; card-bg (white) plus the border is what actually reads as one. */
