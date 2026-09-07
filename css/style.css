@@ -1336,47 +1336,28 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
 .cv-item-panel { overflow: hidden; min-height: 0; }
 .cv-item-panel-inner { padding-bottom: 2.5rem; }
 
-/* A real bento mosaic needs every card to size to its OWN content -- the
-   previous version used CSS Grid row-spanning to let one tall "description"
-   cell share row tracks with the shorter cards beside it, but shared row
-   tracks size to whichever cell in that row needs the most height, which
-   forced the short cards to sit inside oversized rows (visible as dead space
-   inside a card) or, once that was patched by shrinking a card's own width,
-   left it misaligned with everything around it.
-   The fix: two independent grid columns, nothing spans rows. The left column
-   is its own flex stack (Context, Tools, Worth mentioning), each card sized
-   purely by its own content with a consistent gap between them, sharing one
-   left/right edge. The right column is the single tall "What I did" card.
-   Neither column's height leaks into the other's card sizing -- whichever
-   column is taller just leaves normal whitespace beside the shorter one,
-   which is how any ordinary two-column layout looks, not a broken card. */
-.cv-bento {
-  display: grid;
-  grid-template-columns: minmax(220px, 1fr) minmax(0, 1.6fr);
-  align-items: start;
-  gap: 0.75rem;
-}
-.cv-bento-side { display: flex; flex-direction: column; gap: 0.75rem; min-width: 0; }
-/* The one role with no "What I did" bullets (the apprenticeship) has no wide
-   column to sit beside, so it drops the two-column split entirely: Context
-   and Tools become a plain side-by-side row, Worth mentioning spans under
-   both, full width -- still every card sized to its own content, just
-   arranged for a single-column-worth of material instead of two. */
-.cv-bento.no-desc { display: flex; flex-direction: column; gap: 0.75rem; }
-.cv-bento.no-desc .cv-bento-row { display: flex; gap: 0.75rem; }
-.cv-bento.no-desc .cv-bento-meta, .cv-bento.no-desc .cv-bento-tools { flex: 1 1 0; min-width: 0; }
+/* Simple, explicit 2-column split: col 1 is Context + Worth mentioning, col 2
+   is What I did + Tools. Equal-width columns (1fr 1fr), each an independent
+   flex stack so every card is exactly as tall as its own content -- no
+   spanning, no shared row tracks, nothing that can force one card into
+   another's height. flex:1 1 auto on every card fills the column's own width
+   completely (the "always use the available space" part); height stays
+   content-driven since forcing two unrelated cards to the same height is
+   what caused the empty-space problem in the first place. */
+.cv-bento { display: flex; gap: 0.75rem; align-items: flex-start; }
+.cv-bento-col { display: flex; flex-direction: column; gap: 0.75rem; flex: 1 1 0; min-width: 0; }
 /* card-bg, not page-bg -- the page itself already sits on page-bg, so a cell
    filled with that same color rendered as invisible whitespace instead of a
    box; card-bg (white) plus the border is what actually reads as one. */
-.cv-bento-meta, .cv-bento-tools, .cv-bento-desc, .cv-bento-worth { background: var(--card-bg); border: var(--line-w) solid var(--line); border-radius: 12px; padding: 1.25rem 1.5rem; }
+.cv-bento-meta, .cv-bento-tools, .cv-bento-desc, .cv-bento-worth { background: var(--card-bg); border: var(--line-w) solid var(--line); border-radius: 12px; padding: 1.25rem 1.5rem; width: 100%; }
 .cv-bento-meta p { margin-top: 0.25rem; }
 .cv-bento h4 {
-  font-family: var(--font-body);
-  font-weight: 700;
-  font-size: 0.6875rem;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  color: var(--ink-soft);
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 0.9375rem;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--heading-color);
   margin-bottom: 0.75rem;
 }
 .cv-bento-desc-group + .cv-bento-desc-group { margin-top: 1.25rem; }
@@ -1394,7 +1375,16 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
 .cv-award-badge { flex: none; display: flex; height: 3rem; width: 3rem; align-items: center; justify-content: center; border-radius: 50%; border: var(--line-w) solid var(--line); background: var(--card-bg); font-family: var(--font-display); font-size: 1.05rem; color: var(--ink-soft); }
 
 @media (max-width: 767px) {
-  .cv-bento { grid-template-columns: 1fr; }
-  .cv-bento.no-desc .cv-bento-row { flex-direction: column; }
+  /* display:contents dissolves the column wrapper so every card becomes a
+     direct flex item of .cv-bento itself -- needed so `order` below can
+     interleave cards from both columns into one requested sequence (Context,
+     What I did, Worth mentioning, Tools) instead of each column's cards
+     staying grouped together. */
+  .cv-bento { flex-direction: column; }
+  .cv-bento-col { display: contents; }
+  .cv-bento-meta { order: 1; }
+  .cv-bento-desc { order: 2; }
+  .cv-bento-worth { order: 3; }
+  .cv-bento-tools { order: 4; }
   .cv-item-head { align-items: flex-start; }
 }
