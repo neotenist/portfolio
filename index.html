@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Maxine Hargrove — Portfolio</title>
   <link rel="stylesheet" href="css/tailwind.css?v=3">
-  <link rel="stylesheet" href="css/style.css?v=34">
+  <link rel="stylesheet" href="css/style.css?v=35">
 </head>
 <body>
 
@@ -240,17 +240,18 @@
               <span class="oc-dot-label" data-en="Coffee nerd" data-de="Kaffee-Nerd">Coffee nerd</span>
             </button>
           </div>
-          <div class="oc-viewer" id="ocViewer" aria-live="polite">
+          <div class="oc-viewer" id="ocViewer">
             <div class="oc-progress" id="ocProgress"></div>
             <div class="oc-media">
               <div class="oc-media-ph oc-ph-0" id="ocMediaPh"></div>
               <img class="oc-media-img" id="ocMediaImg" alt="" hidden>
               <video class="oc-media-video" id="ocMediaVideo" muted playsinline hidden></video>
             </div>
-            <div class="oc-caption">
-              <b id="ocCapTitle"></b>
-              <p id="ocCapText"></p>
-            </div>
+          </div>
+          <div class="oc-info" aria-live="polite">
+            <span class="oc-info-meta" id="ocInfoMeta"></span>
+            <h3 class="oc-info-title" id="ocCapTitle"></h3>
+            <p class="oc-info-text" id="ocCapText"></p>
           </div>
         </div>
       </section>
@@ -317,6 +318,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="js/site.js?v=6"></script>
-  <script src="js/main.js?v=22"></script>
+  <script src="js/main.js?v=23"></script>
 </body>
 </html>

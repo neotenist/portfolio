@@ -885,20 +885,40 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
 .oc-ph-4 { background: linear-gradient(155deg, #3f3a24, #857a4a); }
 .oc-ph-5 { background: linear-gradient(155deg, #5a3420, #a5673a); }
 
-.oc-caption {
-  position: absolute; left: 0; right: 0; bottom: 0; z-index: 3;
-  padding: 22px 24px 24px;
-  background: linear-gradient(to top, rgba(0,0,0,0.68), transparent 85%);
-  color: #fff;
+/* Editorial column: fills the dead space beside the (fairly narrow, 9:16) viewer
+   with a proper, larger read of whichever highlight is currently open, instead of
+   overlaying small white-on-photo text on the viewer itself. */
+.oc-info {
+  flex: 1;
+  min-width: 0;
+  max-width: 30rem;
+  padding-top: 0.5rem;
 }
-.oc-caption b {
+.oc-info-meta {
   display: block;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.oc-info-title {
+  margin-top: 0.6rem;
   font-family: var(--font-display);
   font-weight: 500;
-  font-size: 1.2rem;
-  margin-bottom: 4px;
+  letter-spacing: -0.01em;
+  font-size: clamp(1.9rem, 2.6vw, 2.5rem);
+  line-height: 1.05;
+  color: var(--heading-color);
 }
-.oc-caption p { font-size: 0.88rem; line-height: 1.4; opacity: 0.92; max-width: 46ch; }
+.oc-info-text {
+  margin-top: 1.1rem;
+  max-width: 38ch;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
 
 @media (max-width: 639px) {
   .oc-stage { flex-direction: column; gap: 1.1rem; }
@@ -929,8 +949,12 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
     text-overflow: ellipsis;
   }
   .oc-ring { height: 58px; width: 58px; }
-  .oc-caption { padding: 16px 16px 18px; }
-  .oc-caption b { font-size: 1.05rem; }
+  .oc-info {
+    max-width: none;
+    padding-top: 0;
+    text-align: center;
+  }
+  .oc-info-text { margin-inline: auto; }
 }
 
 /* ---------- Contact card ---------- */

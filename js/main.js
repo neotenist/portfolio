@@ -602,6 +602,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var ocMediaVideo = document.getElementById('ocMediaVideo');
     var ocCapTitle = document.getElementById('ocCapTitle');
     var ocCapText = document.getElementById('ocCapText');
+    var ocInfoMeta = document.getElementById('ocInfoMeta');
 
     /* Fill in each item's `src` (and set type: 'video' where it applies) once real
        photos/clips exist -- until then an item just renders as its highlight's
@@ -656,6 +657,13 @@ document.addEventListener('DOMContentLoaded', function () {
       ocCapText.textContent = cat.text[lang] || cat.text.en;
     }
 
+    function ocRenderMeta() {
+      var total = ocCategories[ocCatIndex].items.length;
+      var n = String(ocItemIndex + 1);
+      var t = String(total);
+      ocInfoMeta.textContent = (n.length < 2 ? '0' + n : n) + ' / ' + (t.length < 2 ? '0' + t : t);
+    }
+
     function ocMarkSeen(catIndex) {
       if (ocSeen[catIndex]) return;
       ocSeen[catIndex] = true;
@@ -668,6 +676,7 @@ document.addEventListener('DOMContentLoaded', function () {
       var cat = ocCategories[ocCatIndex];
       ocItemIndex = (i + cat.items.length) % cat.items.length;
       var item = cat.items[ocItemIndex];
+      ocRenderMeta();
 
       ocMediaImg.hidden = true;
       ocMediaVideo.hidden = true;
