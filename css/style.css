@@ -162,6 +162,18 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
 .shelf-year { font-family: var(--font-mono); }
 .section { padding-block: clamp(4.5rem, 9vw, 8rem); }
 .hero-intro .lead { color: #000; }
+/* Hard shadow for every white-background, black-border box on the site
+   (not pills, not the small circular chevron control) -- offset only, no
+   blur, full black. .hard-shadow is a plain marker class for the few boxes
+   below that are styled with Tailwind utilities instead of a shared CSS
+   class of their own (the "Things on the shelf" cards). */
+.card,
+.oc-stage,
+.cv-bento-meta, .cv-bento-tools, .cv-bento-desc, .cv-bento-worth,
+.hard-shadow {
+  box-shadow: 3px 3px 0 0 #000;
+}
+
 .card {
   background: var(--card-bg);
   border: 2px solid #000;
