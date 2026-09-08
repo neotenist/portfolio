@@ -29,7 +29,6 @@ document.addEventListener('DOMContentLoaded', function () {
   var wordmarkSlot = document.getElementById('hero-wordmark-slot');
   var wordmark = document.getElementById('hero-wordmark');
   var heroPills = document.getElementById('hero-pills');
-  var headSlot = document.querySelector('.hero-head-slot');
   var heroPhoto = document.querySelector('.hero-photo');
   var navRight = document.getElementById('nav-right');
   var heroStarted = false;
@@ -50,63 +49,10 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  /* Hero head size follows the viewport's height, capped at 90vw so it never overflows
-     on a narrow/tall (mobile) screen. */
-  function sizeHeroHead() {
-    var vh = window.innerHeight;
-    var vw = window.innerWidth;
-    var ratio = heroPhoto.naturalWidth && heroPhoto.naturalHeight
-      ? (heroPhoto.naturalWidth / heroPhoto.naturalHeight) : 0.70;
-    /* Neutralize any earlier correction before measuring the slot's own,
-       untransformed flex position -- otherwise each call would compound
-       the previous run's shift instead of recomputing it from scratch. */
-    headSlot.style.transform = 'none';
-    var slotRect = headSlot.getBoundingClientRect();
-    var height = slotRect.height;
-    var width = height * ratio;
-    var maxWidth = Math.min(slotRect.width, vw * 0.9);
-    if (width > maxWidth) {
-      width = maxWidth;
-      height = width / ratio;
-    }
-    heroPhoto.style.width = width + 'px';
-    heroPhoto.style.height = height + 'px';
-    heroPhoto.style.left = ((slotRect.width - width) / 2) + 'px';
-    var photoTop = (slotRect.height - height) / 2;
-    heroPhoto.style.top = photoTop + 'px';
-
-    /* Pull the head up so it overlaps the wordmark's VISIBLE letter body by
-       exactly one quarter of that body's height -- not one quarter of the
-       full SVG viewBox. Checked every letterform's own getBBox() in
-       maxine_hargrove.svg: 13 of the 14 letters bottom out at y~136 (out of
-       the viewBox's 171 total height); only the "g" reaches the full 171,
-       via its descender. Using the full 171 as "the wordmark's height"
-       meant most of that 25% was spent overlapping nothing but the thin
-       empty tail below the "g", not the dense body of the text a viewer
-       actually reads as "the wordmark" -- WORDMARK_BASELINE_FRACTION is
-       that measured 136/171 ratio, so the overlap targets the real glyph
-       body instead.
-
-       Measured off wordmarkSlot, not wordmark itself -- .hero-wordmark has
-       its OWN opening animation (scaleY 0.015 -> 1, transform-origin at its
-       bottom edge), and this function's very first call happens before
-       that's played at all, while it's still visually collapsed to 1.5% of
-       its true height. wordmark.getBoundingClientRect().height at that
-       instant is close to zero, which zeroes out the overlap the same way
-       -- no visible overlap at all, exactly the collapsed-scale bug this
-       sidesteps. wordmarkSlot never has a transform of its own, so its
-       layout box (reserved by the wordmark's aspect-ratio, unaffected by
-       the child's own paint-time transform) is stable from the very first
-       call, with no dependency on catching a later animationend at all. */
-    var WORDMARK_BASELINE_FRACTION = 136 / 171;
-    var wordmarkSlotRect = wordmarkSlot.getBoundingClientRect();
-    var wordmarkBodyHeight = wordmarkSlotRect.height * WORDMARK_BASELINE_FRACTION;
-    var wordmarkBodyBottom = wordmarkSlotRect.top + wordmarkBodyHeight;
-    var overlapPx = 0.25 * wordmarkBodyHeight;
-    var photoTopNatural = slotRect.top + photoTop;
-    var shift = (wordmarkBodyBottom - overlapPx) - photoTopNatural;
-    headSlot.style.transform = 'translateY(' + shift + 'px)';
-  }
+  /* Head sizing (fit within .hero-head-slot, preserve aspect ratio) and the
+     overlap with the wordmark are both plain CSS now -- object-fit:contain
+     on .hero-photo (width/height:100% of its slot) and a fixed transform on
+     .hero-head-slot. See style.css. */
 
   /* Matching the pills' margin-bottom to the wordmark-slot's margin-top gave
      equal CSS gaps, but not equal-LOOKING gaps: the greeting's own display
@@ -135,20 +81,11 @@ document.addEventListener('DOMContentLoaded', function () {
     wordmarkSlot.style.marginTop = Math.max(0, neededMargin) + 'px';
   }
 
-  /* sizeHeroHead() runs once up front (before the wordmark's own open
-     animation has played), when the wordmark is still at its collapsed
-     pre-animation scale -- measuring its bottom edge at that instant would
-     lock the head's overlap to the wrong position. Re-running it once that
-     animation actually finishes corrects it against the wordmark's real,
-     settled size. By this point the greeting has also finished typing
-     (0.9s wordmark animation vs typically well under that to type a name),
-     so this is also the right moment to align the greeting gap. */
-  wordmark.addEventListener('animationend', function () {
-    /* Gap alignment first -- it can shift the wordmark's own position, which
-       sizeHeroHead's overlap math then needs to measure fresh. */
-    alignGreetingGap();
-    sizeHeroHead();
-  });
+  /* By the time the wordmark's own open animation finishes, the greeting has
+     also finished typing (0.9s wordmark animation vs typically well under
+     that to type a name) -- the right moment to align the greeting gap
+     against its real, settled size. */
+  wordmark.addEventListener('animationend', alignGreetingGap);
 
   /* Stop-motion face frames: 1-4 play once on entry, 5-7 play while the head travels on scroll */
   var INTRO_FRAMES = ['assets/img/1.png', 'assets/img/2.png', 'assets/img/3.png', 'assets/img/4-stop.png'];
@@ -183,7 +120,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function startHeroSequence() {
     heroStarted = true;
-    sizeHeroHead();
 
     var tl = gsap.timeline();
     var fullText = getGreetText(state.lang, state.name);
@@ -213,9 +149,6 @@ document.addEventListener('DOMContentLoaded', function () {
         playStopMotion(heroPhoto, INTRO_FRAMES, [500, 90, 90], 1);
       }, null, 'letters+=1.9');
   }
-
-  window.addEventListener('resize', sizeHeroHead);
-  window.addEventListener('load', sizeHeroHead);
 
   /* ---------- SCROLL: HERO WORDMARK SHRINKS INTO THE HEADER LOGO ----------
      Tied directly and continuously to scroll position (scrub) instead of a fixed-duration
@@ -435,8 +368,10 @@ document.addEventListener('DOMContentLoaded', function () {
     onLeaveBack: function () {
       headTraveling = false;
       heroHeadWrapParent.appendChild(heroPhoto);
-      gsap.set(heroPhoto, { position: 'absolute', margin: 0, zIndex: 30, x: 0, y: 0, autoAlpha: 1 });
-      sizeHeroHead();
+      /* clearProps drops the explicit top/left/width/height the travel
+         animation set inline, so .hero-photo's own CSS (inset:0, 100%/100%)
+         takes back over instead of being stuck at its last travel frame. */
+      gsap.set(heroPhoto, { position: 'absolute', margin: 0, zIndex: 30, x: 0, y: 0, autoAlpha: 1, clearProps: 'top,left,width,height' });
       heroPhoto.setAttribute('src', REST_FRAME);
     },
     onUpdate: function (self) {
@@ -461,11 +396,9 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   window.addEventListener('load', function () {
-    sizeHeroHead();
     ScrollTrigger.refresh();
   });
   window.addEventListener('resize', function () {
-    if (!headTraveling) sizeHeroHead();
     if (!shrunk) captureWordBase();
     ScrollTrigger.refresh();
   });

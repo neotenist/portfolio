@@ -573,16 +573,22 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
 .hero-head-slot {
   margin: auto auto 0;
   margin-top: auto;
-  /* transform is set from JS (sizeHeroHead in main.js) -- it pulls the head
-     up by a precise, measured amount so it overlaps the wordmark by a fixed
-     1.5em at any viewport size, which a static vw-based value here can't do
-     since the wordmark and the head don't scale at the same rate. */
+  /* Pulls the head up over the wordmark's bottom edge for a real, visible
+     overlap. Plain CSS, not measured against anything -- z-index above
+     .hero-wordmark-slot (55) so the head paints in front of the text where
+     they cross, which is what actually makes the overlap read as an
+     overlap rather than the text just covering the head. */
+  transform: translateY(-9rem);
+  z-index: 56;
   height: 62vh;
   width: min(86vh, 90vw);
   position: relative;
 }
 .hero-photo {
   position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   z-index: 30;
   object-fit: contain;
   opacity: 0;
