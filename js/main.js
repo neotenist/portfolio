@@ -85,11 +85,23 @@ document.addEventListener('DOMContentLoaded', function () {
        empty tail below the "g", not the dense body of the text a viewer
        actually reads as "the wordmark" -- WORDMARK_BASELINE_FRACTION is
        that measured 136/171 ratio, so the overlap targets the real glyph
-       body instead. */
+       body instead.
+
+       Measured off wordmarkSlot, not wordmark itself -- .hero-wordmark has
+       its OWN opening animation (scaleY 0.015 -> 1, transform-origin at its
+       bottom edge), and this function's very first call happens before
+       that's played at all, while it's still visually collapsed to 1.5% of
+       its true height. wordmark.getBoundingClientRect().height at that
+       instant is close to zero, which zeroes out the overlap the same way
+       -- no visible overlap at all, exactly the collapsed-scale bug this
+       sidesteps. wordmarkSlot never has a transform of its own, so its
+       layout box (reserved by the wordmark's aspect-ratio, unaffected by
+       the child's own paint-time transform) is stable from the very first
+       call, with no dependency on catching a later animationend at all. */
     var WORDMARK_BASELINE_FRACTION = 136 / 171;
-    var wordmarkRect = wordmark.getBoundingClientRect();
-    var wordmarkBodyHeight = wordmarkRect.height * WORDMARK_BASELINE_FRACTION;
-    var wordmarkBodyBottom = wordmarkRect.top + wordmarkBodyHeight;
+    var wordmarkSlotRect = wordmarkSlot.getBoundingClientRect();
+    var wordmarkBodyHeight = wordmarkSlotRect.height * WORDMARK_BASELINE_FRACTION;
+    var wordmarkBodyBottom = wordmarkSlotRect.top + wordmarkBodyHeight;
     var overlapPx = 0.25 * wordmarkBodyHeight;
     var photoTopNatural = slotRect.top + photoTop;
     var shift = (wordmarkBodyBottom - overlapPx) - photoTopNatural;
