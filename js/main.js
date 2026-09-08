@@ -15,7 +15,10 @@ document.addEventListener('DOMContentLoaded', function () {
   document.addEventListener('site:langchange', function () {
     if (heroStarted) {
       var greetTypedEl = document.getElementById('greet-typed');
-      if (greetTypedEl) greetTypedEl.textContent = getGreetText(state.lang, state.name);
+      if (greetTypedEl) {
+        var fullText = getGreetText(state.lang, state.name);
+        greetTypedEl.innerHTML = window.Site.typedColoredHTML(fullText, state.name, fullText.length);
+      }
     }
     buildRevealText();
   });
@@ -42,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
       duration: duration,
       ease: 'none',
       onUpdate: function () {
-        el.textContent = fullText.slice(0, Math.round(proxy.n));
+        el.innerHTML = window.Site.typedColoredHTML(fullText, state.name, Math.round(proxy.n));
       }
     });
   }
@@ -54,6 +57,10 @@ document.addEventListener('DOMContentLoaded', function () {
     var vw = window.innerWidth;
     var ratio = heroPhoto.naturalWidth && heroPhoto.naturalHeight
       ? (heroPhoto.naturalWidth / heroPhoto.naturalHeight) : 0.70;
+    /* Neutralize any earlier correction before measuring the slot's own,
+       untransformed flex position -- otherwise each call would compound
+       the previous run's shift instead of recomputing it from scratch. */
+    headSlot.style.transform = 'none';
     var slotRect = headSlot.getBoundingClientRect();
     var height = slotRect.height;
     var width = height * ratio;
@@ -65,8 +72,28 @@ document.addEventListener('DOMContentLoaded', function () {
     heroPhoto.style.width = width + 'px';
     heroPhoto.style.height = height + 'px';
     heroPhoto.style.left = ((slotRect.width - width) / 2) + 'px';
-    heroPhoto.style.top = ((slotRect.height - height) / 2) + 'px';
+    var photoTop = (slotRect.height - height) / 2;
+    heroPhoto.style.top = photoTop + 'px';
+
+    /* Pull the head up so it overlaps the wordmark's bottom edge by a fixed
+       1.5em, measured against the wordmark's real position -- a vw-based
+       CSS heuristic here drifted from a small gap on mobile to a much
+       bigger overlap than intended on desktop, since the wordmark and the
+       head don't scale at the same rate as the viewport grows. */
+    var overlapPx = 1.5 * parseFloat(getComputedStyle(document.documentElement).fontSize);
+    var wordmarkBottom = wordmark.getBoundingClientRect().bottom;
+    var photoTopNatural = slotRect.top + photoTop;
+    var shift = (wordmarkBottom - overlapPx) - photoTopNatural;
+    headSlot.style.transform = 'translateY(' + shift + 'px)';
   }
+
+  /* sizeHeroHead() runs once up front (before the wordmark's own open
+     animation has played), when the wordmark is still at its collapsed
+     pre-animation scale -- measuring its bottom edge at that instant would
+     lock the head's overlap to the wrong position. Re-running it once that
+     animation actually finishes corrects it against the wordmark's real,
+     settled size. */
+  wordmark.addEventListener('animationend', sizeHeroHead);
 
   /* Stop-motion face frames: 1-4 play once on entry, 5-7 play while the head travels on scroll */
   var INTRO_FRAMES = ['assets/img/1.png', 'assets/img/2.png', 'assets/img/3.png', 'assets/img/4-stop.png'];
@@ -116,7 +143,7 @@ document.addEventListener('DOMContentLoaded', function () {
       }, null, 'letters')
       .to(greetCursor, { autoAlpha: 0, duration: 0.3 }, 'letters')
       .call(function () { wordmark.classList.add('is-open'); }, null, 'letters')
-      .call(function () { wordmarkSlot.classList.add('is-in'); }, null, 'letters+=0.45')
+      .call(function () { wordmarkSlot.classList.add('is-in'); heroPills.classList.add('is-in'); }, null, 'letters+=0.45')
       .call(function () { navRight.classList.add('is-visible'); }, null, 'letters+=0.7')
       /* Wait until the wordmark bounce, pills and role text have all finished settling
          (pills finish around letters+1.35s) before the head starts its own entrance --

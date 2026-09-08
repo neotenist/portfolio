@@ -41,9 +41,51 @@ document.addEventListener('DOMContentLoaded', function () {
 
   applyLang('en');
 
+  /* ---------- NAME COLORING ----------
+     Wherever the visitor's typed-in name is displayed (hero greeting, contact
+     heading), each letter cycles through this order, repeating once the name
+     runs longer than the color list. */
+  var NAME_COLORS = ['#53add0', '#ed2f3e', '#df9a00', '#13ba4e', '#da3c76', '#000000'];
+  function escapeHtml(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+  function colorizeName(name) {
+    return name.split('').map(function (ch, i) {
+      return '<span style="color:' + NAME_COLORS[i % NAME_COLORS.length] + '">' + escapeHtml(ch) + '</span>';
+    }).join('');
+  }
+  /* Builds the HTML for a typewriter reveal of `n` characters of `fullText`,
+     coloring the name portion letter-by-letter as it's revealed instead of
+     typing it plain and recoloring once done. */
+  function typedColoredHTML(fullText, name, n) {
+    var idx = fullText.indexOf(name);
+    if (idx === -1) return escapeHtml(fullText.slice(0, n));
+    var nameEnd = idx + name.length;
+    var html = escapeHtml(fullText.slice(0, Math.min(n, idx)));
+    if (n > idx) {
+      var shown = name.slice(0, Math.min(n, nameEnd) - idx);
+      html += colorizeName(shown);
+    }
+    if (n > nameEnd) html += escapeHtml(fullText.slice(nameEnd, n));
+    return html;
+  }
+
   /* Shared with main.js (homepage-only hero/animation logic) so both scripts read
      and react to the same name/language state instead of keeping two copies. */
-  window.Site = { state: state, applyLang: applyLang, DEFAULT_NAME: DEFAULT_NAME };
+  window.Site = { state: state, applyLang: applyLang, DEFAULT_NAME: DEFAULT_NAME, colorizeName: colorizeName, typedColoredHTML: typedColoredHTML };
+
+  /* ---------- HEADER SCRIM (scroll-triggered) ----------
+     The header's background scrim only needs to exist once something has
+     actually scrolled in underneath it -- see .site-header::before in
+     style.css, which stays fully transparent until this class is set. */
+  var siteHeader = document.querySelector('.site-header');
+  if (siteHeader) {
+    var updateHeaderScrolled = function () {
+      siteHeader.classList.toggle('is-scrolled', window.scrollY > 0);
+    };
+    updateHeaderScrolled();
+    window.addEventListener('scroll', updateHeaderScrolled, { passive: true });
+  }
 
   /* ---------- HEADER LOGO SIZE (non-home pages) ----------
      The homepage sizes its header logo dynamically once the wordmark shrinks into
@@ -178,7 +220,7 @@ document.addEventListener('DOMContentLoaded', function () {
         duration: Math.max(0.6, full.length * 0.04),
         ease: 'none',
         onUpdate: function () {
-          contactTyped.textContent = full.slice(0, Math.round(proxy.n));
+          contactTyped.innerHTML = typedColoredHTML(full, state.name, Math.round(proxy.n));
         },
         onComplete: function () {
           contactTyped.dataset.done = '1';
@@ -186,7 +228,7 @@ document.addEventListener('DOMContentLoaded', function () {
           var before = full.slice(0, idx);
           var after = full.slice(idx + state.name.length);
           contactTyped.innerHTML = before +
-            '<span class="underline-word">' + state.name +
+            '<span class="underline-word">' + colorizeName(state.name) +
             '<svg viewBox="0 0 200 12" preserveAspectRatio="none" aria-hidden="true">' +
             '<path d="M2 9c38-4 92-7 196-3" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" fill="none"></path>' +
             '</svg></span>' + after;
