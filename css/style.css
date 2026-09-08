@@ -28,11 +28,20 @@
   font-style: normal;
   font-display: swap;
 }
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('../assets/fonts/JetBrainsMono-Bold.woff2') format('woff2'),
+       url('../assets/fonts/JetBrainsMono-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
 
 /* ---------- Tokens (copied from the live reference) ---------- */
 :root {
   --font-display: 'PP Formula', 'Arial Narrow', sans-serif;
   --font-body: 'Manrope', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
   --ink: #111;
   --ink-soft: #11111194;
   --heading-color: #144631;
@@ -1187,61 +1196,73 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
 .project-nav-meta { display: inline-flex; align-items: center; gap: 0.5rem; }
 .project-nav-meta svg { height: 1rem; width: 1rem; }
 
-/* ---------- Work list + hover preview ---------- */
-.work-list a {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding-block: 1.5rem;
-  border-bottom: var(--line-w) solid var(--line);
-  transition: opacity .2s ease;
+/* ---------- Work overview: page chrome ----------
+   Scoped to this page only via body.work-page -- white ground with a
+   square-line grid, black headings, instead of the site's usual cream
+   background and dark-green heading color. The grid goes on .paper-grid,
+   not body, because .paper-grid paints its own opaque background on top
+   of body's. */
+body.work-page { --heading-color: #000; }
+body.work-page .paper-grid {
+  background-color: #fff;
+  background-image:
+    linear-gradient(to right, #eee 1px, transparent 1px),
+    linear-gradient(to bottom, #eee 1px, transparent 1px);
+  background-size: 28px 28px;
 }
-.work-list li:first-child a { border-top: var(--line-w) solid var(--line); }
-.work-list .work-thumb {
-  display: block;
-  height: 4rem;
-  width: 4rem;
-  flex-shrink: 0;
-  overflow: hidden;
-  border: var(--line-w) solid var(--line);
-  background: var(--card-bg);
+
+/* ---------- Work overview: folder stack ----------
+   Namespaced "wf-" (work-folders) throughout -- this is a separate component
+   from the unrelated "What I take on" carousel above (.folder / .folder-back
+   / .folder-blue etc.), so none of its class names may collide with those. */
+.work-folders { --wf-radius: 20px; }
+
+.wf-stack { position: relative; }
+.wf-unit { position: sticky; top: 0; margin-bottom: 2em; }
+/* the last card has no sibling below it inside the stack to hold its sticky
+   pin open, so without this it detaches early instead of locking flush at
+   top:0 like every other card -- this spacer gives it that same room. */
+.wf-stack::after { content: ""; display: block; height: 90vh; }
+
+.wf-shape { position: relative; width: 100%; height: 90vh; display: flex; flex-direction: column; }
+
+/* the card body is plain CSS border-radius -- it can't skew or lose its
+   rounding at any size. Only the tab notch needs the vector curve, so only
+   the notch is rendered as SVG, at a small fixed size that never stretches. */
+.wf-tab { width: clamp(150px, 15vw, 210px); aspect-ratio: 234/34; position: relative; flex-shrink: 0; }
+.wf-tab svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+.wf-card-wrap { flex: 1; min-height: 0; position: relative; }
+/* .wf-back sits directly behind .wf-card, same box, but with a square
+   (unrounded) top-left corner -- it fills the sliver where the SVG tab's
+   curve doesn't perfectly meet the card's rounded corner, reading as the
+   folder's back panel peeking out from behind the front. */
+.wf-back { position: absolute; inset: 0; border-radius: 0 var(--wf-radius) var(--wf-radius) var(--wf-radius); }
+.wf-card { position: absolute; inset: 0; border-radius: var(--wf-radius); overflow: hidden; }
+
+.wf-content { position: relative; height: 100%; display: grid; grid-template-columns: 1fr 1.15fr; gap: clamp(1.5rem, 3.5vw, 3.5rem); padding: clamp(2rem, 4.5vw, 3.5rem); overflow-y: auto; }
+@media (max-width: 820px) {
+  .wf-content { grid-template-columns: 1fr; padding: clamp(1.5rem, 4vw, 2.25rem); gap: 1.5rem; }
 }
-.work-list .work-thumb img { height: 100%; width: 100%; object-fit: cover; }
-.work-list .work-title {
-  font-family: var(--font-display);
-  line-height: 1.05;
-  letter-spacing: -0.01em;
-  font-size: clamp(1.5rem, 7vw, 2rem);
-}
-.work-list .work-year { margin-left: auto; flex-shrink: 0; }
-@media (min-width: 1024px) {
-  .work-list .work-thumb { display: none; }
-  .work-list .work-title { font-size: clamp(2.25rem, 6vw, 5rem); }
-}
-.work-hover-preview {
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 40;
-  pointer-events: none;
-  display: none;
-}
-@media (min-width: 1024px) {
-  .work-hover-preview { display: block; }
-}
-.work-hover-preview-box {
-  position: relative;
-  height: 250px;
-  width: 200px;
-  overflow: hidden;
-  border: var(--line-w) solid var(--line);
-  background: var(--card-bg);
-  opacity: 0;
-  transform: scale(0.92);
-  transition: opacity .2s ease, transform .2s ease;
-}
-.work-hover-preview-box.is-visible { opacity: 1; transform: scale(1); }
-.work-hover-preview-box img { position: absolute; inset: 0; height: 100%; width: 100%; object-fit: cover; }
+
+.wf-text-col { display: flex; flex-direction: column; min-height: 0; }
+.wf-eyebrow { font-family: var(--font-mono); font-size: .74rem; font-weight: 700; }
+.wf-title { font-family: var(--font-display); font-weight: 500; font-size: clamp(1.8rem, 3.4vw, 2.9rem); line-height: 1.03; letter-spacing: -.01em; margin-top: .9rem; color: inherit !important; }
+.wf-desc { font-family: var(--font-body); font-size: 1rem; max-width: 32ch; margin-top: 1rem; line-height: 1.5; }
+.wf-link { display: inline-flex; align-items: center; gap: .4rem; margin-top: 1.5rem; font-family: var(--font-mono); font-size: .78rem; font-weight: 700; letter-spacing: .03em; text-decoration: none; color: inherit; border-bottom: 1.5px solid currentColor; padding-bottom: .2rem; width: fit-content; }
+.wf-tags { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: auto; padding-top: 1.5rem; }
+.wf-tag { font-family: var(--font-mono); font-size: .68rem; font-weight: 700; letter-spacing: .03em; padding: .4rem .8rem; border-radius: var(--radius-pill); }
+
+.wf-visual { position: relative; border-radius: 12px; overflow: hidden; min-height: 0; }
+.wf-visual img { width: 100%; height: 100%; min-height: 220px; object-fit: cover; display: block; }
+
+.wf-blue { color: #000; } .wf-blue .wf-tag { background: #000; color: #fff; }
+.wf-black { color: #fff; } .wf-black .wf-tag { background: #fff; color: #000; }
+.wf-yellow { color: #000; } .wf-yellow .wf-tag { background: #000; color: #fff; }
+.wf-pink { color: #fff; } .wf-pink .wf-tag { background: #fff; color: #000; }
+.wf-green { color: #000; } .wf-green .wf-tag { background: #000; color: #fff; }
+.wf-red { color: #fff; } .wf-red .wf-tag { background: #fff; color: #000; }
+.wf-darkgreen { color: #fff; } .wf-darkgreen .wf-tag { background: #fff; color: #000; }
 
 /* ---------- Responsive ---------- */
 @media (max-width: 639px) {
