@@ -578,7 +578,7 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
      .hero-wordmark-slot (55) so the head paints in front of the text where
      they cross, which is what actually makes the overlap read as an
      overlap rather than the text just covering the head. */
-  transform: translateY(-9rem);
+  transform: translateY(-7rem);
   z-index: 56;
   height: 62vh;
   width: min(86vh, 90vw);
