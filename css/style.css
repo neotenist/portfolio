@@ -159,6 +159,7 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
   font-size: 0.8125rem;
   line-height: 1.4;
 }
+.shelf-year { font-family: var(--font-mono); }
 .section { padding-block: clamp(4.5rem, 9vw, 8rem); }
 .card {
   background: var(--card-bg);
@@ -361,7 +362,7 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
   padding: 0 10px;
   border-radius: var(--radius-pill);
   border: none;
-  font-family: var(--font-display);
+  font-family: var(--font-mono);
   font-size: 11px;
   letter-spacing: 0.02em;
   line-height: 1;
@@ -520,7 +521,7 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
   background: var(--card-bg);
   color: var(--ink);
   padding: 0.5rem 0.875rem;
-  font-family: var(--font-body);
+  font-family: var(--font-mono);
   font-size: 0.75rem;
   line-height: 1;
   letter-spacing: 0.04em;
@@ -909,7 +910,7 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
 }
 .oc-dot-label {
   min-width: 0;
-  font-family: var(--font-body);
+  font-family: var(--font-mono);
   font-weight: 600;
   font-size: 0.85rem;
   color: var(--ink-soft);
@@ -1091,6 +1092,7 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
 .contact-sub.is-in { opacity: 1; transform: none; }
 
 /* ---------- Footer ---------- */
+footer p, footer a { font-family: var(--font-mono); }
 .site-footer-wordmark {
   /* The SVG's own fill is a white-to-transparent gradient (top opaque, fading out
      toward the bottom) -- inverting it turns that into black-to-transparent, which
@@ -1319,7 +1321,7 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
   cursor: pointer;
 }
 .cv-item-head-left { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.25rem 0.875rem; min-width: 0; }
-.cv-item-head .meta { flex: none; }
+.cv-item-head .meta { flex: none; font-family: var(--font-mono); }
 .cv-item-head-title { font-family: var(--font-display); font-weight: 500; color: var(--ink); font-size: clamp(1.1rem, 2.4vw, 1.375rem); }
 .cv-item-head-company { color: var(--ink-soft); font-size: 0.9375rem; }
 .cv-item-chevron {
@@ -1374,7 +1376,7 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
   margin-bottom: 0.75rem;
 }
 .cv-bento-desc-group + .cv-bento-desc-group { margin-top: 1.25rem; }
-.cv-bento-desc-group h5 { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-faint, var(--ink-soft)); margin-bottom: 0.625rem; }
+.cv-bento-desc-group h5 { font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-faint, var(--ink-soft)); margin-bottom: 0.625rem; }
 .cv-bento-worth p + p { margin-top: 0.875rem; }
 /* .pill's own background is card-bg (white) too, so sitting inside a now-white
    bento cell it lost its fill contrast and read as outline-only. page-bg here
