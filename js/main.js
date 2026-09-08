@@ -75,16 +75,24 @@ document.addEventListener('DOMContentLoaded', function () {
     var photoTop = (slotRect.height - height) / 2;
     heroPhoto.style.top = photoTop + 'px';
 
-    /* Pull the head up so it overlaps the wordmark's bottom edge by exactly
-       one quarter of the wordmark's own rendered height -- proportional to
-       the wordmark, not a fixed em value, since the wordmark's size swings
-       widely with viewport width (it's width:100% of its container) while
-       a fixed-px overlap wouldn't track that. */
+    /* Pull the head up so it overlaps the wordmark's VISIBLE letter body by
+       exactly one quarter of that body's height -- not one quarter of the
+       full SVG viewBox. Checked every letterform's own getBBox() in
+       maxine_hargrove.svg: 13 of the 14 letters bottom out at y~136 (out of
+       the viewBox's 171 total height); only the "g" reaches the full 171,
+       via its descender. Using the full 171 as "the wordmark's height"
+       meant most of that 25% was spent overlapping nothing but the thin
+       empty tail below the "g", not the dense body of the text a viewer
+       actually reads as "the wordmark" -- WORDMARK_BASELINE_FRACTION is
+       that measured 136/171 ratio, so the overlap targets the real glyph
+       body instead. */
+    var WORDMARK_BASELINE_FRACTION = 136 / 171;
     var wordmarkRect = wordmark.getBoundingClientRect();
-    var overlapPx = 0.25 * wordmarkRect.height;
-    var wordmarkBottom = wordmarkRect.bottom;
+    var wordmarkBodyHeight = wordmarkRect.height * WORDMARK_BASELINE_FRACTION;
+    var wordmarkBodyBottom = wordmarkRect.top + wordmarkBodyHeight;
+    var overlapPx = 0.25 * wordmarkBodyHeight;
     var photoTopNatural = slotRect.top + photoTop;
-    var shift = (wordmarkBottom - overlapPx) - photoTopNatural;
+    var shift = (wordmarkBodyBottom - overlapPx) - photoTopNatural;
     headSlot.style.transform = 'translateY(' + shift + 'px)';
   }
 
