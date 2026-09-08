@@ -100,8 +100,12 @@ document.addEventListener('DOMContentLoaded', function () {
   function alignGreetingGap() {
     if (!greetTyped.textContent) return;
     var pillsBottom = heroPills.getBoundingClientRect().bottom;
+    /* greetTyped itself, not its parent -- the parent also contains the
+       blinking-cursor span, which still contributes its own layout box to
+       a Range even once faded to opacity:0, inflating the "tight" bounds
+       this is supposed to avoid. */
     var range = document.createRange();
-    range.selectNodeContents(greetTyped.parentNode);
+    range.selectNodeContents(greetTyped);
     var textRect = range.getBoundingClientRect();
     var gapPillsToText = textRect.top - pillsBottom;
 
