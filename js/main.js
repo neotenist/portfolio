@@ -75,16 +75,40 @@ document.addEventListener('DOMContentLoaded', function () {
     var photoTop = (slotRect.height - height) / 2;
     heroPhoto.style.top = photoTop + 'px';
 
-    /* Pull the head up so it overlaps the wordmark's bottom edge by a fixed
-       1.5em, measured against the wordmark's real position -- a vw-based
-       CSS heuristic here drifted from a small gap on mobile to a much
-       bigger overlap than intended on desktop, since the wordmark and the
-       head don't scale at the same rate as the viewport grows. */
-    var overlapPx = 1.5 * parseFloat(getComputedStyle(document.documentElement).fontSize);
-    var wordmarkBottom = wordmark.getBoundingClientRect().bottom;
+    /* Pull the head up so it overlaps the wordmark's bottom edge by exactly
+       one quarter of the wordmark's own rendered height -- proportional to
+       the wordmark, not a fixed em value, since the wordmark's size swings
+       widely with viewport width (it's width:100% of its container) while
+       a fixed-px overlap wouldn't track that. */
+    var wordmarkRect = wordmark.getBoundingClientRect();
+    var overlapPx = 0.25 * wordmarkRect.height;
+    var wordmarkBottom = wordmarkRect.bottom;
     var photoTopNatural = slotRect.top + photoTop;
     var shift = (wordmarkBottom - overlapPx) - photoTopNatural;
     headSlot.style.transform = 'translateY(' + shift + 'px)';
+  }
+
+  /* Matching the pills' margin-bottom to the wordmark-slot's margin-top gave
+     equal CSS gaps, but not equal-LOOKING gaps: the greeting's own display
+     font, at line-height:1, still reserves descender/leading space below
+     its visible glyphs that a plain box-to-box margin can't see, so the
+     greeting-to-wordmark gap read as visibly bigger than the pills-to-
+     greeting one even with identical margins. Range.getBoundingClientRect()
+     on the greeting's actual text gives its tight visual bounds (no font
+     leading included), which is what "equal gap" needs to be measured
+     against instead of the padded box. */
+  function alignGreetingGap() {
+    if (!greetTyped.textContent) return;
+    var pillsBottom = heroPills.getBoundingClientRect().bottom;
+    var range = document.createRange();
+    range.selectNodeContents(greetTyped.parentNode);
+    var textRect = range.getBoundingClientRect();
+    var gapPillsToText = textRect.top - pillsBottom;
+
+    wordmarkSlot.style.marginTop = '0px';
+    var wsTop = wordmarkSlot.getBoundingClientRect().top;
+    var neededMargin = gapPillsToText - (wsTop - textRect.bottom);
+    wordmarkSlot.style.marginTop = Math.max(0, neededMargin) + 'px';
   }
 
   /* sizeHeroHead() runs once up front (before the wordmark's own open
@@ -92,8 +116,15 @@ document.addEventListener('DOMContentLoaded', function () {
      pre-animation scale -- measuring its bottom edge at that instant would
      lock the head's overlap to the wrong position. Re-running it once that
      animation actually finishes corrects it against the wordmark's real,
-     settled size. */
-  wordmark.addEventListener('animationend', sizeHeroHead);
+     settled size. By this point the greeting has also finished typing
+     (0.9s wordmark animation vs typically well under that to type a name),
+     so this is also the right moment to align the greeting gap. */
+  wordmark.addEventListener('animationend', function () {
+    /* Gap alignment first -- it can shift the wordmark's own position, which
+       sizeHeroHead's overlap math then needs to measure fresh. */
+    alignGreetingGap();
+    sizeHeroHead();
+  });
 
   /* Stop-motion face frames: 1-4 play once on entry, 5-7 play while the head travels on scroll */
   var INTRO_FRAMES = ['assets/img/1.png', 'assets/img/2.png', 'assets/img/3.png', 'assets/img/4-stop.png'];
