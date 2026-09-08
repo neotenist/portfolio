@@ -44,9 +44,9 @@
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
   --ink: #111;
   --ink-soft: #11111194;
-  --heading-color: #144631;
+  --heading-color: #000;
   --paper: #fff;
-  --page-bg: #faf7f0;
+  --page-bg: #fff;
   --card-bg: #fff;
   --line: #d7d7d7;
   --line-w: 1px;
@@ -100,6 +100,10 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
 .paper-grid {
   position: relative;
   background-color: var(--page-bg);
+  background-image:
+    linear-gradient(to right, #eee 1px, transparent 1px),
+    linear-gradient(to bottom, #eee 1px, transparent 1px);
+  background-size: 28px 28px;
 }
 
 /* ---------- Container ---------- */
@@ -1195,21 +1199,6 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
 .project-nav-title { transition: color 0.2s ease; }
 .project-nav-meta { display: inline-flex; align-items: center; gap: 0.5rem; }
 .project-nav-meta svg { height: 1rem; width: 1rem; }
-
-/* ---------- Work overview: page chrome ----------
-   Scoped to this page only via body.work-page -- white ground with a
-   square-line grid, black headings, instead of the site's usual cream
-   background and dark-green heading color. The grid goes on .paper-grid,
-   not body, because .paper-grid paints its own opaque background on top
-   of body's. */
-body.work-page { --heading-color: #000; }
-body.work-page .paper-grid {
-  background-color: #fff;
-  background-image:
-    linear-gradient(to right, #eee 1px, transparent 1px),
-    linear-gradient(to bottom, #eee 1px, transparent 1px);
-  background-size: 28px 28px;
-}
 
 /* ---------- Work overview: folder stack ----------
    Namespaced "wf-" (work-folders) throughout -- this is a separate component
