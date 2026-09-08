@@ -605,9 +605,10 @@ document.addEventListener('DOMContentLoaded', function () {
      like Instagram: each one holds a few items that autoplay and loop among
      themselves once that highlight is open, but never auto-advance to a DIFFERENT
      highlight -- that only happens when you click a different dot. All items in a
-     highlight share one caption. A highlight's ring is green until you've opened it
-     once (tracked in sessionStorage, the same gate the name-prompt uses), then it
-     goes gray for the rest of the session. */
+     highlight share one caption. Each highlight's ring has its own color (see
+     .oc-ring / [data-oc-index] in style.css) until you switch away to a different
+     highlight (tracked in sessionStorage, the same gate the name-prompt uses), then
+     it goes gray for the rest of the session. */
   var ocStage = document.getElementById('ocStage');
   if (ocStage) {
     var ocDotsEls = Array.prototype.slice.call(ocStage.querySelectorAll('.oc-dot'));
@@ -775,11 +776,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function ocOpenCategory(i) {
       clearTimeout(ocTimer);
-      ocCatIndex = (i + ocCategories.length) % ocCategories.length;
+      var newIndex = (i + ocCategories.length) % ocCategories.length;
+      /* The ring for the highlight you're currently on keeps its own color --
+         only the one you're leaving turns gray, and only once you've actually
+         switched to a different highlight (not on the initial auto-open, and
+         not on re-clicking the one that's already active). */
+      if (newIndex !== ocCatIndex) ocMarkSeen(ocCatIndex);
+      ocCatIndex = newIndex;
       ocDotsEls.forEach(function (d, di) { d.classList.toggle('is-active', di === ocCatIndex); });
       ocRenderCaption();
       ocProgressEl.innerHTML = ocCategories[ocCatIndex].items.map(function () { return '<i></i>'; }).join('');
-      ocMarkSeen(ocCatIndex);
       ocShowItem(0);
     }
 

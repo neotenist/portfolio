@@ -211,9 +211,12 @@ document.addEventListener('DOMContentLoaded', function () {
     var contactSub = document.getElementById('contact-sub');
 
     function typeContact() {
+      /* Forced break right after the name (not just left to wrap) so the heading
+         is always two lines -- otherwise a short name fits on one line and the
+         card's height visibly jumps depending on what the visitor typed. */
       var full = state.lang === 'de'
-        ? ('Hey ' + state.name + ', lass uns reden!')
-        : ('Hey ' + state.name + ', let\'s talk!');
+        ? ('Hey ' + state.name + ',\nlass uns reden!')
+        : ('Hey ' + state.name + ',\nlet\'s talk!');
       var proxy = { n: 0 };
       gsap.to(proxy, {
         n: full.length,

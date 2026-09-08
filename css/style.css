@@ -46,7 +46,7 @@
   --ink-soft: #11111194;
   --heading-color: #000;
   --paper: #fff;
-  --page-bg: #fff;
+  --page-bg: #eee;
   --card-bg: #fff;
   --line: #d7d7d7;
   --line-w: 1px;
@@ -101,8 +101,8 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
   position: relative;
   background-color: var(--page-bg);
   background-image:
-    linear-gradient(to right, #eee 1px, transparent 1px),
-    linear-gradient(to bottom, #eee 1px, transparent 1px);
+    linear-gradient(to right, #d9d9d9 1px, transparent 1px),
+    linear-gradient(to bottom, #d9d9d9 1px, transparent 1px);
   background-size: 28px 28px;
 }
 
@@ -676,7 +676,7 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
   --folder-green-front: #4cd17b;
   --folder-pink-back: #da3c76;
   --folder-pink-front: #f26a9c;
-  --folder-sheet: #fafaf9;
+  --folder-sheet: #fbf6df;
   --folder-sheet-ink: #111;
   padding-block: clamp(1rem, 2.5vw, 2rem) clamp(2rem, 4vw, 3.5rem);
   overflow: clip visible;
@@ -696,7 +696,7 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
   cursor: grab;
   touch-action: pan-y;
   height: clamp(40.5rem, 58.5vw, 52.5rem);
-  margin-top: clamp(2.25rem, 3.5vw, 3.5rem);
+  margin-top: clamp(1.1rem, 1.75vw, 1.75rem);
   position: relative;
 }
 .folder-stage.is-dragging { cursor: grabbing; }
@@ -718,14 +718,14 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
 }
 
 .folder-position {
-  /* 10% smaller than the reference's own values (both the card width and the gap
-     between cards, so the fan stays proportioned the same at the smaller scale). */
-  --folder-gap: clamp(25.65rem, 37.8vw, 39.15rem);
+  /* ~13% smaller again on top of the reduction above (both the card width and the
+     gap between cards, so the fan stays proportioned the same at the smaller scale). */
+  --folder-gap: clamp(22.3rem, 32.9vw, 34.05rem);
   position: absolute;
   bottom: 4.5rem;
   left: 50%;
   aspect-ratio: 449 / 362;
-  width: clamp(22.95rem, 36.45vw, 33.75rem);
+  width: clamp(19.95rem, 31.7vw, 29.35rem);
   z-index: var(--folder-order);
   opacity: 0;
   transform-origin: 50% 235%;
@@ -788,7 +788,11 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
   left: 5.35%;
   z-index: 2;
   width: 87.95%;
-  height: 70.2%;
+  /* Taller than the shape's own tab-to-bottom proportion (70.2%) would give --
+     needed so the longer German copy has room to fit without this element's
+     own overflow:hidden clipping it (mirrors the same fix already used at the
+     mobile breakpoint below). */
+  height: 78%;
   background: var(--folder-sheet);
   color: var(--folder-sheet-ink);
   border-radius: 12px;
@@ -806,13 +810,13 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
   margin: 0;
   font-family: var(--font-display);
   font-weight: 500;
-  font-size: clamp(1.9rem, 3.2vw, 2.8rem);
+  font-size: clamp(1.3rem, 2.15vw, 1.9rem);
   line-height: 0.95;
 }
 .folder-paper p {
   max-width: 32ch;
   margin: clamp(0.65rem, 1.1vw, 1rem) 0 0;
-  font-size: clamp(1.35rem, 1.95vw, 1.65rem);
+  font-size: clamp(1rem, 1.35vw, 1.15rem);
   line-height: 1.35;
 }
 
@@ -924,9 +928,18 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
   width: 56px;
   aspect-ratio: 1 / 1;
   border-radius: 50%;
-  background: conic-gradient(var(--heading-color), #4c8f6f, var(--heading-color));
+  background: var(--oc-ring-color, var(--heading-color));
   transition: background 0.25s ease;
 }
+/* Each highlight gets its own color (reusing the site's existing folder/name
+   palette) so the ring itself identifies which highlight it is -- .is-seen
+   below still overrides this once viewed, same as before. */
+.oc-dot[data-oc-index="0"] { --oc-ring-color: #53add0; }
+.oc-dot[data-oc-index="1"] { --oc-ring-color: #ed2f3e; }
+.oc-dot[data-oc-index="2"] { --oc-ring-color: #13ba4e; }
+.oc-dot[data-oc-index="3"] { --oc-ring-color: #df9a00; }
+.oc-dot[data-oc-index="4"] { --oc-ring-color: #da3c76; }
+.oc-dot[data-oc-index="5"] { --oc-ring-color: #0d3423; }
 .oc-dot.is-seen .oc-ring { background: var(--line); }
 @media (min-width: 1360px) {
   /* After the base rule, not inside the earlier 1360px block above -- same
@@ -1100,6 +1113,11 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
 }
 
 /* ---------- Contact card ---------- */
+/* Scoped to the typed span itself, not .contact-heading -- the heading element's
+   own HTML has a newline between its opening tag and this span (ordinary source
+   formatting), and pre-line renders THAT as a forced blank first line too if it's
+   applied up there instead. */
+#contact-typed { white-space: pre-line; }
 .contact-heading .underline-word { position: relative; display: inline; }
 .contact-heading .underline-word svg {
   position: absolute;
@@ -1435,7 +1453,7 @@ footer p, footer a { font-family: var(--font-mono); }
 .bullet-list li::before { content: ''; display: block; margin-top: 0.7em; height: var(--line-w); width: 12px; flex-shrink: 0; background: var(--line); }
 .cv-award-row { margin-top: 1.25rem; padding-top: 1.25rem; border-top: var(--line-w) solid var(--line); display: flex; flex-wrap: wrap; gap: 1.5rem 2.5rem; }
 .cv-award { display: flex; align-items: center; gap: 0.875rem; max-width: 18rem; }
-.cv-award-badge { flex: none; display: flex; height: 3rem; width: 3rem; align-items: center; justify-content: center; border-radius: 50%; border: var(--line-w) solid var(--line); background: var(--card-bg); font-family: var(--font-display); font-size: 1.05rem; color: var(--ink-soft); }
+.cv-award-badge { flex: none; display: flex; height: 3rem; width: 3rem; align-items: center; justify-content: center; border-radius: 50%; border: var(--line-w) solid var(--line); background: var(--card-bg); font-family: var(--font-display); font-size: 1.05rem; color: var(--ink); }
 
 @media (max-width: 767px) {
   /* display:contents dissolves the column wrapper so every card becomes a
