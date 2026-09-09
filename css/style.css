@@ -161,6 +161,12 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
 }
 .shelf-year { font-family: var(--font-mono); }
 .section { padding-block: clamp(4.5rem, 9vw, 8rem); }
+/* Half the gap specifically between the intro section and the one right after
+   it (CV's timeline, Work's folder stack) -- halving both sides so the total
+   distance between them is half of two full .section paddings, without
+   touching .section itself (used everywhere else on the page). */
+.hero-intro { padding-bottom: clamp(2.25rem, 4.5vw, 4rem); }
+.hero-intro + section { padding-top: clamp(2.25rem, 4.5vw, 4rem); }
 .hero-intro .lead { color: #000; }
 /* Hard shadow for every white-background, black-border box on the site
    (not pills, not the small circular chevron control) -- offset only, no
@@ -170,6 +176,8 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
 .card,
 .oc-stage,
 .cv-bento-meta, .cv-bento-tools, .cv-bento-desc, .cv-bento-worth,
+.gate-content,
+.project-hero-figure, .project-gallery-figure, .project-meta-dl,
 .hard-shadow {
   box-shadow: 3px 3px 0 0 #000;
 }
@@ -236,6 +244,10 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
 .gate-content {
   max-width: 560px;
   width: 100%;
+  background: #fff;
+  border: 2px solid #000;
+  border-radius: 12px;
+  padding: clamp(1.75rem, 5vw, 3.5rem) clamp(1.5rem, 5vw, 3rem);
 }
 
 .gate-title {
@@ -251,6 +263,13 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
   display: flex;
   gap: 12px;
   margin-bottom: 20px;
+}
+@media (max-width: 639px) {
+  /* Input + pill button side by side overflowed the screen at this width --
+     the button just kept its own natural width and got pushed off the right
+     edge instead of shrinking. Stacking removes the competition for width. */
+  .gate-form { flex-direction: column; align-items: stretch; }
+  .gate-submit { width: 100%; }
 }
 
 .gate-input {
@@ -377,13 +396,13 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 34px;
-  height: 26px;
-  padding: 0 10px;
+  min-width: 42px;
+  height: 32px;
+  padding: 0 13px;
   border-radius: var(--radius-pill);
   border: none;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 13px;
   letter-spacing: 0.02em;
   line-height: 1;
   color: var(--ink-soft);
@@ -400,8 +419,8 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
 .menu-btn {
   display: grid;
   place-items: center;
-  height: 36px;
-  width: 36px;
+  height: 57.6px;
+  width: 57.6px;
   border-radius: 50%;
   border: none;
   color: var(--heading-color);
@@ -411,30 +430,30 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
 .menu-btn-lines {
   position: relative;
   display: block;
-  height: 11px;
-  width: 27px;
+  height: 17.6px;
+  width: 43.2px;
 }
 .menu-btn-lines span {
   position: absolute;
   left: 0;
   display: block;
-  height: 3px;
+  height: 4.8px;
   width: 100%;
   background: currentColor;
-  border-radius: 1.5px;
+  border-radius: 2.4px;
   transition: transform 0.35s var(--ease-soft), top 0.35s var(--ease-soft);
 }
 .menu-btn-lines span:nth-child(1) { top: 0; }
-.menu-btn-lines span:nth-child(2) { top: 100%; margin-top: -3px; }
+.menu-btn-lines span:nth-child(2) { top: 100%; margin-top: -4.8px; }
 /* Hamburger -> X: just the two lines meeting in the middle and crossing. */
 .menu-btn.is-open .menu-btn-lines span:nth-child(1) {
   top: 50%;
-  margin-top: -1.5px;
+  margin-top: -2.4px;
   transform: rotate(45deg);
 }
 .menu-btn.is-open .menu-btn-lines span:nth-child(2) {
   top: 50%;
-  margin-top: -1.5px;
+  margin-top: -2.4px;
   transform: rotate(-45deg);
 }
 
@@ -701,7 +720,6 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
 }
 .folder-stage.is-dragging { cursor: grabbing; }
 .folder-stage.is-dragging .folder-fan { transition: none; }
-.folder-stage.is-bouncing .folder-fan { transition: transform 0.62s cubic-bezier(0.2, 1.65, 0.35, 1); }
 .folder-stage, .folder-stage * { user-select: none; }
 
 .folder-fan {
@@ -720,12 +738,16 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
 .folder-position {
   /* ~13% smaller again on top of the reduction above (both the card width and the
      gap between cards, so the fan stays proportioned the same at the smaller scale). */
-  --folder-gap: clamp(22.3rem, 32.9vw, 34.05rem);
+  --folder-gap: clamp(20.05rem, 29.6vw, 30.65rem);
+  /* Used only at rest (once settled/interactive) -- a much tighter step than
+     --folder-gap above, which is still the wide swing-in distance the entrance
+     itself fans in from. */
+  --folder-stack-step: clamp(2.2rem, 3.2vw, 3.6rem);
   position: absolute;
-  bottom: 4.5rem;
+  bottom: 13rem;
   left: 50%;
   aspect-ratio: 449 / 362;
-  width: clamp(19.95rem, 31.7vw, 29.35rem);
+  width: clamp(17.95rem, 28.5vw, 26.4rem);
   z-index: var(--folder-order);
   opacity: 0;
   transform-origin: 50% 235%;
@@ -742,10 +764,15 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
 
 .folder-stage.is-visible .folder-position {
   opacity: 1;
+  /* Settled state is a compact stack fanned to the right and slightly back
+     (up), not the wide bidirectional spread the entrance swings in from --
+     --folder-x only ever runs 0 (front) to folderTotal-1 (back) here, never
+     negative, since the deck now cycles one-directionally (see dismissFront
+     in main.js) instead of re-centering on whichever card is active. */
   transform:
-    translateX(calc(-50% + var(--folder-x) * var(--folder-gap)))
-    translateY(calc(var(--folder-x) * var(--folder-x) * 1.08rem))
-    rotate(calc(var(--folder-x) * 5deg));
+    translateX(calc(-50% + var(--folder-x) * var(--folder-stack-step)))
+    translateY(calc(var(--folder-x) * -0.9rem))
+    rotate(calc(var(--folder-x) * 2deg));
 }
 .folder-stage.is-in .folder-position {
   /* A near-even ease: the previous curve reached ~80% of the motion in the first
@@ -827,6 +854,14 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
   transform: translateY(18px);
 }
 .reveal.is-in { opacity: 1; transform: none; }
+/* Stronger variant -- more slide, more fade -- for the one section/card right
+   after the intro that should announce itself more than a routine .reveal
+   (CV's timeline, Work's first folder card). Same is-in end state as .reveal,
+   just a bigger starting displacement and a slower transition to travel it. */
+.reveal-lg {
+  transform: translateY(48px);
+  transition: opacity .8s var(--ease-soft), transform .8s var(--ease-soft);
+}
 
 /* ---------- Off the clock: story-highlight viewer ----------
    Dots on the left (top row, swipeable, on mobile) are highlights, Instagram-style --
@@ -1223,7 +1258,8 @@ footer p, footer a { font-family: var(--font-mono); }
   position: relative;
   width: 100%;
   overflow: hidden;
-  border: var(--line-w) solid var(--line);
+  border: 2px solid #000;
+  border-radius: 12px;
   background: var(--card-bg);
 }
 .project-hero-figure { aspect-ratio: 16 / 9; }
@@ -1237,7 +1273,23 @@ footer p, footer a { font-family: var(--font-mono); }
   object-fit: cover;
 }
 
-.project-meta-dl { border-top: var(--line-w) solid var(--line); }
+/* Meta box picks up the shared card treatment (see the hard-shadow selector
+   list above); --proj-accent is set per project via an inline style on this
+   element, same pattern .wf-* already uses for the folder colors. */
+.project-meta-dl {
+  position: relative;
+  overflow: hidden;
+  background: var(--card-bg);
+  border: 2px solid #000;
+  border-radius: 12px;
+  padding: 1.6rem 1.4rem 0.25rem;
+}
+.project-meta-accent {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 6px;
+  background: var(--proj-accent, var(--heading-color));
+}
 .project-meta-row {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1246,6 +1298,18 @@ footer p, footer a { font-family: var(--font-mono); }
   padding-block: 0.75rem;
 }
 .project-meta-row dd { grid-column: span 2 / span 2; font-size: 0.9375rem; }
+
+.project-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.25rem; }
+.project-tags .pill {
+  background: var(--proj-accent, var(--heading-color));
+  color: var(--proj-accent-ink, #fff);
+  border: none;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.68rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
 
 .project-gallery { display: flex; flex-direction: column; gap: 2.5rem; }
 
@@ -1256,14 +1320,32 @@ footer p, footer a { font-family: var(--font-mono); }
 .project-nav-link:hover .project-nav-title,
 .project-nav-link:hover .project-back-meta { color: var(--ink); }
 .project-nav-title { transition: color 0.2s ease; }
-.project-nav-meta { display: inline-flex; align-items: center; gap: 0.5rem; }
+/* Styled like .wf-link ("VIEW PROJECT") on the work overview -- a button,
+   not a boxed card. */
+.project-nav-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--ink);
+  border-bottom: 1.5px solid currentColor;
+  padding-bottom: 0.2rem;
+  width: fit-content;
+}
 .project-nav-meta svg { height: 1rem; width: 1rem; }
 
 /* ---------- Work overview: folder stack ----------
    Namespaced "wf-" (work-folders) throughout -- this is a separate component
    from the unrelated "What I take on" carousel above (.folder / .folder-back
    / .folder-blue etc.), so none of its class names may collide with those. */
-.work-folders { --wf-radius: 20px; }
+.work-folders { --wf-radius: 40px; }
+@media (max-width: 639px) {
+  .work-folders { --wf-radius: 20px; }
+}
 
 .wf-stack { position: relative; }
 /* top:10vh, not 0 -- the card is 80vh tall, so this centers it vertically in
@@ -1320,8 +1402,8 @@ footer p, footer a { font-family: var(--font-mono); }
 @media (max-width: 639px) {
   .hero-role { writing-mode: vertical-rl; transform: rotate(180deg); }
   .nav-lang .lang-btn { min-width: 38px; height: 30px; padding: 0 12px; font-size: 12px; }
-  .menu-btn { height: 40px; width: 40px; }
-  .menu-btn-lines { height: 13px; width: 30px; }
+  .menu-btn { height: 64px; width: 64px; }
+  .menu-btn-lines { height: 20.8px; width: 48px; }
   .take-on-folders { padding-block: clamp(0.75rem, 4vw, 1.5rem) 2rem; }
   .folder-stage { height: clamp(22rem, min(118vw, 62vh), 34rem); margin-top: clamp(1rem, min(8vw, 3vh), 2rem); }
   .folder-position {
@@ -1333,7 +1415,7 @@ footer p, footer a { font-family: var(--font-mono); }
        and peek in from both edges instead. */
     --folder-gap: min(72vw, 31vh, 21.3rem);
     width: min(88vw, 38vh, 26rem);
-    bottom: 1.5rem;
+    bottom: 4.5rem;
   }
   .folder-paper {
     padding: 0.75rem;
@@ -1410,19 +1492,21 @@ footer p, footer a { font-family: var(--font-mono); }
 .cv-item-panel { overflow: hidden; min-height: 0; }
 .cv-item-panel-inner { padding-bottom: 2.5rem; }
 
-/* Simple, explicit 2-column split: col 1 is Context + Worth mentioning, col 2
-   is What I did + Tools. Equal-width columns (1fr 1fr). align-items:stretch
+/* Simple, explicit 2-column split: col 1 is Context + What I did, col 2 is
+   Worth mentioning + Tools. Equal-width columns (1fr 1fr). align-items:stretch
    (not flex-start) makes both columns the same height -- whichever is
-   naturally taller -- and within each column the second card (Worth
-   mentioning / Tools) grows to absorb the leftover space so the column's own
-   two cards still add up to that full height, instead of the column ending
-   early and leaving the page's own background visible below it. The first
-   card in each column (Context / What I did) keeps its natural height --
-   only the second one stretches, so a short "Context" note doesn't itself
-   get inflated with dead space. */
+   naturally taller -- and within each column the LAST card grows to absorb
+   the leftover space so the column's own two cards still add up to that full
+   height, instead of the column ending early and leaving the page's own
+   background visible below it. Targeted positionally (:last-child), not by
+   which specific card that is -- the pairing above has been reordered before
+   and the flush-bottom alignment needs to keep working whichever card ends up
+   last. The first card in each column keeps its natural height -- only the
+   last one stretches, so a short "Context" note doesn't itself get inflated
+   with dead space. */
 .cv-bento { display: flex; gap: 0.75rem; align-items: stretch; }
 .cv-bento-col { display: flex; flex-direction: column; gap: 0.75rem; flex: 1 1 0; min-width: 0; }
-.cv-bento-worth, .cv-bento-tools { flex: 1 1 auto; }
+.cv-bento-col > *:last-child { flex: 1 1 auto; }
 /* card-bg, not page-bg -- the page itself already sits on page-bg, so a cell
    filled with that same color rendered as invisible whitespace instead of a
    box; card-bg (white) plus the border is what actually reads as one. */
@@ -1459,13 +1543,13 @@ footer p, footer a { font-family: var(--font-mono); }
   /* display:contents dissolves the column wrapper so every card becomes a
      direct flex item of .cv-bento itself -- needed so `order` below can
      interleave cards from both columns into one requested sequence (Context,
-     What I did, Worth mentioning, Tools) instead of each column's cards
+     Worth mentioning, What I did, Tools) instead of each column's cards
      staying grouped together. */
   .cv-bento { flex-direction: column; }
   .cv-bento-col { display: contents; }
   .cv-bento-meta { order: 1; }
-  .cv-bento-desc { order: 2; }
-  .cv-bento-worth { order: 3; }
+  .cv-bento-worth { order: 2; }
+  .cv-bento-desc { order: 3; }
   .cv-bento-tools { order: 4; }
   .cv-item-head { align-items: flex-start; }
 }

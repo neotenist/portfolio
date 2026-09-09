@@ -404,22 +404,25 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   /* ---------- WHAT I TAKE ON: folder fan carousel ----------
-     Ported from the reference's own compiled logic: folders sit in a fixed
-     array order; the currently "active" one always sits at --folder-x:0,
-     the rest fan out from it via (index - activeIndex). Before the deck has
-     entered view, they're stacked instead relative to the LAST folder, so
-     they fade in already spread out ending on the last (rightmost) one --
-     then jump to being centered on the FIRST folder in a big staggered
-     arc once "is-in" kicks in. The paper (title + body) is normally tucked
-     mostly out of sight and only slides fully into view via .paper-out --
-     automatically ~2.35s after the entrance settles, or on tap/after a
-     drag that changes the active folder. */
+     Before the deck has entered view, folders are stacked relative to the LAST
+     one (index folderTotal-1, pink), so they fade in already spread out ending
+     on the last (rightmost) one -- then jump to being centered on the FIRST
+     folder (blue) in a big staggered arc once "is-in" kicks in. That entrance
+     swing is unrelated to the settled stack order below it -- it always runs
+     the same way regardless of how the deck has since been reshuffled.
+     Once settled, folders sit in a one-directional queue (stackOrder: the DOM
+     index at each stack position, 0=front) instead of a symmetric fan you page
+     through -- flicking the front folder just sends it to the back of the
+     queue (dismissFront), it never comes back to the front by dragging the
+     other way. The paper (title + body) is normally tucked mostly out of sight
+     and only slides fully into view via .paper-out -- automatically ~2.35s
+     after the entrance settles, or after a flick dismisses the front folder. */
   var folderStage = document.getElementById('folder-stage');
   var folderFan = document.getElementById('folder-fan');
   var folderPositions = Array.prototype.slice.call(folderStage.querySelectorAll('.folder-position'));
   var folderTotal = folderPositions.length;
   var folderTimers = [];
-  var activeIndex = 0;
+  var stackOrder = folderPositions.map(function (_, i) { return i; });
   var isIn = false;
 
   function clearFolderTimers() {
@@ -435,7 +438,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function layoutFolders() {
     folderPositions.forEach(function (el, t) {
-      var n = isIn ? (t - activeIndex) : (t - (folderTotal - 1));
+      var n = isIn ? stackOrder.indexOf(t) : (t - (folderTotal - 1));
       el.style.setProperty('--folder-x', n);
       el.style.setProperty('--folder-abs', Math.abs(n));
       el.style.setProperty('--folder-order', folderTotal - Math.abs(n));
@@ -453,11 +456,10 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  function goToFolder(index, duration) {
+  function dismissFront(duration) {
     duration = typeof duration === 'number' ? duration : 330;
-    index = Math.max(0, Math.min(folderTotal - 1, index));
     setPaperOut(false);
-    activeIndex = index;
+    stackOrder.push(stackOrder.shift());
     layoutFolders();
     var t = setTimeout(function () { setPaperOut(true); }, duration);
     folderTimers.push(t);
@@ -516,7 +518,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }, { threshold: 0, rootMargin: '-25% 0px -73% 0px' });
   folderObserver.observe(takeOnHeading);
 
-  var drag = { down: false, swiping: false, startX: 0, delta: 0, atEdge: false };
+  var drag = { down: false, swiping: false, startX: 0, delta: 0 };
   var dragX = 0;
 
   function setDragX(px) {
@@ -529,7 +531,6 @@ document.addEventListener('DOMContentLoaded', function () {
     drag.swiping = false;
     drag.startX = e.touches ? e.touches[0].clientX : e.clientX;
     drag.delta = 0;
-    drag.atEdge = false;
   }
   function folderPointerMove(e) {
     if (!drag.down) return;
@@ -542,15 +543,11 @@ document.addEventListener('DOMContentLoaded', function () {
       folderStage.classList.add('is-dragging');
       setPaperOut(false);
     }
-    /* Resistance only at the very last folder (dragging further forward) -- signals
-       "end of the line". Dragging past the first folder backward behaves normally. */
-    var atEdge = (activeIndex === folderTotal - 1 && t < 0);
-    drag.atEdge = atEdge;
-    setDragX(Math.max(-140, Math.min(140, atEdge ? t * 0.45 : t)));
+    setDragX(Math.max(-140, Math.min(140, t)));
   }
   function folderPointerUp() {
     if (!drag.down) return;
-    var wasSwiping = drag.swiping, delta = drag.delta, atEdge = drag.atEdge;
+    var wasSwiping = drag.swiping, delta = drag.delta;
     drag.down = false;
     drag.swiping = false;
     folderStage.classList.remove('is-dragging');
@@ -560,13 +557,10 @@ document.addEventListener('DOMContentLoaded', function () {
       if (isIn) setPaperOut(true);
       return;
     }
-    if (atEdge) {
-      setDragX(0);
-      folderStage.classList.add('is-bouncing');
-      var t = setTimeout(function () { folderStage.classList.remove('is-bouncing'); }, 650);
-      folderTimers.push(t);
-      return;
-    }
+    /* A flick in either direction dismisses the front folder to the back of the
+       queue -- there's no "previous" to flick back to any more (one-directional
+       stack), so unlike the old bidirectional carousel there's no edge case to
+       resist against here; the queue just wraps around forever. */
     if (Math.abs(delta) > 55) {
       /* .folder-fan's own drag-offset normally eases back to 0 over 1.45s on its own
          bouncy curve (see CSS) -- fine for a released-but-cancelled drag, but on an
@@ -583,7 +577,7 @@ document.addEventListener('DOMContentLoaded', function () {
       clearFolderTimers();
       folderFan.style.transition = 'transform 1.4s cubic-bezier(0.4, 0, 0.2, 1)';
       setDragX(0);
-      goToFolder(activeIndex + (delta < 0 ? 1 : -1));
+      dismissFront();
       var restoreFanTransition = setTimeout(function () {
         folderFan.style.transition = '';
       }, 1450);
@@ -630,8 +624,8 @@ document.addEventListener('DOMContentLoaded', function () {
         title: { en: 'Music & DJing', de: 'Musik & DJing' },
         text: { en: 'Teaching myself how to DJ on the weekends. Work in progress, but the neighbours are surprisingly supportive.', de: 'Lehre mich am Wochenende das DJing. Work in progress, aber die Nachbarn sind überraschend geduldig.' },
         items: [
-          { type: 'photo', src: 'assets/img/off-the-clock/oc-music-1.webp', duration: 3000 },
-          { type: 'video', src: 'assets/video/off-the-clock/oc-music-2.mp4', duration: 15333 }
+          { type: 'video', src: 'assets/video/off-the-clock/oc-music-2.mp4', duration: 15333 },
+          { type: 'photo', src: 'assets/img/off-the-clock/oc-music-1.webp', duration: 3000 }
         ] },
       { ph: 'oc-ph-1',
         thumb: 'assets/img/off-the-clock/oc-dog-2.webp',
