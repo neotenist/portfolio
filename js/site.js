@@ -2,6 +2,8 @@ document.addEventListener('DOMContentLoaded', function () {
   var DEFAULT_NAME = 'Stranger';
   var storedName = null;
   try { storedName = sessionStorage.getItem('site_name'); } catch (e) {}
+  var storedLang = null;
+  try { storedLang = localStorage.getItem('site_lang'); } catch (e) {}
   var state = { lang: 'en', name: storedName || DEFAULT_NAME };
   var root = document.documentElement;
 
@@ -16,6 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
     state.lang = lang;
     root.setAttribute('lang', lang);
     root.setAttribute('data-lang', lang);
+    try { localStorage.setItem('site_lang', lang); } catch (e) {}
 
     i18nEls.forEach(function (el) {
       var text = el.getAttribute('data-' + lang);
@@ -39,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
-  applyLang('en');
+  applyLang(storedLang === 'de' ? 'de' : 'en');
 
   /* ---------- NAME COLORING ----------
      Wherever the visitor's typed-in name is displayed (hero greeting, contact
