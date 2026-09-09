@@ -168,6 +168,12 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
 .hero-intro { padding-bottom: clamp(2.25rem, 4.5vw, 4rem); }
 .hero-intro + section { padding-top: clamp(2.25rem, 4.5vw, 4rem); }
 .hero-intro .lead { color: #000; }
+/* Same halved gap, applied to the CV's other two section boundaries: timeline
+   -> credentials, and credentials -> contact (which also drops its divider
+   line -- see cv.html). */
+.cv-timeline-section { padding-bottom: clamp(2.25rem, 4.5vw, 4rem); }
+.cv-credentials-section { padding-block: clamp(2.25rem, 4.5vw, 4rem); }
+.cv-credentials-section + #contact { padding-top: clamp(2.25rem, 4.5vw, 4rem); }
 /* Hard shadow for every white-background, black-border box on the site
    (not pills, not the small circular chevron control) -- offset only, no
    blur, full black. .hard-shadow is a plain marker class for the few boxes
@@ -1263,6 +1269,10 @@ footer p, footer a { font-family: var(--font-mono); }
   background: var(--card-bg);
 }
 .project-hero-figure { aspect-ratio: 16 / 9; }
+/* Wordmark Scatter's own page is a real scrolling document (controls panel
+   below the stage), not a full-bleed app like the other two live embeds --
+   16:9 isn't tall enough to show it without an internal scrollbar. */
+.project-hero-figure.is-tall { aspect-ratio: 4 / 3; }
 .project-gallery-figure { aspect-ratio: 1 / 1; }
 .project-hero-figure img,
 .project-gallery-figure img {
@@ -1271,6 +1281,79 @@ footer p, footer a { font-family: var(--font-mono); }
   height: 100%;
   width: 100%;
   object-fit: cover;
+}
+
+/* Live embedded tool in the hero slot (in place of a photo) -- the iframe
+   loads the tool's own hosted build, so a push to that repo shows up here
+   with no separate sync step. Below 820px there isn't room for a WebGL
+   canvas plus its own control panel to be usable, so a notice replaces it
+   instead of trying to shrink the tool to fit. */
+.project-hero-figure iframe {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  width: 100%;
+  border: 0;
+  display: block;
+}
+/* Title row: H1 on the left, the live badge on the right, its own edge
+   aligned with the hero figure below it since both share the same
+   container width. */
+.hero-title-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.hero-live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: #fff;
+  color: var(--ink);
+  padding: 0.4rem 0.7rem;
+  border-radius: var(--radius-pill);
+  border: 2px solid #000;
+  box-shadow: 2px 2px 0 0 #000;
+  flex-shrink: 0;
+  margin-bottom: 0.4rem;
+}
+.hero-live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #13ba4e;
+  animation: hero-live-pulse 1.8s infinite;
+}
+@keyframes hero-live-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(19, 186, 78, .55); }
+  70% { box-shadow: 0 0 0 7px rgba(19, 186, 78, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(19, 186, 78, 0); }
+}
+.hero-mobile-notice {
+  display: none;
+  position: absolute;
+  inset: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+  background: #0d0d0f;
+  color: #e4e4e2;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+@media (max-width: 820px) {
+  .project-hero-figure iframe { display: none; }
+  .hero-mobile-notice { display: flex; }
 }
 
 /* Meta box picks up the shared card treatment (see the hard-shadow selector
@@ -1349,22 +1432,31 @@ footer p, footer a { font-family: var(--font-mono); }
 }
 
 .wf-stack { position: relative; }
-/* top:10vh, not 0 -- the card is 80vh tall, so this centers it vertically in
-   the viewport (10vh clear above, 10vh clear below) instead of pinning it
-   flush to the very top edge, where the tab used to disappear behind the
-   fixed header. */
-.wf-unit { position: sticky; top: 10vh; margin-bottom: 2em; }
+/* top:50% + translateY(-50%), not a fixed top offset -- the card's height is
+   content-driven now (see .wf-shape), so a fixed vh offset can't keep it
+   centered: a short card and a tall one would both stick at the same top
+   edge, leaving very different amounts of clear space below. This centers
+   the card's own midpoint on the viewport's midpoint regardless of how tall
+   it ends up being. */
+/* Scoped to .wf-stack .wf-unit (not just .wf-unit) so this ties the shared
+   .reveal.is-in{transform:none} rule on specificity instead of losing to it --
+   the first card also carries .reveal/.reveal-lg for its entrance animation,
+   and .reveal.is-in resets transform once that animation completes. Matching
+   specificity plus this rule's later position in the file makes it win. */
+.wf-stack .wf-unit { position: sticky; top: 50%; transform: translateY(-50%); margin-bottom: 2em; }
 /* the last card has no sibling below it inside the stack to hold its sticky
    pin open, so without this it detaches early instead of locking in place
    like every other card -- this spacer gives it that same room. */
 .wf-stack::after { content: ""; display: block; height: 80vh; }
 
-/* 80vh is a ceiling, not a fixed size -- on a short/flattened viewport (a
-   landscape phone, a squat browser window) it can shrink enough to squeeze
-   out the image and text entirely. min-height floors it so the card always
-   has room for its content, growing the page's scroll length instead of
-   the card itself shrinking further. */
-.wf-shape { position: relative; width: 100%; height: 80vh; min-height: 600px; display: flex; flex-direction: column; }
+/* The card's height is content-driven, not a fixed viewport fraction: the
+   image keeps its own natural ratio (see .wf-visual) and that, plus the
+   card's own padding, is what determines how tall the card needs to be.
+   80vh only steps in as a ceiling once that natural height would exceed
+   it; min-height is the floor for a short/flattened viewport (a landscape
+   phone, a squat browser window), where even 80vh could otherwise shrink
+   enough to squeeze out the image and text entirely. */
+.wf-shape { position: relative; width: 100%; height: auto; max-height: 80vh; min-height: 600px; overflow: hidden; display: flex; flex-direction: column; }
 
 /* the card body is plain CSS border-radius -- it can't skew or lose its
    rounding at any size. Only the tab notch needs the vector curve, so only
@@ -1372,15 +1464,18 @@ footer p, footer a { font-family: var(--font-mono); }
 .wf-tab { width: clamp(150px, 15vw, 210px); aspect-ratio: 234/34; position: relative; flex-shrink: 0; }
 .wf-tab svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 
-.wf-card-wrap { flex: 1; min-height: 0; position: relative; }
+.wf-card-wrap { position: relative; }
 /* .wf-back sits directly behind .wf-card, same box, but with a square
    (unrounded) top-left corner -- it fills the sliver where the SVG tab's
    curve doesn't perfectly meet the card's rounded corner, reading as the
-   folder's back panel peeking out from behind the front. */
+   folder's back panel peeking out from behind the front. .wf-card is in
+   normal flow now (not absolutely filling a fixed-height ancestor), so
+   .wf-card-wrap's own height comes from it naturally, and .wf-back (still
+   absolute) matches that. */
 .wf-back { position: absolute; inset: 0; border-radius: 0 var(--wf-radius) var(--wf-radius) var(--wf-radius); }
-.wf-card { position: absolute; inset: 0; border-radius: var(--wf-radius); overflow: hidden; }
+.wf-card { position: relative; border-radius: var(--wf-radius); overflow: hidden; }
 
-.wf-content { position: relative; height: 100%; display: grid; grid-template-columns: 1fr 1.15fr; gap: clamp(1.5rem, 3.5vw, 3.5rem); padding: clamp(2rem, 4.5vw, 3.5rem); overflow-y: auto; }
+.wf-content { position: relative; display: grid; grid-template-columns: 1fr 1.15fr; gap: clamp(1.5rem, 3.5vw, 3.5rem); padding: clamp(2rem, 4.5vw, 3.5rem); }
 @media (max-width: 820px) {
   .wf-content { grid-template-columns: 1fr; padding: clamp(1.5rem, 4vw, 2.25rem); gap: 1.5rem; }
   /* Text-then-image stacked in one column runs taller than the 2-column
@@ -1394,13 +1489,19 @@ footer p, footer a { font-family: var(--font-mono); }
 .wf-text-col { display: flex; flex-direction: column; min-height: 0; }
 .wf-eyebrow { font-family: var(--font-mono); font-size: .74rem; font-weight: 700; }
 .wf-title { font-family: var(--font-display); font-weight: 500; font-size: clamp(1.8rem, 3.4vw, 2.9rem); line-height: 1.03; letter-spacing: -.01em; margin-top: .9rem; color: inherit !important; }
-.wf-desc { font-family: var(--font-body); font-size: 1rem; max-width: 32ch; margin-top: 1rem; line-height: 1.5; }
+.wf-desc { font-family: var(--font-body); font-size: clamp(1rem, 1.5vw, 1.25rem); max-width: 32ch; margin-top: 1rem; line-height: 1.5; }
 .wf-link { display: inline-flex; align-items: center; gap: .4rem; margin-top: 1.5rem; font-family: var(--font-mono); font-size: .78rem; font-weight: 700; letter-spacing: .03em; text-decoration: none; color: inherit; border-bottom: 1.5px solid currentColor; padding-bottom: .2rem; width: fit-content; }
 .wf-tags { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: auto; padding-top: 1.5rem; }
 .wf-tag { font-family: var(--font-mono); font-size: .68rem; font-weight: 700; letter-spacing: .03em; padding: .4rem .8rem; border-radius: var(--radius-pill); }
 
-.wf-visual { position: relative; border-radius: 12px; overflow: hidden; min-height: 0; }
-.wf-visual img { width: 100%; height: 100%; min-height: 220px; object-fit: cover; display: block; }
+/* Fixed 4:3 (within the 1:1-to-16:9 landscape range everything is shot in)
+   instead of each photo's own ratio -- simpler, and the height it resolves
+   to (via aspect-ratio, at this column's width) is what now drives the
+   card's own height (see .wf-shape/.wf-content), so the padding around the
+   image ends up equal on top, bottom and right without extra centering
+   math. */
+.wf-visual { position: relative; border-radius: 12px; overflow: hidden; align-self: center; width: 100%; aspect-ratio: 4 / 3; }
+.wf-visual img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
 .wf-blue { color: #000; } .wf-blue .wf-tag { background: #000; color: #fff; }
 .wf-black { color: #fff; } .wf-black .wf-tag { background: #fff; color: #000; }
@@ -1469,17 +1570,23 @@ footer p, footer a { font-family: var(--font-mono); }
   align-items: center;
   justify-content: space-between;
   gap: 1.5rem;
-  padding-block: 1.5rem;
+  padding-block: 2.25rem;
   background: none;
   border: none;
   text-align: left;
   font-family: inherit;
   cursor: pointer;
 }
-.cv-item-head-left { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.25rem 0.875rem; min-width: 0; }
-.cv-item-head .meta { flex: none; font-family: var(--font-mono); }
-.cv-item-head-title { font-family: var(--font-display); font-weight: 500; color: var(--ink); font-size: clamp(1.1rem, 2.4vw, 1.375rem); }
-.cv-item-head-company { color: var(--ink); font-size: 0.9375rem; }
+.cv-item-head-left { display: flex; flex-direction: column; gap: 0.3rem; min-width: 0; }
+.cv-item-head-title { font-family: var(--font-display); font-weight: 500; color: var(--ink); font-size: clamp(1.35rem, 3vw, 1.75rem); }
+/* Company and date share a line -- kept as siblings, not nested, since the
+   i18n script replaces textContent wholesale on any [data-en] element and
+   several of these company spans carry their own translation. */
+.cv-item-head-meta-row { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0.5rem; }
+.cv-item-head-company { color: var(--ink); font-size: 0.9375rem; font-family: var(--font-mono); }
+.cv-item-head-sep { color: var(--ink); font-size: 0.9375rem; font-family: var(--font-mono); }
+.cv-item-head-meta-row .meta { flex: none; font-family: var(--font-mono); }
+.cv-item-head-right { flex: none; display: flex; align-items: center; }
 .cv-item-chevron {
   flex: none;
   display: flex;

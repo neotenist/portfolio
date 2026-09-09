@@ -88,9 +88,9 @@ document.addEventListener('DOMContentLoaded', function () {
   wordmark.addEventListener('animationend', alignGreetingGap);
 
   /* Stop-motion face frames: 1-4 play once on entry, 5-7 play while the head travels on scroll */
-  var INTRO_FRAMES = ['assets/img/1.png', 'assets/img/2.png', 'assets/img/3.png', 'assets/img/4-stop.png'];
-  var TRAVEL_FRAMES = ['assets/img/5.png', 'assets/img/6.png', 'assets/img/7-stop.png'];
-  var REST_FRAME = 'assets/img/4-stop.png';
+  var INTRO_FRAMES = ['assets/img/1.webp?v=2', 'assets/img/2.webp?v=2', 'assets/img/3.webp?v=2', 'assets/img/4-stop.webp?v=2'];
+  var TRAVEL_FRAMES = ['assets/img/5.webp?v=2', 'assets/img/6.webp?v=2', 'assets/img/7-stop.webp?v=2'];
+  var REST_FRAME = 'assets/img/4-stop.webp?v=2';
 
   /* Swapping an <img src> mid-scroll (setHeadFrame below) forces a fresh network
      fetch + decode the first time each frame is requested -- on a slower mobile

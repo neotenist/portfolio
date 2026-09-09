@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>When in doubt, vibe code it! — Maxine Hargrove</title>
   <link rel="stylesheet" href="css/tailwind.css?v=5">
-  <link rel="stylesheet" href="css/style.css?v=108">
+  <link rel="stylesheet" href="css/style.css?v=119">
 </head>
 <body>
 
@@ -43,10 +43,16 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg>
             <span data-en="The receipts." data-de="Die Belege.">The receipts.</span>
           </a>
-          <h1 class="h1-display mt-6 max-w-[16ch] text-ink">When in doubt, vibe code it!</h1>
+          <div class="hero-title-row mt-6">
+            <h1 class="h1-display max-w-[16ch] text-ink">When in doubt, vibe code it!</h1>
+            <div class="hero-live-badge"><span class="hero-live-dot"></span><span data-en="Live — drop images in" data-de="Live — Bilder hineinziehen">Live — drop images in</span></div>
+          </div>
           <div class="mt-10">
             <div class="project-hero-figure">
-              <img src="assets/img/work-5-vibe-code.jpg" alt="When in doubt, vibe code it!" loading="lazy">
+              <iframe src="https://neotenist.github.io/trichrome/" title="Trichrome — live tool" loading="lazy"></iframe>
+              <div class="hero-mobile-notice">
+                <p data-en="This is a browser-based tool with many adjustment options. It's not mobile-optimized at this point — please view this page on a desktop browser." data-de="Das hier ist ein browserbasiertes Tool mit vielen Einstellmöglichkeiten. Es ist derzeit nicht für Mobilgeräte optimiert — bitte öffne diese Seite auf einem Desktop-Browser.">This is a browser-based tool with many adjustment options. It's not mobile-optimized at this point — please view this page on a desktop browser.</p>
+              </div>
             </div>
           </div>
         </div>
@@ -57,31 +63,28 @@
         <div class="grid gap-12 lg:grid-cols-12">
           <div class="lg:col-span-4">
             <div class="lg:sticky lg:top-32">
-              <div class="reveal" style="--proj-accent:#13ba4e;--proj-accent-ink:#000;">
+              <div class="reveal" style="--proj-accent:#df9a00;--proj-accent-ink:#000;">
                 <div class="project-meta-dl">
                   <h4 data-en="Details" data-de="Details">Details</h4>
-                  <div class="project-meta-row"><dt class="meta text-ink-soft" data-en="Client" data-de="Kunde">Client</dt><dd class="text-ink">Onlineprinters</dd></div>
+                  <div class="project-meta-row"><dt class="meta text-ink-soft" data-en="Type" data-de="Art">Type</dt><dd class="text-ink" data-en="Local web app" data-de="Lokale Web-App">Local web app</dd></div>
                   <div class="project-meta-row"><dt class="meta text-ink-soft" data-en="Year" data-de="Jahr">Year</dt><dd class="text-ink">2026</dd></div>
                   <div class="project-meta-row"><dt class="meta text-ink-soft" data-en="Role" data-de="Rolle">Role</dt><dd class="text-ink" data-en="Concept, build" data-de="Konzept, Umsetzung">Concept, build</dd></div>
-                  <div class="project-meta-row"><dt class="meta text-ink-soft" data-en="Focus" data-de="Fokus">Focus</dt><dd class="text-ink" data-en="Tooling, AI workflows" data-de="Tooling, KI-Workflows">Tooling, AI workflows</dd></div>
+                  <div class="project-meta-row"><dt class="meta text-ink-soft" data-en="Focus" data-de="Fokus">Focus</dt><dd class="text-ink" data-en="Client-side image processing" data-de="Client-seitige Bildverarbeitung">Client-side image processing</dd></div>
+                  <div class="project-meta-row"><dt class="meta text-ink-soft" data-en="URL" data-de="URL">URL</dt><dd class="text-ink"><a href="https://neotenist.github.io/trichrome/" target="_blank" rel="noopener" class="text-ink underline decoration-1 underline-offset-2">Open &#8599;</a></dd></div>
+                  <div class="project-meta-row"><dt class="meta text-ink-soft" data-en="Code" data-de="Code">Code</dt><dd class="text-ink"><a href="https://github.com/neotenist/trichrome" target="_blank" rel="noopener" class="text-ink underline decoration-1 underline-offset-2">GitHub &#8599;</a></dd></div>
                   <div class="project-tags">
-                    <span class="pill">Web</span>
-                    <span class="pill">AI</span>
+                    <span class="pill">Tool</span>
+                    <span class="pill">AI-built</span>
                   </div>
                 </div>
-                <div class="mt-8 space-y-4">
-                  <p class="lead text-ink" data-en="Every campaign needs the same asset in a dozen shapes: newsletter, landing page, social, homepage banner. Figma exports the sizes, but it can't write WebP, and it gives you no control over compression quality on PNG or JPEG. So every batch ended in Photoshop or some web converter to get the file sizes down." data-de="Jede Aktion braucht dasselbe Motiv in einem Dutzend Formaten: Newsletter, Landingpage, Social, Startseitenbanner. Figma spuckt zwar alle Größen aus, kann aber kein WebP und lässt einen die Qualität bei PNG und JPEG nicht regeln. Also ging es danach jedes Mal noch durch Photoshop oder irgendeinen Konverter, nur damit die Dateien kleiner werden.">Every campaign needs the same asset in a dozen shapes: newsletter, landing page, social, homepage banner. Figma exports the sizes, but it can't write WebP, and it gives you no control over compression quality on PNG or JPEG. So every batch ended in Photoshop or some web converter to get the file sizes down.</p>
-                  <p class="body-text text-ink-soft" data-en="I vibe coded a tool with Claude to remove that step. Drop in a PNG, JPEG or WebP, pick the formats you want out, and set the quality per format with a slider that shows the resulting file size as you move it. Then export all three at once. It's a single HTML file: drag it into a browser and it runs, no install and no account, which is why the rest of the team actually uses it." data-de="Diesen Schritt habe ich mir mit Claude wegprogrammiert. Man zieht ein PNG, JPEG oder WebP rein, wählt die Ausgabeformate und stellt die Qualität pro Format über einen Regler ein, der die entstehende Dateigröße gleich mit anzeigt. Dann alles auf einmal exportieren. Das Ganze ist eine einzige HTML-Datei: in den Browser ziehen, läuft. Keine Installation, kein Account. Genau deshalb benutzt das Team sie auch wirklich.">I vibe coded a tool with Claude to remove that step. Drop in a PNG, JPEG or WebP, pick the formats you want out, and set the quality per format with a slider that shows the resulting file size as you move it. Then export all three at once. It's a single HTML file: drag it into a browser and it runs, no install and no account, which is why the rest of the team actually uses it.</p>
-                  <p class="body-text text-ink-soft" data-en="This is the kind of AI use I argue for. Instead of having AI slop generated for you, you build yourself a real tool that fits the way you actually work." data-de="Dafür plädiere ich, wenn es um KI geht: sich statt AI Slop generieren zu lassen ein echtes Werkzeug zu bauen, das zum eigenen Arbeitsalltag passt.">This is the kind of AI use I argue for. Instead of having AI slop generated for you, you build yourself a real tool that fits the way you actually work.</p>
-                </div>
-
               </div>
             </div>
           </div>
           <div class="lg:col-span-8">
-            <div class="project-gallery">
-              <div class="reveal project-gallery-figure"><img src="assets/img/p5-g1.jpg" alt="When in doubt, vibe code it!" loading="lazy"></div>
-              <div class="reveal project-gallery-figure"><img src="assets/img/p5-g2.jpg" alt="When in doubt, vibe code it!" loading="lazy"></div>
+            <div class="reveal space-y-4">
+              <p class="lead text-ink" data-en="A local image converter — drop in PNG, JPG, or WEBP, batch-convert between formats, and compare file sizes side by side. Nothing leaves the browser." data-de="Ein lokaler Bildkonverter — PNG, JPG oder WEBP reinziehen, zwischen den Formaten stapelweise konvertieren und die Dateigrößen direkt vergleichen. Nichts verlässt den Browser.">A local image converter — drop in PNG, JPG, or WEBP, batch-convert between formats, and compare file sizes side by side. Nothing leaves the browser.</p>
+              <p class="body-text text-ink" data-en="Up to 40 images at once, each converted and measured in real time across all three formats, so the actual size trade-off is visible before exporting anything." data-de="Bis zu 40 Bilder gleichzeitig, jedes in Echtzeit über alle drei Formate hinweg konvertiert und gemessen, sodass der tatsächliche Größen-Trade-off sichtbar ist, bevor überhaupt etwas exportiert wird.">Up to 40 images at once, each converted and measured in real time across all three formats, so the actual size trade-off is visible before exporting anything.</p>
+              <p class="body-text text-ink" data-en="A genuinely useful tool I kept needing myself — asset prep that used to mean several browser tabs and manual exports is now one page." data-de="Ein Tool, das ich selbst ständig gebraucht habe — Asset-Vorbereitung, die früher mehrere Browser-Tabs und manuelle Exporte bedeutet hat, ist jetzt eine Seite.">A genuinely useful tool I kept needing myself — asset prep that used to mean several browser tabs and manual exports is now one page.</p>
             </div>
           </div>
         </div>
@@ -90,13 +93,13 @@
       <!-- PREV / NEXT -->
       <section class="container-page section border-b-0 project-nav-section">
         <div class="grid gap-10 sm:grid-cols-2">
-          <a href="work-shapes-n-calendars.html" class="project-nav-link">
+          <a href="work-liquid-metal.html" class="project-nav-link">
             <span class="project-nav-meta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg><span data-en="Previous project" data-de="Vorheriges Projekt">Previous project</span></span>
-            <h2 class="project-nav-title h3-display mt-3 text-ink">Shapes'n'Calendars</h2>
+            <h2 class="project-nav-title h3-display mt-3 text-ink">Liquid Metal</h2>
           </a>
-          <a href="work-website-for-eva.html" class="project-nav-link sm:text-right">
+          <a href="work-wordmark-scatter.html" class="project-nav-link sm:text-right">
             <span class="project-nav-meta" style="justify-content:flex-end"><span data-en="Next project" data-de="Nächstes Projekt">Next project</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></span>
-            <h2 class="project-nav-title h3-display mt-3 text-ink">Website for Eva</h2>
+            <h2 class="project-nav-title h3-display mt-3 text-ink">Wordmark Scatter</h2>
           </a>
         </div>
       </section>
