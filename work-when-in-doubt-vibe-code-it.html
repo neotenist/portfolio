@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>When in doubt, vibe code it! — Maxine Hargrove</title>
   <link rel="stylesheet" href="css/tailwind.css?v=5">
-  <link rel="stylesheet" href="css/style.css?v=102">
+  <link rel="stylesheet" href="css/style.css?v=108">
 </head>
 <body>
 
@@ -37,7 +37,7 @@
     <main>
 
       <!-- PROJECT HEADER -->
-      <section class="container-page section border-b-0" style="padding-top:calc(var(--header-h) + clamp(2rem,6vw,4rem))">
+      <section class="container-page section border-b-0 project-header-section" style="padding-top:calc(var(--header-h) + clamp(2rem,6vw,4rem))">
         <div class="reveal">
           <a class="project-back meta text-ink-soft" href="work.html">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg>
@@ -52,24 +52,22 @@
         </div>
       </section>
 
-      <div class="h-px w-full bg-[var(--line)]"></div>
-
       <!-- PROJECT BODY -->
-      <section class="container-page section border-b-0">
+      <section class="container-page section border-b-0 project-body-section">
         <div class="grid gap-12 lg:grid-cols-12">
           <div class="lg:col-span-4">
             <div class="lg:sticky lg:top-32">
               <div class="reveal" style="--proj-accent:#13ba4e;--proj-accent-ink:#000;">
-                <dl class="project-meta-dl">
-                  <div class="project-meta-accent"></div>
+                <div class="project-meta-dl">
+                  <h4 data-en="Details" data-de="Details">Details</h4>
                   <div class="project-meta-row"><dt class="meta text-ink-soft" data-en="Client" data-de="Kunde">Client</dt><dd class="text-ink">Onlineprinters</dd></div>
                   <div class="project-meta-row"><dt class="meta text-ink-soft" data-en="Year" data-de="Jahr">Year</dt><dd class="text-ink">2026</dd></div>
                   <div class="project-meta-row"><dt class="meta text-ink-soft" data-en="Role" data-de="Rolle">Role</dt><dd class="text-ink" data-en="Concept, build" data-de="Konzept, Umsetzung">Concept, build</dd></div>
                   <div class="project-meta-row"><dt class="meta text-ink-soft" data-en="Focus" data-de="Fokus">Focus</dt><dd class="text-ink" data-en="Tooling, AI workflows" data-de="Tooling, KI-Workflows">Tooling, AI workflows</dd></div>
-                </dl>
-                <div class="project-tags">
+                  <div class="project-tags">
                     <span class="pill">Web</span>
                     <span class="pill">AI</span>
+                  </div>
                 </div>
                 <div class="mt-8 space-y-4">
                   <p class="lead text-ink" data-en="Every campaign needs the same asset in a dozen shapes: newsletter, landing page, social, homepage banner. Figma exports the sizes, but it can't write WebP, and it gives you no control over compression quality on PNG or JPEG. So every batch ended in Photoshop or some web converter to get the file sizes down." data-de="Jede Aktion braucht dasselbe Motiv in einem Dutzend Formaten: Newsletter, Landingpage, Social, Startseitenbanner. Figma spuckt zwar alle Größen aus, kann aber kein WebP und lässt einen die Qualität bei PNG und JPEG nicht regeln. Also ging es danach jedes Mal noch durch Photoshop oder irgendeinen Konverter, nur damit die Dateien kleiner werden.">Every campaign needs the same asset in a dozen shapes: newsletter, landing page, social, homepage banner. Figma exports the sizes, but it can't write WebP, and it gives you no control over compression quality on PNG or JPEG. So every batch ended in Photoshop or some web converter to get the file sizes down.</p>
@@ -89,10 +87,8 @@
         </div>
       </section>
 
-      <div class="h-px w-full bg-[var(--line)]"></div>
-
       <!-- PREV / NEXT -->
-      <section class="container-page section border-b-0">
+      <section class="container-page section border-b-0 project-nav-section">
         <div class="grid gap-10 sm:grid-cols-2">
           <a href="work-shapes-n-calendars.html" class="project-nav-link">
             <span class="project-nav-meta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path></svg><span data-en="Previous project" data-de="Vorheriges Projekt">Previous project</span></span>

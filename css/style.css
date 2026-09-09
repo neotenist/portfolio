@@ -88,7 +88,7 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
    that site's own Tailwind build has them as real theme tokens. Defining them here
    is what actually makes text-ink-soft etc. do anything. */
 .text-ink { color: var(--ink); }
-.text-ink-soft { color: var(--ink-soft); }
+.text-ink-soft { color: var(--ink); }
 .font-display { font-family: var(--font-display); }
 /* Tailwind's border-* utilities only ever set border-WIDTH -- border-STYLE normally
    comes from Preflight (disabled here so it doesn't fight the rest of this file), so
@@ -127,7 +127,7 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
   font-family: var(--font-display);
   font-weight: 500;
   letter-spacing: -0.02em;
-  font-size: clamp(3rem, 7.5vw, 6.5rem);
+  font-size: clamp(2rem, 5vw, 4.25rem);
   line-height: 1.05;
 }
 .h2-display {
@@ -222,7 +222,7 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
 }
 
 .gate-lang-label {
-  color: var(--ink-soft);
+  color: var(--ink);
   margin-right: 4px;
 }
 
@@ -233,7 +233,7 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.06em;
-  color: var(--ink-soft);
+  color: var(--ink);
 }
 .lang-btn[aria-pressed="true"] {
   color: var(--ink);
@@ -283,7 +283,7 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
   color: var(--ink);
 }
 .gate-input:focus { outline: none; border-bottom-color: var(--ink-soft); }
-.gate-input::placeholder { color: #b5b5b9; }
+.gate-input::placeholder { color: var(--ink); }
 
 .gate-submit {
   background: var(--ink);
@@ -301,7 +301,7 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
 .gate-skip {
   background: none;
   border: none;
-  color: var(--ink-soft);
+  color: var(--ink);
   font-size: 14px;
   text-decoration: underline;
   text-underline-offset: 3px;
@@ -396,16 +396,16 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 42px;
-  height: 32px;
-  padding: 0 13px;
+  min-width: 48px;
+  height: 36px;
+  padding: 0 15px;
   border-radius: var(--radius-pill);
   border: none;
   font-family: var(--font-mono);
-  font-size: 13px;
+  font-size: 15px;
   letter-spacing: 0.02em;
   line-height: 1;
-  color: var(--ink-soft);
+  color: var(--ink);
   transition: color 0.2s ease, background 0.2s ease;
   text-decoration: none;
 }
@@ -1000,7 +1000,7 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
   font-family: var(--font-mono);
   font-weight: 600;
   font-size: 0.85rem;
-  color: var(--ink-soft);
+  color: var(--ink);
   transition: color 0.2s ease;
 }
 .oc-dot.is-active .oc-dot-label, .oc-dot:hover .oc-dot-label { color: var(--ink); }
@@ -1274,21 +1274,14 @@ footer p, footer a { font-family: var(--font-mono); }
 }
 
 /* Meta box picks up the shared card treatment (see the hard-shadow selector
-   list above); --proj-accent is set per project via an inline style on this
-   element, same pattern .wf-* already uses for the folder colors. */
+   list above); --proj-accent is set per project via an inline style on the
+   surrounding .reveal, same pattern .wf-* already uses for the folder colors
+   -- now only read by the tag pills inside this box. */
 .project-meta-dl {
-  position: relative;
-  overflow: hidden;
   background: var(--card-bg);
   border: 2px solid #000;
   border-radius: 12px;
-  padding: 1.6rem 1.4rem 0.25rem;
-}
-.project-meta-accent {
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 6px;
-  background: var(--proj-accent, var(--heading-color));
+  padding: 1.25rem 1.5rem 1.5rem;
 }
 .project-meta-row {
   display: grid;
@@ -1297,6 +1290,7 @@ footer p, footer a { font-family: var(--font-mono); }
   border-bottom: var(--line-w) solid var(--line);
   padding-block: 0.75rem;
 }
+.project-meta-row dt { font-family: var(--font-mono); }
 .project-meta-row dd { grid-column: span 2 / span 2; font-size: 0.9375rem; }
 
 .project-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.25rem; }
@@ -1338,6 +1332,13 @@ footer p, footer a { font-family: var(--font-mono); }
 }
 .project-nav-meta svg { height: 1rem; width: 1rem; }
 
+/* Half the gap on both sides of the project body -- same halved value as
+   .hero-intro elsewhere -- now that the divider lines between hero/body and
+   body/nav are gone. */
+.project-header-section { padding-bottom: clamp(2.25rem, 4.5vw, 4rem); }
+.project-body-section { padding-block: clamp(2.25rem, 4.5vw, 4rem); }
+.project-nav-section { padding-top: clamp(2.25rem, 4.5vw, 4rem); }
+
 /* ---------- Work overview: folder stack ----------
    Namespaced "wf-" (work-folders) throughout -- this is a separate component
    from the unrelated "What I take on" carousel above (.folder / .folder-back
@@ -1358,7 +1359,12 @@ footer p, footer a { font-family: var(--font-mono); }
    like every other card -- this spacer gives it that same room. */
 .wf-stack::after { content: ""; display: block; height: 80vh; }
 
-.wf-shape { position: relative; width: 100%; height: 80vh; display: flex; flex-direction: column; }
+/* 80vh is a ceiling, not a fixed size -- on a short/flattened viewport (a
+   landscape phone, a squat browser window) it can shrink enough to squeeze
+   out the image and text entirely. min-height floors it so the card always
+   has room for its content, growing the page's scroll length instead of
+   the card itself shrinking further. */
+.wf-shape { position: relative; width: 100%; height: 80vh; min-height: 600px; display: flex; flex-direction: column; }
 
 /* the card body is plain CSS border-radius -- it can't skew or lose its
    rounding at any size. Only the tab notch needs the vector curve, so only
@@ -1377,6 +1383,12 @@ footer p, footer a { font-family: var(--font-mono); }
 .wf-content { position: relative; height: 100%; display: grid; grid-template-columns: 1fr 1.15fr; gap: clamp(1.5rem, 3.5vw, 3.5rem); padding: clamp(2rem, 4.5vw, 3.5rem); overflow-y: auto; }
 @media (max-width: 820px) {
   .wf-content { grid-template-columns: 1fr; padding: clamp(1.5rem, 4vw, 2.25rem); gap: 1.5rem; }
+  /* Text-then-image stacked in one column runs taller than the 2-column
+     desktop layout, so the photo lands near the bottom of the card -- right
+     where the next card's natural scroll position starts overlapping it.
+     Extra margin delays that next card's entrance so this one's image clears
+     first. */
+  .wf-unit { margin-bottom: 16vh; }
 }
 
 .wf-text-col { display: flex; flex-direction: column; min-height: 0; }
@@ -1467,7 +1479,7 @@ footer p, footer a { font-family: var(--font-mono); }
 .cv-item-head-left { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.25rem 0.875rem; min-width: 0; }
 .cv-item-head .meta { flex: none; font-family: var(--font-mono); }
 .cv-item-head-title { font-family: var(--font-display); font-weight: 500; color: var(--ink); font-size: clamp(1.1rem, 2.4vw, 1.375rem); }
-.cv-item-head-company { color: var(--ink-soft); font-size: 0.9375rem; }
+.cv-item-head-company { color: var(--ink); font-size: 0.9375rem; }
 .cv-item-chevron {
   flex: none;
   display: flex;
@@ -1512,7 +1524,7 @@ footer p, footer a { font-family: var(--font-mono); }
    box; card-bg (white) plus the border is what actually reads as one. */
 .cv-bento-meta, .cv-bento-tools, .cv-bento-desc, .cv-bento-worth { background: var(--card-bg); border: 2px solid #000; border-radius: 12px; padding: 1.25rem 1.5rem; width: 100%; }
 .cv-bento-meta p { margin-top: 0.25rem; }
-.cv-bento h4 {
+.cv-bento h4, .project-meta-dl h4 {
   font-family: var(--font-display);
   font-weight: 500;
   font-size: 1.25rem;
@@ -1522,7 +1534,7 @@ footer p, footer a { font-family: var(--font-mono); }
   margin-bottom: 0.75rem;
 }
 .cv-bento-desc-group + .cv-bento-desc-group { margin-top: 1.25rem; }
-.cv-bento-desc-group h5 { font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-faint, var(--ink-soft)); margin-bottom: 0.625rem; }
+.cv-bento-desc-group h5 { font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink); margin-bottom: 0.625rem; }
 .cv-bento-worth p + p { margin-top: 0.875rem; }
 /* .pill's own background is card-bg (white) too, so sitting inside a now-white
    bento cell it lost its fill contrast and read as outline-only. page-bg here
