@@ -1504,12 +1504,11 @@ footer p, footer a { font-family: var(--font-mono); }
    math. */
 .wf-visual { position: relative; border-radius: 12px; overflow: hidden; align-self: center; width: 100%; aspect-ratio: 4 / 3; }
 .wf-visual img { width: 100%; height: 100%; object-fit: cover; display: block; }
-/* Live-tool folders (e.g. Liquid Metal) embed the tool itself instead of a
-   still image -- the shader has no pointer interaction left (removed
-   earlier), so it's just a passive animated backdrop here, safe to sit
-   inside a scrolling card. pointer-events:none anyway, so it never eats a
-   scroll/drag gesture meant for the page. */
-.wf-visual iframe { width: 100%; height: 100%; border: 0; display: block; pointer-events: none; }
+/* Live-tool folders (e.g. Liquid Metal, Wordmark Scatter) embed the tool
+   itself instead of a still image. Pointer events stay enabled (the
+   default) -- Wordmark Scatter's whole point is hover/click reacting live,
+   even here. */
+.wf-visual iframe { width: 100%; height: 100%; border: 0; display: block; }
 
 .wf-blue { color: #000; } .wf-blue .wf-tag { background: #000; color: #fff; }
 .wf-black { color: #fff; } .wf-black .wf-tag { background: #fff; color: #000; }
