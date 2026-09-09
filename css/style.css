@@ -680,6 +680,13 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
   text-transform: none;
   margin: 0;
 }
+/* On narrow viewports, force "version" onto its own line instead of relying
+   on shape-outside to wrap it around the docked head -- at just the right
+   width "The short version" can fit on one line, and that line sits close
+   enough to the float to visually overlap the head docked beside it. */
+@media (max-width: 639px) {
+  .short-version-break { display: block; }
+}
 
 .reveal-text {
   font-family: var(--font-body);
