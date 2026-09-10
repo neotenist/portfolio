@@ -9,7 +9,19 @@ document.addEventListener('DOMContentLoaded', function () {
   var state = window.Site.state;
 
   document.addEventListener('site:gateclosed', function () {
-    startHeroSequence();
+    /* A same-session reload skips the gate straight to this event -- if that
+       lands already scrolled past the hero entirely, the wordmark's
+       scroll-linked dock (further down) is already at or near its docked
+       end state, so playing the full entrance is exactly backwards: it
+       pops open at full hero size, then the docking scroll-trigger
+       immediately snaps it down into the header the instant it evaluates
+       the actual scroll position. Landing already docked, with no
+       animation, matches what the visitor is actually looking at. */
+    if (document.querySelector('.hero').getBoundingClientRect().bottom <= 0) {
+      skipHeroIntroToFinalState();
+    } else {
+      startHeroSequence();
+    }
   });
 
   document.addEventListener('site:langchange', function () {
@@ -148,6 +160,24 @@ document.addEventListener('DOMContentLoaded', function () {
       .call(function () {
         playStopMotion(heroPhoto, INTRO_FRAMES, [500, 90, 90], 1);
       }, null, 'letters+=1.9');
+  }
+
+  /* Sets every piece startHeroSequence() would have animated in straight to
+     its finished state -- no typewriter, no wordmark pop, no stop-motion.
+     The scroll-linked docking further down (captureWordBase/ScrollTrigger.
+     refresh on window load) still runs regardless and positions the
+     wordmark/head correctly for wherever the visitor actually is. */
+  function skipHeroIntroToFinalState() {
+    heroStarted = true;
+    var fullText = getGreetText(state.lang, state.name);
+    greetTyped.innerHTML = window.Site.typedColoredHTML(fullText, state.name, fullText.length);
+    gsap.set(greetCursor, { autoAlpha: 0 });
+    wordmark.style.animation = 'none';
+    gsap.set(wordmark, { opacity: 1 });
+    wordmarkSlot.classList.add('is-in');
+    heroPills.classList.add('is-in');
+    navRight.classList.add('is-visible');
+    heroPhoto.classList.add('is-visible');
   }
 
   /* ---------- SCROLL: HERO WORDMARK SHRINKS INTO THE HEADER LOGO ----------

@@ -48,28 +48,34 @@ document.addEventListener('DOMContentLoaded', function () {
      Wherever the visitor's typed-in name is displayed (hero greeting, contact
      heading), each letter cycles through this order, repeating once the name
      runs longer than the color list. */
-  var NAME_COLORS = ['#53add0', '#ed2f3e', '#df9a00', '#13ba4e', '#da3c76', '#000000'];
+  var NAME_COLORS = ['#53add0', '#ed2f3e', '#df9a00', '#13ba4e', '#da3c76'];
   function escapeHtml(s) {
     return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
-  function colorizeName(name) {
-    return name.split('').map(function (ch, i) {
-      return '<span style="color:' + NAME_COLORS[i % NAME_COLORS.length] + '">' + escapeHtml(ch) + '</span>';
+  function colorizeChars(text, startIndex) {
+    return text.split('').map(function (ch, i) {
+      return '<span style="color:' + NAME_COLORS[(startIndex + i) % NAME_COLORS.length] + '">' + escapeHtml(ch) + '</span>';
     }).join('');
+  }
+  function colorizeName(name) {
+    return colorizeChars(name, 0);
   }
   /* Builds the HTML for a typewriter reveal of `n` characters of `fullText`,
      coloring the name portion letter-by-letter as it's revealed instead of
-     typing it plain and recoloring once done. */
+     typing it plain and recoloring once done. A "!" immediately after the
+     name (the hero greeting's "Hi {name}!") joins the same colored run,
+     continuing the cycle instead of landing back in plain text. */
   function typedColoredHTML(fullText, name, n) {
     var idx = fullText.indexOf(name);
     if (idx === -1) return escapeHtml(fullText.slice(0, n));
     var nameEnd = idx + name.length;
+    var colorEnd = fullText.charAt(nameEnd) === '!' ? nameEnd + 1 : nameEnd;
     var html = escapeHtml(fullText.slice(0, Math.min(n, idx)));
     if (n > idx) {
-      var shown = name.slice(0, Math.min(n, nameEnd) - idx);
-      html += colorizeName(shown);
+      var shown = fullText.slice(idx, Math.min(n, colorEnd));
+      html += colorizeChars(shown, 0);
     }
-    if (n > nameEnd) html += escapeHtml(fullText.slice(nameEnd, n));
+    if (n > colorEnd) html += escapeHtml(fullText.slice(colorEnd, n));
     return html;
   }
 
@@ -278,5 +284,30 @@ document.addEventListener('DOMContentLoaded', function () {
         head.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
       });
     });
+  }
+
+  /* ---------- WORK FOLDERS: match height on mobile ----------
+     .wf-shape's height is content-driven (see style.css) -- fine on desktop's
+     two-column layout, where the image's own aspect ratio sets a floor most
+     description lengths don't exceed, but on mobile's single stacked column
+     a card with a 3-line description is directly that much taller than one
+     with 2. Since each card must peek out from behind the one before it as
+     it locks into its sticky position, any height mismatch between them
+     shows up as a visibly uneven stack. Matching every card to the tallest
+     one's own natural height fixes that without hardcoding a number that
+     would go stale the next time any description's length changes. */
+  var wfShapes = document.querySelectorAll('.wf-shape');
+  if (wfShapes.length) {
+    var WF_MOBILE_MAX_WIDTH = 820; // matches .wf-content's single-column breakpoint
+    var matchWfShapeHeights = function () {
+      wfShapes.forEach(function (el) { el.style.height = ''; });
+      if (window.innerWidth > WF_MOBILE_MAX_WIDTH) return;
+      var maxH = 0;
+      wfShapes.forEach(function (el) { maxH = Math.max(maxH, el.getBoundingClientRect().height); });
+      wfShapes.forEach(function (el) { el.style.height = maxH + 'px'; });
+    };
+    matchWfShapeHeights();
+    window.addEventListener('load', matchWfShapeHeights);
+    window.addEventListener('resize', matchWfShapeHeights);
   }
 });
