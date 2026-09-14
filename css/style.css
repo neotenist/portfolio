@@ -46,7 +46,7 @@
   --ink-soft: #11111194;
   --heading-color: #000;
   --paper: #fff;
-  --page-bg: #eee;
+  --page-bg: #f2f0e9;
   --card-bg: #fff;
   --line: #d7d7d7;
   --line-w: 1px;
@@ -96,15 +96,13 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
    renders with width but no visible line. */
 *, ::before, ::after { border-width: 0; border-style: solid; border-color: var(--line); }
 
-/* ---------- Page background: solid, no grid ---------- */
+/* ---------- Page background: cross pattern ---------- */
 .paper-grid {
   position: relative;
   background-color: var(--page-bg);
-  background-image:
-    linear-gradient(to right, #d9d9d9 1px, transparent 1px),
-    linear-gradient(to bottom, #d9d9d9 1px, transparent 1px);
-  background-size: 28px 28px;
-  /* fixed, not scroll -- otherwise the grid visibly slides underneath the
+  background-image: url("data:image/svg+xml,<svg%20xmlns='http://www.w3.org/2000/svg'%20width='28'%20height='28'><path%20d='M14%209v10M9%2014h10'%20stroke='%23eae7df'%20stroke-width='2'%20stroke-linecap='square'/></svg>");
+  background-size: 36.4px 36.4px;
+  /* fixed, not scroll -- otherwise the pattern visibly slides underneath the
      work page's sticky folder stack, since the folders stop moving while a
      scroll-attached background keeps going. Fixed keeps it looking like one
      static backdrop everywhere, including there. */
