@@ -626,7 +626,7 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
      was tuned on, but at any shorter viewport (62vh itself shrinks) that
      same fixed amount ate a much bigger share of a now-smaller head, and at
      a taller one barely registered. */
-  transform: translateY(-20%);
+  transform: translateY(-12%);
   z-index: 56;
   height: 62vh;
   width: min(86vh, 90vw);
@@ -665,12 +665,12 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
 
 .short-head-target {
   float: right;
-  margin-top: calc(clamp(5rem, 11vw, 10rem) * -1);
-  margin-right: calc(clamp(1rem, 4vw, 4rem) * -1);
+  margin-top: calc(clamp(1rem, 2.2vw, 2rem) * -1);
+  margin-right: calc(clamp(0.2rem, 0.8vw, 0.8rem) * -1);
   margin-left: 1.25rem;
   aspect-ratio: 1 / 1;
   height: auto;
-  width: min(68vw, 60rem);
+  width: min(14vw, 12rem);
   shape-outside: ellipse(48% 50% at 52% 50%);
   shape-margin: 1.25rem;
 }
@@ -1292,6 +1292,10 @@ footer p, footer a { font-family: var(--font-mono); }
    16:9 isn't tall enough to show it without an internal scrollbar. */
 .project-hero-figure.is-tall { aspect-ratio: 4 / 3; }
 .project-gallery-figure { aspect-ratio: 1 / 1; }
+/* Talendu's wireframe image is a transparent PNG/WebP export -- without its
+   own background it would just float on whatever card-bg is behind it. A
+   subtle warm grey gives it a real edge instead. */
+.project-gallery-figure--mockup { background: #e3e0d6; }
 .project-hero-figure img,
 .project-gallery-figure img {
   position: absolute;
