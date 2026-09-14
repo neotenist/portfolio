@@ -6,13 +6,239 @@
   <title>Maxine Hargrove — Portfolio</title>
   <link rel="stylesheet" href="css/tailwind.css?v=5">
   <link rel="stylesheet" href="css/style.css?v=128">
+
+  <style>
+  /* ================= Work + Experience sections (added) =================
+     Colors are scoped to these two sections via a local custom-property
+     namespace (--d-*) -- nothing here touches :root or body, so no existing
+     component structure anywhere else on the page is affected. */
+  .d-work-section, .d-experience-section {
+    --d-ink: #191c17;
+    --wf-radius: 20px;
+    --d-blue-back:#6f9cb5; --d-blue-card:#a8c9db;
+    --d-red-back:#c9654f; --d-red-card:#e49b85;
+    --d-yellow-back:#d4ac2e; --d-yellow-card:#eed151;
+    --d-green-back:#4c6b45; --d-green-card:#8aab74;
+    --d-pink-back:#d98aab; --d-pink-card:#f1abc8;
+    --d-dark-back:#10281f; --d-dark-card:#193e31;
+  }
+  .d-work-foot { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 20px; margin-top: 28px; }
+  .d-work-foot a { border-bottom: 1px solid currentColor; padding-bottom: 4px; font-size: 13px; }
+
+  /* Experience/CV: pink band (Contact below is the dark green one -- swapped
+     per her latest call). Same .container-page class as every other section
+     (not full-bleed) -- same max-width and side padding as the rest of the
+     page's content, plus a guaranteed minimum outer margin (min() below) so
+     it never touches the viewport edge even under 1200px; rounded corners
+     visible on all four sides since the box is narrower than the viewport. */
+  .d-experience-section { background: #f1abc8; border-radius: 32px; width: min(1200px, 100% - 2em); margin-inline: auto; }
+  .d-experience-heading, .d-experience-section .d-section-eyebrow { color: #191c17 !important; }
+
+  /* Small "0N / ..." numbered label above a section heading, echoing the
+     reference file's own section numbering (which pairs some of these with
+     a second, right-aligned line on the same row -- e.g. "The short version"
+     + "Nice to meet you" -- and leaves others, like Work's, as a single
+     line). Solid color throughout, no opacity-faded grey -- ink by default,
+     cream inside the dark Experience band above. */
+  .d-section-eyebrow { display: block; margin-bottom: 28px; font-family: var(--font-mono); }
+  .d-section-eyebrow-pair { display: flex; justify-content: space-between; gap: 20px; }
+  /* NOTE for next time: mt-4, mt-16, gap-4 (bare) and max-w-[46em] all look
+     like real Tailwind utilities but aren't in css/tailwind.css -- that
+     bundle only contains classes the ORIGINAL site files used somewhere, so
+     any utility class introduced here that wasn't already used verbatim
+     elsewhere on the real site silently matches nothing. Spacing added to
+     new markup needs to be a real rule in this stylesheet, not a guessed
+     Tailwind class -- confirmed against the actual bundle, not assumed. */
+  .d-lead-gap { margin-top: 1.5rem !important; max-width: 46em; }
+  .d-subheading-gap { margin-top: 3rem; }
+  .d-mono-eyebrow { font-family: var(--font-mono); }
+  /* Hidden rather than removed from the DOM -- main.js reads #hero-role
+     directly (heroRole.style.transition = ...) with no null-check, so the
+     element has to keep existing even though it's not shown any more. */
+  .hero-role { display: none; }
+  /* Name gate: same cross-pattern as the rest of the page (it already
+     inherits the beige --page-bg color from the real .gate rule, just not
+     the pattern image, which lives on .paper-grid, a different element). */
+  .d-gate-pattern {
+    background-image: url("data:image/svg+xml,<svg%20xmlns='http://www.w3.org/2000/svg'%20width='28'%20height='28'><path%20d='M14%209v10M9%2014h10'%20stroke='%23eae7df'%20stroke-width='2'%20stroke-linecap='square'/></svg>");
+    background-size: 36.4px 36.4px;
+  }
+
+  .d-stack { position: relative; padding-bottom: 40px; }
+  .d-project { position: sticky; top: 96px; min-height: 460px; height: calc(100svh - 170px); max-height: 640px; margin-bottom: 56px; transform-origin: center top; will-change: transform; }
+  /* Reuse the real work.html folder-tab component (.wf-shape/.wf-tab/
+     .wf-card-wrap/.wf-back/.wf-card, defined in css/style.css) verbatim
+     instead of a hand-rolled tab: same SVG notch, no text, and a fixed width
+     (clamp(150px,15vw,210px), set on .wf-tab there) so every tab is the same
+     width regardless of content. Its own sizing (max-height:80vh/min-height:
+     600px -- meant for a content-driven card with no ancestor height) is
+     overridden here since .d-project above already fixes the card height for
+     the sticky-stack effect; flex propagates that height down to the card. */
+  .d-project .wf-shape { height: 100%; max-height: none; min-height: 0; }
+  .d-project .wf-card-wrap, .d-project .wf-card { flex: 1 1 auto; min-height: 0; display: flex; }
+  .d-project-inner { height: 100%; width: 100%; padding: 28px; display: grid; grid-template-columns: .78fr 1.4fr; gap: 30px; }
+  .d-project-copy { display: flex; flex-direction: column; align-items: start; padding: 10px 0; min-height: 0; }
+  .d-project h3 { font-family: var(--font-display); font-weight: 500; font-size: clamp(26px, 3vw, 42px); line-height: 1.05; margin: 22px 0 14px; color: inherit !important; }
+  .d-project-copy p { font-size: 14px; line-height: 1.7; max-width: 320px; }
+  .d-project-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .d-project-tags span { font: 700 10px var(--font-mono); text-transform: uppercase; letter-spacing: .04em; padding: 6px 11px; border-radius: 20px; background: color-mix(in srgb, currentColor 12%, transparent); }
+  .d-project-link { border: 0; background: none; color: inherit; cursor: pointer; border-bottom: 1px solid currentColor; padding: 10px 0; margin-top: auto; font: 700 11px/1.5 var(--font-mono); display: flex; gap: 24px; align-self: start; }
+  .d-project-link:hover { gap: 36px; }
+  .d-image-button { width: 100%; height: 100%; overflow: hidden; padding: 0; border: 0; border-radius: 14px; background: #00000010; position: relative; min-height: 0; cursor: pointer; }
+  .d-image-button img, .d-image-button iframe { width: 100%; height: 100%; object-fit: cover; border: 0; display: block; transition: transform .7s cubic-bezier(.22,1,.36,1); pointer-events: none; }
+  .d-image-button:hover img { transform: scale(1.035); }
+  .d-image-button::after { content: 'Explore ↗'; position: absolute; bottom: 18px; right: 18px; padding: 10px 16px; border-radius: 30px; background: #f2f0e9; color: #191c17; font-size: 12px; opacity: 0; transform: translateY(8px); transition: .25s; }
+  .d-image-button:hover::after, .d-image-button:focus-visible::after { opacity: 1; transform: none; }
+
+  /* One column, full-width rows (not a 2-up grid) -- reuses the site's own
+     .card + .hard-shadow classes (white fill, black border, solid black
+     offset shadow, defined in css/style.css and already used for the
+     contact card etc.) instead of a bespoke dark fill, so these match the
+     rest of the site's "sticker" card language. */
+  .d-job-grid { display: flex; flex-direction: column; gap: 14px; }
+  .d-job-card { display: flex; align-items: center; justify-content: space-between; gap: 24px; width: 100%; text-align: left; padding: 22px 28px; transition: transform .2s; cursor: pointer; }
+  .d-job-card:hover { transform: translateX(4px); }
+  .d-job-card-main { display: flex; flex-direction: column; min-width: 0; }
+  .d-job-card .d-mono-eyebrow { color: var(--d-pink-back); }
+  .d-job-card h3 { font-family: var(--font-display); font-weight: 500; font-size: clamp(19px, 1.8vw, 24px); margin: 10px 0 4px; color: inherit !important; }
+  .d-job-card .d-job-company { font-family: var(--font-mono); font-size: 13px; }
+  .d-job-arrow { flex-shrink: 0; width: 44px; height: 44px; border-radius: 50%; border: 1px solid color-mix(in srgb, currentColor 40%, transparent); display: grid; place-items: center; font-size: 19px; transition: transform .3s; }
+  .d-job-card:hover .d-job-arrow { transform: rotate(45deg); }
+
+  dialog.d-dialog { border: 0; padding: 0; border-radius: 20px; width: min(980px, calc(100% - 28px)); max-height: 88svh; background: #f2f0e9; color: #191c17; }
+  dialog.d-dialog::backdrop { background: #10281fe0; backdrop-filter: blur(6px); }
+  .d-dialog-head { position: sticky; top: 0; background: #f2f0e9; padding: 16px 26px; border-bottom: 1px solid #19171422; display: flex; justify-content: space-between; align-items: center; z-index: 2; }
+  .d-close { border: 1px solid #19171459; background: none; color: inherit; cursor: pointer; border-radius: 40px; padding: 9px 15px; font-size: 12px; }
+  .d-case-body { padding: 28px; }
+  .d-case-body h2 { font-size: clamp(30px, 5vw, 50px); max-width: 720px; margin-bottom: 22px; }
+  .d-case-img { width: 100%; max-height: 540px; object-fit: contain; background: #00000008; border-radius: 10px; margin: 14px 0; }
+  .d-case-iframe { width: 100%; aspect-ratio: 16/10; border: 0; border-radius: 10px; margin: 14px 0; background: #0a0e14; }
+  .d-case-meta { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px 24px; margin: 20px 0; padding: 16px 0; border-top: 1px solid #19171422; border-bottom: 1px solid #19171422; }
+  .d-case-meta dt { font: 700 10px var(--font-mono); text-transform: uppercase; letter-spacing: .05em; opacity: .6; margin: 0; }
+  .d-case-meta dd { font-size: 14px; margin: 2px 0 0; }
+  .d-case-intro p { font-size: 15px; line-height: 1.8; max-width: 720px; margin: 14px 0; }
+  .d-case-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+  .d-case-tags span { font: 700 10px var(--font-mono); text-transform: uppercase; padding: 6px 11px; border-radius: 20px; background: #00000010; }
+  .d-case-body .cv-bento { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; margin-top: 18px; }
+  /* Ditch the box chrome (white fill, black border, hard-shadow) here in the
+     modal -- same text/hierarchy, just no card underneath; cv.html's own
+     page keeps its boxes, this only touches the copy reused inside #d-case-content. */
+  #d-case-content .cv-bento-meta, #d-case-content .cv-bento-tools, #d-case-content .cv-bento-desc, #d-case-content .cv-bento-worth {
+    background: none; border: 0; border-radius: 0; box-shadow: none; padding: 0;
+  }
+  /* h4 ("Context"/"What I did"/"Worth mentioning"/"Tools") is already PP
+     Formula via the real .cv-bento h4 rule, and h5 ("Hands-on"/"Strategy")
+     is already JetBrains Mono via .cv-bento-desc-group h5 -- both correct,
+     left alone. Only the spacing below each needed to grow, and to match
+     between the two levels (was .75rem/.625rem, two different amounts). */
+  .d-case-body .cv-bento h4, .d-case-body .cv-bento-desc-group h5 { margin-bottom: 1.1rem; }
+  .d-case-body .cv-bento p, .d-case-body .cv-bento li { font-size: 14px; line-height: 1.65; }
+  .d-case-body .cv-bento .pill { display: inline-block; font-size: 11px; padding: 5px 10px; border-radius: 20px; background: #00000010; margin: 0 4px 4px 0; }
+
+  @media (max-width: 900px) {
+    .d-project-inner { grid-template-columns: 1fr; }
+    .d-case-body .cv-bento { grid-template-columns: 1fr; }
+    .d-case-meta { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 560px) {
+    .d-job-card { padding: 18px 20px; gap: 14px; }
+    .d-job-arrow { width: 36px; height: 36px; font-size: 16px; }
+    .d-project { position: relative; top: auto; height: auto; min-height: 0; max-height: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .d-project { transform: none !important; }
+  }
+
+  /* ================= Page-wide color reconciliation (added, draft-only) =====
+     Fixes reported after the first pass: (1) no visible beige background --
+     the reference's beige never actually made it onto the page; (2) the new
+     muted palette above only applied to the two new sections, so it clashed
+     with take-on-folders' and off-the-clock's old saturated/earthy colors.
+     Everything below changes existing color VALUES only via the exact same
+     selectors the real stylesheet already uses -- no HTML/structure in either
+     component is touched, and once approved these values fold straight back
+     into css/style.css (replacing --page-bg, the --folder-* block, and the
+     oc-ring/oc-ph rules there) instead of living as a draft-only override. */
+  :root { --page-bg: #f2f0e9; }
+  .paper-grid {
+    background-image: url("data:image/svg+xml,<svg%20xmlns='http://www.w3.org/2000/svg'%20width='28'%20height='28'><path%20d='M14%209v10M9%2014h10'%20stroke='%23eae7df'%20stroke-width='2'%20stroke-linecap='square'/></svg>");
+    background-size: 36.4px 36.4px;
+  }
+  .take-on-folders {
+    --folder-blue-back: #6f9cb5;   --folder-blue-front: #a8c9db;
+  --folder-red-back: #c9654f;   --folder-red-front: #e49b85;
+  --folder-yellow-back: #d4ac2e;   --folder-yellow-front: #eed151;
+  --folder-green-back: #4c6b45;   --folder-green-front: #8aab74;
+  --folder-pink-back: #d98aab;   --folder-pink-front: #f1abc8;
+  }
+  .oc-dot[data-oc-index="0"] { --oc-ring-color: #6f9cb5; }
+  .oc-dot[data-oc-index="1"] { --oc-ring-color: #c9654f; }
+  .oc-dot[data-oc-index="2"] { --oc-ring-color: #4c6b45; }
+  .oc-dot[data-oc-index="3"] { --oc-ring-color: #d4ac2e; }
+  .oc-dot[data-oc-index="4"] { --oc-ring-color: #d98aab; }
+  .oc-dot[data-oc-index="5"] { --oc-ring-color: #10281f; }
+  .oc-ph-0 { background: linear-gradient(155deg, #6f9cb5, #a8c9db); }
+  .oc-ph-1 { background: linear-gradient(155deg, #c9654f, #e49b85); }
+  .oc-ph-2 { background: linear-gradient(155deg, #4c6b45, #8aab74); }
+  .oc-ph-3 { background: linear-gradient(155deg, #d4ac2e, #eed151); }
+  .oc-ph-4 { background: linear-gradient(155deg, #d98aab, #f1abc8); }
+  .oc-ph-5 { background: linear-gradient(155deg, #10281f, #193e31); }
+
+  /* Name-gate highlight: the BOX is tilted -2deg, not the letters -- a
+     separate ::before layer carries the rotated background, absolutely
+     positioned behind the (upright, untransformed) text, instead of
+     rotating the text's own element like the reference's "Tech." does.
+     Reverted: no background box any more, just solid pink text in both
+     spots -- the old underline-squiggle SVG (site.js's own onComplete
+     touch, added to .underline-word) is still hidden, that part stands. */
+  #greet-typed span[style*="color"] { color: #d98aab !important; }
+  #contact-typed span[style*="color"] { color: #d98aab !important; }
+  #contact-typed .underline-word svg { display: none; }
+
+  /* Contact/CTA: rebuilt to match the reference's own contact section
+     structure and sizing precisely (eyebrow pair, heading + circular arrow
+     link side by side, email link below) -- dark green field now (swapped
+     with Experience above), cream text; copy differs ("Hey Stranger, let's
+     talk!" instead of "Let's make something click."). The existing .card
+     chrome (white fill, black border, hard-shadow) is neutralized so the
+     heading/email sit directly on the field like the reference; .card's
+     real definition (used identically on work.html/cv.html) is untouched.
+     Same guaranteed-minimum-outer-margin sizing as Experience above. */
+  .d-contact-section { background: #10281f; border-radius: 32px; width: min(1200px, 100% - 2em); margin-inline: auto; }
+  .d-contact-section .contact-heading, .d-contact-section a, .d-contact-section .d-contact-eyebrow { color: #f2f0e9 !important; text-decoration-color: currentColor !important; }
+  .d-contact-eyebrow { display: flex; justify-content: space-between; gap: 20px; margin-bottom: 28px; font-family: var(--font-mono); }
+  .d-contact-main { display: flex; align-items: flex-end; justify-content: space-between; gap: 30px; margin-top: 50px; }
+  .d-contact-section .contact-heading { font-size: clamp(66px, 10.5vw, 148px); line-height: 1.03; margin: 0; max-width: 1100px; }
+  .d-contact-arrow { flex-shrink: 0; width: 125px; height: 125px; border-radius: 50%; border: 1px solid color-mix(in srgb, currentColor 45%, transparent); display: grid; place-items: center; font-size: 76px; line-height: 1; transition: transform .3s; }
+  .d-contact-arrow:hover { transform: rotate(45deg); }
+  .d-contact-email { display: inline-block; font-family: var(--font-display); font-size: clamp(20px, 3vw, 40px); margin: 40px 0 0; border-bottom: 1px solid; padding-bottom: 8px; }
+  @media (max-width: 560px) {
+    /* Heading + arrow no longer fit side by side at this width -- wrap
+       instead of letting the arrow push past the viewport edge. */
+    .d-contact-main { flex-wrap: wrap; }
+    .d-contact-arrow { width: 64px; height: 64px; font-size: 34px; margin-top: 8px; }
+  }
+
+  /* Credentials + Things on the shelf, both now living inside the dark
+     Experience band (moved here from their own spot further down the page,
+     in the shelf's case). Award cards stay their real white/bordered style
+     (they read fine against dark green, same as the white job cards above);
+     only the credentials rows and headings need the light-text treatment. */
+  .d-credentials { border-top: 1px solid color-mix(in srgb, #191c17 25%, transparent); }
+  .d-credentials-row { display: grid; grid-template-columns: 1fr 1.7fr; gap: 16px; padding: 16px 0; border-bottom: 1px solid color-mix(in srgb, #191c17 25%, transparent); }
+  .d-credentials-row dt { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: #191c17; }
+  .d-credentials-row dd { font-size: 14px; line-height: 1.6; margin: 0; color: #191c17; }
+  @media (max-width: 640px) {
+    .d-credentials-row { grid-template-columns: 1fr; gap: 4px; }
+  }
+  </style>
 </head>
 <body>
 
   <div class="paper-grid">
 
     <!-- INTRO GATE -->
-    <div id="gate" class="gate">
+    <div id="gate" class="gate d-gate-pattern">
       <div class="gate-lang">
         <span class="gate-lang-label" data-en="Language" data-de="Sprache">Language</span>
         <button type="button" class="lang-btn" data-lang-btn="de" aria-pressed="false">DE</button>
@@ -51,11 +277,6 @@
               <button type="button" class="lang-btn" data-lang-btn="de" aria-pressed="false">DE</button>
               <button type="button" class="lang-btn" data-lang-btn="en" aria-pressed="true">EN</button>
             </div>
-            <button type="button" class="menu-btn" id="menu-open" aria-label="Menu">
-              <span class="menu-btn-lines">
-                <span></span><span></span>
-              </span>
-            </button>
           </div>
         </div>
       </div>
@@ -67,9 +288,9 @@
         <section class="hero">
           <div class="container-page hero-inner">
 
-            <div class="hero-pills" id="hero-pills">
-              <span class="pill pill-drop" data-en="Designing since 2011" data-de="Design seit 2011">Designing since 2011</span>
-              <span class="pill pill-drop" data-en="Remote in Germany + EU" data-de="Remote in Deutschland + EU">Remote in Germany + EU</span>
+            <div class="d-contact-eyebrow meta d-hero-eyebrow" id="hero-pills">
+              <span data-en="Senior Digital Designer / UX &amp; UI" data-de="Senior Digital Designer / UX &amp; UI">Senior Digital Designer / UX &amp; UI</span>
+              <span data-en="Germany + EU / Designing since 2011" data-de="Deutschland + EU / Seit 2011 im Design">Germany + EU / Designing since 2011</span>
             </div>
 
             <p class="hero-greeting"><span id="greet-typed"></span><span class="type-cursor" id="greet-cursor">|</span></p>
@@ -92,6 +313,10 @@
           <div class="container-page">
             <div class="short-version-inner">
               <div class="short-head-target" id="short-head-target" aria-hidden="true"></div>
+              <div class="meta d-section-eyebrow d-section-eyebrow-pair">
+                <span data-en="01 / About me" data-de="01 / Über mich">01 / About me</span>
+                <span data-en="Nice to meet you." data-de="Schön, dich kennenzulernen.">Nice to meet you.</span>
+              </div>
               <h2 class="short-version-heading"><span data-en="The short" data-de="Die kurze">The short</span> <span class="short-version-break" data-en="version" data-de="Fassung">version</span></h2>
               <p class="reveal-text" data-en="Fifteen years ago I started as an apprentice at a B2B agency in a small rural town in Bavaria and finished top of my year at the Regensburg Chamber of Commerce." data-de="Vor fünfzehn Jahren habe ich meine Ausbildung bei einer B2B-Agentur in einer kleinen Stadt auf dem bayerischen Land begonnen und meinen Jahrgang bei der IHK Regensburg als Beste abgeschlossen.">Fifteen years ago I started as an apprentice at a B2B agency in a small rural town in Bavaria and finished top of my year at the Regensburg Chamber of Commerce.</p>
               <p class="reveal-text" data-en="Since then: brands built, shops relaunched, a startup co&#8209;founded, countless logos made bigger, and three years of web design freelancing. That last part taught me everything design school politely leaves out &mdash; pricing, saying no without saying &quot;No&quot;, and what a client actually means when they say &quot;make it pop.&quot;" data-de="Seitdem: Marken aufgebaut, Shops relauncht, ein Startup mitgegründet, unzählige Logos größer gemacht und drei Jahre als freiberufliche Webdesignerin gearbeitet. Der letzte Teil hat mir alles beigebracht, was die Designschule taktvoll verschweigt – Preise verhandeln, Nein sagen, ohne „Nein“ zu sagen, und was ein Kunde wirklich meint, wenn er sagt: „Mach's knalliger.“">Since then: brands built, shops relaunched, a startup co&#8209;founded, countless logos made bigger, and three years of web design freelancing. That last part taught me everything design school politely leaves out &mdash; pricing, saying no without saying &quot;No&quot;, and what a client actually means when they say &quot;make it pop.&quot;</p>
@@ -104,6 +329,10 @@
       <!-- WHAT I TAKE ON — folder carousel -->
       <section class="take-on-folders">
         <div class="container-page">
+          <div class="meta d-section-eyebrow d-section-eyebrow-pair d-take-on-eyebrow">
+            <span data-en="02 / What I take on" data-de="02 / Was ich übernehme">02 / What I take on</span>
+            <span data-en="Take your pick." data-de="Wähl dir was aus.">Take your pick.</span>
+          </div>
           <h2 class="h2-display text-center take-on-heading" id="take-on-heading" data-en="What I take on" data-de="Was ich übernehme">What I take on</h2>
         </div>
         <div class="folder-stage" id="folder-stage" role="region" aria-roledescription="carousel" aria-label="What I take on">
@@ -188,24 +417,297 @@
         </div>
       </section>
 
-      <!-- THINGS ON THE SHELF -->
-      <section class="container-page section border-b-0">
+
+      <!-- EXPERIENCE / CV (added) -->
+      <section class="container-page section border-b-0 d-experience-section" id="experience">
+          <div class="reveal">
+            <div class="meta d-section-eyebrow d-section-eyebrow-pair">
+              <span data-en="03 / The long version" data-de="03 / Die lange Fassung">03 / The long version</span>
+              <span data-en="Fifteen years in." data-de="Fünfzehn Jahre dabei.">Fifteen years in.</span>
+            </div>
+            <h2 class="h2-display d-experience-heading" data-en="Fifteen years, one timeline" data-de="Fünfzehn Jahre, eine Zeitleiste">Fifteen years, one timeline</h2>
+            <p class="lead d-experience-lead d-lead-gap" data-en="Pick a title for the full story — context, what I did, and what was worth mentioning." data-de="Für die ganze Geschichte einfach auf einen Titel klicken – Kontext, was ich gemacht habe, und was besonders erwähnenswert war.">Pick a title for the full story — context, what I did, and what was worth mentioning.</p>
+          </div>
+          <div class="d-job-grid mt-10">
+<button type="button" class="d-job-card card hard-shadow" data-open="cv-0">
+  <span class="d-job-card-main">
+    <span class="meta d-mono-eyebrow" data-en="07/2024 – present" data-de="07/2024 – heute">07/2024 – present</span>
+    <h3 data-en="Senior Brand Designer" data-de="Senior Brand Designerin">Senior Brand Designer</h3>
+    <p class="d-job-company" data-en="Onlineprinters GmbH" data-de="Onlineprinters GmbH">Onlineprinters GmbH</p>
+  </span>
+  <span class="d-job-arrow" aria-hidden="true">↗</span>
+</button>
+<button type="button" class="d-job-card card hard-shadow" data-open="cv-1">
+  <span class="d-job-card-main">
+    <span class="meta d-mono-eyebrow" data-en="07/2021 – 07/2024" data-de="07/2021 – 07/2024">07/2021 – 07/2024</span>
+    <h3 data-en="Freelance Brand Strategist &amp; Web Designer" data-de="Freelance Brand Strategin &amp; Webdesignerin">Freelance Brand Strategist &amp; Web Designer</h3>
+    <p class="d-job-company" data-en="Sole proprietor" data-de="Einzelunternehmerin">Sole proprietor</p>
+  </span>
+  <span class="d-job-arrow" aria-hidden="true">↗</span>
+</button>
+<button type="button" class="d-job-card card hard-shadow" data-open="cv-2">
+  <span class="d-job-card-main">
+    <span class="meta d-mono-eyebrow" data-en="04/2020 – 06/2022" data-de="04/2020 – 06/2022">04/2020 – 06/2022</span>
+    <h3 data-en="Designer" data-de="Designerin">Designer</h3>
+    <p class="d-job-company" data-en="Docmedical GmbH" data-de="Docmedical GmbH">Docmedical GmbH</p>
+  </span>
+  <span class="d-job-arrow" aria-hidden="true">↗</span>
+</button>
+<button type="button" class="d-job-card card hard-shadow" data-open="cv-3">
+  <span class="d-job-card-main">
+    <span class="meta d-mono-eyebrow" data-en="09/2019 – 03/2021" data-de="09/2019 – 03/2021">09/2019 – 03/2021</span>
+    <h3 data-en="UX/UI Designer, Marketing &amp; Co-Founder" data-de="UX/UI Designerin, Marketing &amp; Co-Founderin">UX/UI Designer, Marketing &amp; Co-Founder</h3>
+    <p class="d-job-company" data-en="PFCR UG" data-de="PFCR UG">PFCR UG</p>
+  </span>
+  <span class="d-job-arrow" aria-hidden="true">↗</span>
+</button>
+<button type="button" class="d-job-card card hard-shadow" data-open="cv-4">
+  <span class="d-job-card-main">
+    <span class="meta d-mono-eyebrow" data-en="01/2016 – 03/2020" data-de="01/2016 – 03/2020">01/2016 – 03/2020</span>
+    <h3 data-en="Designer" data-de="Designerin">Designer</h3>
+    <p class="d-job-company" data-en="Hinke GmbH" data-de="Hinke GmbH">Hinke GmbH</p>
+  </span>
+  <span class="d-job-arrow" aria-hidden="true">↗</span>
+</button>
+<button type="button" class="d-job-card card hard-shadow" data-open="cv-5">
+  <span class="d-job-card-main">
+    <span class="meta d-mono-eyebrow" data-en="07/2014 – 12/2015" data-de="07/2014 – 12/2015">07/2014 – 12/2015</span>
+    <h3 data-en="Media Designer, Digital &amp; Print" data-de="Mediengestalterin Digital &amp; Print">Media Designer, Digital &amp; Print</h3>
+    <p class="d-job-company" data-en="de-Agentur" data-de="de-Agentur">de-Agentur</p>
+  </span>
+  <span class="d-job-arrow" aria-hidden="true">↗</span>
+</button>
+<button type="button" class="d-job-card card hard-shadow" data-open="cv-6">
+  <span class="d-job-card-main">
+    <span class="meta d-mono-eyebrow" data-en="09/2011 – 06/2014" data-de="09/2011 – 06/2014">09/2011 – 06/2014</span>
+    <h3 data-en="Apprentice, Media Designer Digital" data-de="Auszubildende, Mediengestalterin Digital">Apprentice, Media Designer Digital</h3>
+    <p class="d-job-company" data-en="de-Agentur" data-de="de-Agentur">de-Agentur</p>
+  </span>
+  <span class="d-job-arrow" aria-hidden="true">↗</span>
+</button></div>
+          <h3 class="h3-display d-experience-heading d-subheading-gap" data-en="Credentials" data-de="Qualifikationen">Credentials</h3>
+          <dl class="d-credentials mt-8"><div class="d-credentials-row">
+      <dt data-en="Languages" data-de="Sprachen">Languages</dt>
+      <dd data-en="German and English, both native" data-de="Deutsch und Englisch, beides Muttersprachen">German and English, both native</dd>
+    </div><div class="d-credentials-row">
+      <dt data-en="Certified trainer (AEVO)" data-de="Ausbildereignung">Certified trainer (AEVO)</dt>
+      <dd data-en="Licensed to train apprentices in Germany. I&#x27;ve been doing it since 2016." data-de="AEVO – ich darf offiziell ausbilden und mache das seit 2016.">Licensed to train apprentices in Germany. I&#x27;ve been doing it since 2016.</dd>
+    </div><div class="d-credentials-row">
+      <dt data-en="Further training" data-de="Weiterbildung">Further training</dt>
+      <dd data-en="Defining marketing objectives, RID Stiftung" data-de="Marketingziele definieren, RID Stiftung">Defining marketing objectives, RID Stiftung</dd>
+    </div><div class="d-credentials-row">
+      <dt data-en="Driving licence" data-de="Führerschein">Driving licence</dt>
+      <dd data-en="Class B" data-de="Klasse B">Class B</dd>
+    </div></dl>
+          
+          <h3 class="h3-display d-experience-heading d-subheading-gap" data-en="Things on the shelf" data-de="Steht im Regal">Things on the shelf</h3>
+          <div class="mt-8 grid gap-3 md:grid-cols-3 md:gap-4">
+            <div class="flex items-start justify-between gap-6 bg-[var(--card-bg)] rounded-xl border-2 border-black p-6 hard-shadow">
+              <p class="h3-display text-ink">German Brand Award</p>
+              <p class="meta shelf-year shrink-0 text-ink-soft">2016</p>
+            </div>
+            <div class="flex items-start justify-between gap-6 bg-[var(--card-bg)] rounded-xl border-2 border-black p-6 hard-shadow">
+              <p class="h3-display text-ink">German Design Award, Special Mention</p>
+              <p class="meta shelf-year shrink-0 text-ink-soft">2015</p>
+            </div>
+            <div class="flex items-start justify-between gap-6 bg-[var(--card-bg)] rounded-xl border-2 border-black p-6 hard-shadow">
+              <p class="h3-display text-ink" data-en="Top apprentice of the year, IHK Regensburg" data-de="Kammerbeste der IHK Regensburg">Top apprentice of the year, IHK Regensburg</p>
+              <p class="meta shelf-year shrink-0 text-ink-soft">2014</p>
+            </div>
+          </div>
+      </section>
+
+      <!-- WORK (added) -->
+      <section class="container-page section border-b-0 d-work-section" id="work">
         <div class="reveal">
-          <h2 class="h2-display text-ink" data-en="Things on the shelf" data-de="Steht im Regal">Things on the shelf</h2>
+          <span class="meta d-section-eyebrow" data-en="04 / A few good examples" data-de="04 / Ein paar gute Beispiele">04 / A few good examples</span>
+          <h2 class="h2-display text-ink" data-en="Selected work" data-de="Ausgewählte Arbeiten">Selected work</h2>
+          <p class="lead text-ink-soft d-lead-gap" data-en="Nine projects, picked to show the range rather than just the highlights." data-de="Neun Projekte, ausgewählt, um die Bandbreite zu zeigen, nicht nur die Highlights.">Nine projects, picked to show the range rather than just the highlights.</p>
         </div>
-        <div class="mt-10 grid gap-3 md:grid-cols-3 md:gap-4">
-          <div class="flex items-start justify-between gap-6 bg-[var(--card-bg)] rounded-xl border-2 border-black p-6 hard-shadow">
-            <p class="h3-display text-ink">German Brand Award</p>
-            <p class="meta shelf-year shrink-0 text-ink-soft">2016</p>
+        <div class="d-stack mt-10" id="d-work-stack">
+<article class="d-project" style="color:var(--d-ink)">
+  <div class="wf-shape">
+    <div class="wf-tab"><svg viewBox="0 0 234 34" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><path d="M151.21 0C158.934 0 166.521 2.03308 173.21 5.89489L211.679 28.1051C218.368 31.9669 225.956 34 233.679 34H1139C1163.3 34 1183 53.6995 1183 78V778C1183 802.301 1163.3 822 1139 822H44C19.6995 822 0 802.301 0 778V34C0 15.2223 15.2224 0 34 0H151.21Z" fill="#6f9cb5"/></svg></div>
+    <div class="wf-card-wrap">
+      <div class="wf-back" style="background:#6f9cb5"></div>
+      <div class="wf-card" style="background:#a8c9db">
+        <div class="d-project-inner">
+          <div class="d-project-copy">
+            <span class="meta d-mono-eyebrow">2025</span>
+            <h3 data-en="A mailing that doesn&#x27;t get binned" data-de="Produktwelt im eigenen Studio">A mailing that doesn&#x27;t get binned</h3>
+            <p data-en="Making a print mailer survive its first five seconds in a stranger&#x27;s hands." data-de="Ein Print-Mailing, das die ersten fünf Sekunden in fremden Händen übersteht.">Making a print mailer survive its first five seconds in a stranger&#x27;s hands.</p>
+            <div class="d-project-tags"><span>Direct Mail</span><span>Print</span></div>
+            <button type="button" class="d-project-link" data-open="work-mailing"><span data-en="Open the project" data-de="Projekt öffnen">Open the project</span> <span>↗</span></button>
           </div>
-          <div class="flex items-start justify-between gap-6 bg-[var(--card-bg)] rounded-xl border-2 border-black p-6 hard-shadow">
-            <p class="h3-display text-ink">German Design Award, Special Mention</p>
-            <p class="meta shelf-year shrink-0 text-ink-soft">2015</p>
+          <button type="button" class="d-image-button" data-open="work-mailing" aria-label="Explore A mailing that doesn&#x27;t get binned"><img src="assets/img/work-1-mailing.webp" alt="" loading="lazy"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</article>
+<article class="d-project" style="color:var(--d-ink)">
+  <div class="wf-shape">
+    <div class="wf-tab"><svg viewBox="0 0 234 34" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><path d="M151.21 0C158.934 0 166.521 2.03308 173.21 5.89489L211.679 28.1051C218.368 31.9669 225.956 34 233.679 34H1139C1163.3 34 1183 53.6995 1183 78V778C1183 802.301 1163.3 822 1139 822H44C19.6995 822 0 802.301 0 778V34C0 15.2223 15.2224 0 34 0H151.21Z" fill="#c9654f"/></svg></div>
+    <div class="wf-card-wrap">
+      <div class="wf-back" style="background:#c9654f"></div>
+      <div class="wf-card" style="background:#e49b85">
+        <div class="d-project-inner">
+          <div class="d-project-copy">
+            <span class="meta d-mono-eyebrow">2026</span>
+            <h3 data-en="Gamified Direct Mail" data-de="Gamified Direct Mail">Gamified Direct Mail</h3>
+            <p data-en="Turning a one-way mail drop into something people actually want to open." data-de="Aus einem Einweg-Mailing wird etwas, das man wirklich öffnen will.">Turning a one-way mail drop into something people actually want to open.</p>
+            <div class="d-project-tags"><span>Direct Mail</span><span>Interactive</span></div>
+            <button type="button" class="d-project-link" data-open="work-gamified"><span data-en="Open the project" data-de="Projekt öffnen">Open the project</span> <span>↗</span></button>
           </div>
-          <div class="flex items-start justify-between gap-6 bg-[var(--card-bg)] rounded-xl border-2 border-black p-6 hard-shadow">
-            <p class="h3-display text-ink" data-en="Top apprentice of the year, IHK Regensburg" data-de="Kammerbeste der IHK Regensburg">Top apprentice of the year, IHK Regensburg</p>
-            <p class="meta shelf-year shrink-0 text-ink-soft">2014</p>
+          <button type="button" class="d-image-button" data-open="work-gamified" aria-label="Explore Gamified Direct Mail"><img src="assets/img/work-2-gamified.webp" alt="" loading="lazy"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</article>
+<article class="d-project" style="color:var(--d-ink)">
+  <div class="wf-shape">
+    <div class="wf-tab"><svg viewBox="0 0 234 34" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><path d="M151.21 0C158.934 0 166.521 2.03308 173.21 5.89489L211.679 28.1051C218.368 31.9669 225.956 34 233.679 34H1139C1163.3 34 1183 53.6995 1183 78V778C1183 802.301 1163.3 822 1139 822H44C19.6995 822 0 802.301 0 778V34C0 15.2223 15.2224 0 34 0H151.21Z" fill="#d4ac2e"/></svg></div>
+    <div class="wf-card-wrap">
+      <div class="wf-back" style="background:#d4ac2e"></div>
+      <div class="wf-card" style="background:#eed151">
+        <div class="d-project-inner">
+          <div class="d-project-copy">
+            <span class="meta d-mono-eyebrow">2024–2026</span>
+            <h3 data-en="Two years of first impressions" data-de="Zwei Jahre erste Eindrücke">Two years of first impressions</h3>
+            <p data-en="Keeping one client&#x27;s brand fresh across two years of asking." data-de="Zwei Jahre lang die Marke einer Kundin immer wieder neu gedacht.">Keeping one client&#x27;s brand fresh across two years of asking.</p>
+            <div class="d-project-tags"><span>Brand</span><span>Ongoing</span></div>
+            <button type="button" class="d-project-link" data-open="work-first-impressions"><span data-en="Open the project" data-de="Projekt öffnen">Open the project</span> <span>↗</span></button>
           </div>
+          <button type="button" class="d-image-button" data-open="work-first-impressions" aria-label="Explore Two years of first impressions"><img src="assets/img/work-3-first-impressions.webp" alt="" loading="lazy"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</article>
+<article class="d-project" style="color:var(--d-ink)">
+  <div class="wf-shape">
+    <div class="wf-tab"><svg viewBox="0 0 234 34" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><path d="M151.21 0C158.934 0 166.521 2.03308 173.21 5.89489L211.679 28.1051C218.368 31.9669 225.956 34 233.679 34H1139C1163.3 34 1183 53.6995 1183 78V778C1183 802.301 1163.3 822 1139 822H44C19.6995 822 0 802.301 0 778V34C0 15.2223 15.2224 0 34 0H151.21Z" fill="#4c6b45"/></svg></div>
+    <div class="wf-card-wrap">
+      <div class="wf-back" style="background:#4c6b45"></div>
+      <div class="wf-card" style="background:#8aab74">
+        <div class="d-project-inner">
+          <div class="d-project-copy">
+            <span class="meta d-mono-eyebrow">2015</span>
+            <h3 data-en="Shapes&#x27;n&#x27;Calendars" data-de="Shapes&#x27;n&#x27;Calendars">Shapes&#x27;n&#x27;Calendars</h3>
+            <p data-en="Proving a calendar can be made of nothing but shapes and still work." data-de="Der Beweis, dass ein Kalender nur aus Formen bestehen kann und trotzdem funktioniert.">Proving a calendar can be made of nothing but shapes and still work.</p>
+            <div class="d-project-tags"><span>Print</span><span>Personal</span></div>
+            <button type="button" class="d-project-link" data-open="work-calendars"><span data-en="Open the project" data-de="Projekt öffnen">Open the project</span> <span>↗</span></button>
+          </div>
+          <button type="button" class="d-image-button" data-open="work-calendars" aria-label="Explore Shapes&#x27;n&#x27;Calendars"><img src="assets/img/work-4-calendars.webp" alt="" loading="lazy"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</article>
+<article class="d-project" style="color:var(--d-ink)">
+  <div class="wf-shape">
+    <div class="wf-tab"><svg viewBox="0 0 234 34" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><path d="M151.21 0C158.934 0 166.521 2.03308 173.21 5.89489L211.679 28.1051C218.368 31.9669 225.956 34 233.679 34H1139C1163.3 34 1183 53.6995 1183 78V778C1183 802.301 1163.3 822 1139 822H44C19.6995 822 0 802.301 0 778V34C0 15.2223 15.2224 0 34 0H151.21Z" fill="#d98aab"/></svg></div>
+    <div class="wf-card-wrap">
+      <div class="wf-back" style="background:#d98aab"></div>
+      <div class="wf-card" style="background:#f1abc8">
+        <div class="d-project-inner">
+          <div class="d-project-copy">
+            <span class="meta d-mono-eyebrow">2023</span>
+            <h3 data-en="Website for Eva" data-de="Website for Eva">Website for Eva</h3>
+            <p data-en="Building a whole site — design, copy, code — for a client of one." data-de="Eine komplette Website — Design, Text, Code — im Alleingang für eine Kundin umgesetzt.">Building a whole site — design, copy, code — for a client of one.</p>
+            <div class="d-project-tags"><span>Web</span><span>Solo</span></div>
+            <button type="button" class="d-project-link" data-open="work-eva"><span data-en="Open the project" data-de="Projekt öffnen">Open the project</span> <span>↗</span></button>
+          </div>
+          <button type="button" class="d-image-button" data-open="work-eva" aria-label="Explore Website for Eva"><img src="assets/img/work-6-eva.jpg" alt="" loading="lazy"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</article>
+<article class="d-project" style="color:#f2f0e9">
+  <div class="wf-shape">
+    <div class="wf-tab"><svg viewBox="0 0 234 34" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><path d="M151.21 0C158.934 0 166.521 2.03308 173.21 5.89489L211.679 28.1051C218.368 31.9669 225.956 34 233.679 34H1139C1163.3 34 1183 53.6995 1183 78V778C1183 802.301 1163.3 822 1139 822H44C19.6995 822 0 802.301 0 778V34C0 15.2223 15.2224 0 34 0H151.21Z" fill="#10281f"/></svg></div>
+    <div class="wf-card-wrap">
+      <div class="wf-back" style="background:#10281f"></div>
+      <div class="wf-card" style="background:#193e31">
+        <div class="d-project-inner">
+          <div class="d-project-copy">
+            <span class="meta d-mono-eyebrow">2026</span>
+            <h3 data-en="A Real Fake Brand" data-de="A Real Fake Brand">A Real Fake Brand</h3>
+            <p data-en="Building a brand that isn&#x27;t real, with all the rigor of one that is." data-de="Eine Marke, die es gar nicht gibt — mit derselben Sorgfalt wie eine echte.">Building a brand that isn&#x27;t real, with all the rigor of one that is.</p>
+            <div class="d-project-tags"><span>Brand</span><span>Concept</span></div>
+            <button type="button" class="d-project-link" data-open="work-fake-brand"><span data-en="Open the project" data-de="Projekt öffnen">Open the project</span> <span>↗</span></button>
+          </div>
+          <button type="button" class="d-image-button" data-open="work-fake-brand" aria-label="Explore A Real Fake Brand"><img src="assets/img/work-7-fake-brand.jpg" alt="" loading="lazy"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</article>
+<article class="d-project" style="color:var(--d-ink)">
+  <div class="wf-shape">
+    <div class="wf-tab"><svg viewBox="0 0 234 34" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><path d="M151.21 0C158.934 0 166.521 2.03308 173.21 5.89489L211.679 28.1051C218.368 31.9669 225.956 34 233.679 34H1139C1163.3 34 1183 53.6995 1183 78V778C1183 802.301 1163.3 822 1139 822H44C19.6995 822 0 802.301 0 778V34C0 15.2223 15.2224 0 34 0H151.21Z" fill="#6f9cb5"/></svg></div>
+    <div class="wf-card-wrap">
+      <div class="wf-back" style="background:#6f9cb5"></div>
+      <div class="wf-card" style="background:#a8c9db">
+        <div class="d-project-inner">
+          <div class="d-project-copy">
+            <span class="meta d-mono-eyebrow">2026</span>
+            <h3 data-en="Liquid Metal" data-de="Liquid Metal">Liquid Metal</h3>
+            <p data-en="A live WebGL shader — dark chrome, catching and bending light as it moves." data-de="Ein Live-WebGL-Shader — dunkles Chrom, das Licht einfängt und bricht, während es sich bewegt.">A live WebGL shader — dark chrome, catching and bending light as it moves.</p>
+            <div class="d-project-tags"><span>Shader</span><span>AI-built</span></div>
+            <button type="button" class="d-project-link" data-open="work-liquid-metal"><span data-en="Open the project" data-de="Projekt öffnen">Open the project</span> <span>↗</span></button>
+          </div>
+          <button type="button" class="d-image-button" data-open="work-liquid-metal" aria-label="Explore Liquid Metal"><iframe src="https://neotenist.github.io/liquid-metal-shader/?embed=1" title="Liquid Metal" loading="lazy"></iframe></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</article>
+<article class="d-project" style="color:var(--d-ink)">
+  <div class="wf-shape">
+    <div class="wf-tab"><svg viewBox="0 0 234 34" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><path d="M151.21 0C158.934 0 166.521 2.03308 173.21 5.89489L211.679 28.1051C218.368 31.9669 225.956 34 233.679 34H1139C1163.3 34 1183 53.6995 1183 78V778C1183 802.301 1163.3 822 1139 822H44C19.6995 822 0 802.301 0 778V34C0 15.2223 15.2224 0 34 0H151.21Z" fill="#c9654f"/></svg></div>
+    <div class="wf-card-wrap">
+      <div class="wf-back" style="background:#c9654f"></div>
+      <div class="wf-card" style="background:#e49b85">
+        <div class="d-project-inner">
+          <div class="d-project-copy">
+            <span class="meta d-mono-eyebrow">2026</span>
+            <h3 data-en="When in doubt, vibe code it!" data-de="When in doubt, vibe code it!">When in doubt, vibe code it!</h3>
+            <p data-en="A local image converter — batch-convert PNG, JPG and WEBP without leaving the browser." data-de="Ein lokaler Bildkonverter — PNG, JPG und WEBP stapelweise konvertieren, ganz ohne den Browser zu verlassen.">A local image converter — batch-convert PNG, JPG and WEBP without leaving the browser.</p>
+            <div class="d-project-tags"><span>Tool</span><span>AI-built</span></div>
+            <button type="button" class="d-project-link" data-open="work-vibe-code"><span data-en="Open the project" data-de="Projekt öffnen">Open the project</span> <span>↗</span></button>
+          </div>
+          <button type="button" class="d-image-button" data-open="work-vibe-code" aria-label="Explore When in doubt, vibe code it!"><img src="assets/img/work-vibe-code.svg" alt="" loading="lazy"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</article>
+<article class="d-project" style="color:var(--d-ink)">
+  <div class="wf-shape">
+    <div class="wf-tab"><svg viewBox="0 0 234 34" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><path d="M151.21 0C158.934 0 166.521 2.03308 173.21 5.89489L211.679 28.1051C218.368 31.9669 225.956 34 233.679 34H1139C1163.3 34 1183 53.6995 1183 78V778C1183 802.301 1163.3 822 1139 822H44C19.6995 822 0 802.301 0 778V34C0 15.2223 15.2224 0 34 0H151.21Z" fill="#d4ac2e"/></svg></div>
+    <div class="wf-card-wrap">
+      <div class="wf-back" style="background:#d4ac2e"></div>
+      <div class="wf-card" style="background:#eed151">
+        <div class="d-project-inner">
+          <div class="d-project-copy">
+            <span class="meta d-mono-eyebrow">2026</span>
+            <h3 data-en="Wordmark Scatter" data-de="Wordmark Scatter">Wordmark Scatter</h3>
+            <p data-en="This site&#x27;s own wordmark, scattered into dots that spring back into place." data-de="Das eigene Wordmark dieser Seite, aufgelöst in Punkte, die an ihren Platz zurückfedern.">This site&#x27;s own wordmark, scattered into dots that spring back into place.</p>
+            <div class="d-project-tags"><span>Shader</span><span>AI-built</span></div>
+            <button type="button" class="d-project-link" data-open="work-wordmark-scatter"><span data-en="Open the project" data-de="Projekt öffnen">Open the project</span> <span>↗</span></button>
+          </div>
+          <button type="button" class="d-image-button" data-open="work-wordmark-scatter" aria-label="Explore Wordmark Scatter"><iframe src="https://neotenist.github.io/wordmark-scatter/?embed=1&word=maxine&dotSize=3&dotGap=1&breathe=1&bleed=24" title="Wordmark Scatter" loading="lazy"></iframe></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</article></div>
+        <div class="d-work-foot">
+          <span class="meta text-ink-soft" data-en="A selection, not the whole story." data-de="Eine Auswahl, nicht die ganze Geschichte.">A selection, not the whole story.</span>
+          <a href="work.html" data-en="All projects &amp; experiments" data-de="Alle Projekte &amp; Experimente">All projects &amp; experiments</a>
         </div>
       </section>
 
@@ -213,6 +715,7 @@
       <section class="container-page section border-b-0 oc-section">
         <div class="oc-layout">
           <div class="reveal oc-heading-col">
+            <span class="meta d-section-eyebrow" data-en="05 / Beyond the screen" data-de="05 / Neben dem Bildschirm">05 / Beyond the screen</span>
             <h2 class="h2-display text-ink" data-en="Off the clock" data-de="Nach Feierabend">Off the clock</h2>
           </div>
           <div class="oc-stage" id="ocStage">
@@ -261,18 +764,18 @@
       </section>
 
       <!-- CONTACT -->
-      <section id="contact" class="container-page section" aria-label="Drop me a message:">
-        <div class="mx-auto w-full max-w-4xl">
-          <div class="card p-10 sm:p-16 lg:p-20">
-            <h2 class="contact-heading h1-display cursor-pointer text-ink" style="font-size:clamp(2rem, 7vw, 4.5rem);line-height:1.2">
+      <section id="contact" class="container-page section d-contact-section" aria-label="Drop me a message: Hey Stranger, let's talk!">
+          <div class="d-contact-eyebrow meta">
+            <span data-en="06 / Your turn" data-de="06 / Du bist dran">06 / Your turn</span>
+            <span data-en="Got something in mind?" data-de="Hast du etwas im Kopf?">Got something in mind?</span>
+          </div>
+          <div class="d-contact-main">
+            <h2 class="contact-heading h1-display cursor-pointer text-ink">
               <span id="contact-typed"></span><span class="contact-caret"></span>
             </h2>
-            <div class="contact-sub mt-8" id="contact-sub">
-              <p class="lead text-ink-soft" data-en="Drop me a message:" data-de="Schreib mir:">Drop me a message:</p>
-              <a href="mailto:work@maxinehargrove.com" class="mt-2 inline-block max-w-full whitespace-nowrap font-display text-[clamp(1rem,4.6vw,2.5rem)] leading-tight text-accent underline decoration-accent decoration-[3px] underline-offset-[10px] transition-colors hover:text-ink hover:decoration-ink">work@maxinehargrove.com</a>
-            </div>
+            <a href="mailto:work@maxinehargrove.com" class="d-contact-arrow" aria-label="Email Maxine">↗</a>
           </div>
-        </div>
+          <a href="mailto:work@maxinehargrove.com" class="d-contact-email">work@maxinehargrove.com</a>
       </section>
 
     </main>
@@ -292,34 +795,94 @@
 
   </div>
 
-  <!-- MENU OVERLAY -->
-  <div class="menu-overlay" id="menu-overlay">
-    <div class="container-page">
-      <div class="header-inner">
-        <div></div>
-        <div class="flex items-center gap-3">
-          <div class="nav-lang" aria-label="Language">
-            <button type="button" class="lang-btn" data-lang-btn="de" aria-pressed="false">DE</button>
-            <button type="button" class="lang-btn" data-lang-btn="en" aria-pressed="true">EN</button>
-          </div>
-          <button type="button" class="menu-btn is-open" id="menu-close" aria-label="Close">
-            <span class="menu-btn-lines">
-              <span></span><span></span>
-            </span>
-          </button>
-        </div>
-      </div>
-      <nav class="menu-overlay-nav">
-        <a href="index.html" class="h2-display active" data-en="Home" data-de="Home">Home</a>
-        <a href="cv.html" class="h2-display" data-en="CV" data-de="Lebenslauf">CV</a>
-        <a href="work.html" class="h2-display" data-en="Work" data-de="Arbeiten">Work</a>
-      </nav>
-    </div>
-  </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="js/site.js?v=12"></script>
   <script src="js/main.js?v=48"></script>
+
+  <!-- WORK/CV MODAL (added) -->
+  <dialog class="d-dialog" aria-labelledby="d-case-title">
+    <div class="d-dialog-head">
+      <span class="meta" data-en="A closer look" data-de="Im Detail">A closer look</span>
+      <button type="button" class="d-close" data-en="Close ×" data-de="Schließen ×">Close ×</button>
+    </div>
+    <div class="d-case-body">
+      <h2 id="d-case-title" class="h2-display"></h2>
+      <div id="d-case-content"></div>
+    </div>
+  </dialog>
+  <script id="d-modal-data" type="application/json">{"work-mailing": {"title_en": "A mailing that doesn't get binned", "title_de": "Produktwelt im eigenen Studio", "html": "<img class=\"d-case-img\" src=\"assets/img/work-1-mailing.webp\" alt=\"A mailing that doesn&#x27;t get binned\"><dl class=\"d-case-meta\"><div><dt data-en=\"Client\" data-de=\"Kunde\">Client</dt>\n<dd><span data-en=\"Onlineprinters\" data-de=\"Onlineprinters\">Onlineprinters</span></dd></div><div><dt data-en=\"Year\" data-de=\"Jahr\">Year</dt>\n<dd><span data-en=\"2025\" data-de=\"2025\">2025</span></dd></div><div><dt data-en=\"Role\" data-de=\"Rolle\">Role</dt>\n<dd><span data-en=\"Concept, design, copy\" data-de=\"Konzept, Design, Text\">Concept, design, copy</span></dd></div><div><dt data-en=\"Focus\" data-de=\"Fokus\">Focus</dt>\n<dd><span data-en=\"Print, Direct mail\" data-de=\"Print, Mailing\">Print, Direct mail</span></dd></div></dl><div class=\"d-case-intro\"><p>Most B2B mailings have one job and fail it: surviving the walk from the post room to the desk. I set a harder target. Make something that stays on the break room table.</p><p>So the mailing stopped being a mailing and became a game. Inside is a round of Stadt-Land-Fluss, a German category game, printed onto one of our own notepads, so the product doubles as the board. A branded pen to play with. Two bags of gummy bears, one for the winner and one as a consolation prize. Stickers for both outcomes, because losing deserves a sticker too.</p><p>What I wanted was for people to actually use the thing and spend a few minutes with our branding, rather than glance at it once.</p></div><img class=\"d-case-img\" loading=\"lazy\" src=\"assets/img/p1-g1.webp\" alt=\"A mailing that doesn&#x27;t get binned — detail\"><img class=\"d-case-img\" loading=\"lazy\" src=\"assets/img/p1-g2.webp\" alt=\"A mailing that doesn&#x27;t get binned — detail\"><img class=\"d-case-img\" loading=\"lazy\" src=\"assets/img/p1-g3.webp\" alt=\"A mailing that doesn&#x27;t get binned — detail\"><div class=\"d-case-tags\"><span>Direct Mail</span><span>Print</span></div>"}, "work-gamified": {"title_en": "Gamified Direct Mail", "title_de": "Gamified Direct Mail", "html": "<img class=\"d-case-img\" src=\"assets/img/work-2-gamified.webp\" alt=\"Gamified Direct Mail\"><dl class=\"d-case-meta\"><div><dt data-en=\"Client\" data-de=\"Kunde\">Client</dt>\n<dd><span data-en=\"Onlineprinters\" data-de=\"Onlineprinters\">Onlineprinters</span></dd></div><div><dt data-en=\"Year\" data-de=\"Jahr\">Year</dt>\n<dd><span data-en=\"2026\" data-de=\"2026\">2026</span></dd></div><div><dt data-en=\"Role\" data-de=\"Rolle\">Role</dt>\n<dd><span data-en=\"Concept, design, research\" data-de=\"Konzept, Design, Recherche\">Concept, design, research</span></dd></div><div><dt data-en=\"Focus\" data-de=\"Fokus\">Focus</dt>\n<dd><span data-en=\"Print, Direct mail\" data-de=\"Print, Mailing\">Print, Direct mail</span></dd></div></dl><div class=\"d-case-intro\"><p>A brochure about brochures. The category needed pushing, and the honest way to sell paper is to put it in someone's hands.</p><p>We used several different paper stocks in one brochure, which is unusual enough to be a talking point in itself. The finishing options are demonstrated rather than listed, starting with a cover finished twice over. Between them sit quizzes, crosswords and did-you-know panels, so the reader works through the information instead of being lectured at.</p><p>Every page is designed differently, in a scrapbook style built from stickers and torn-paper elements. The handmade look is deliberate. It builds a bridge to the craft behind the printing.</p></div><img class=\"d-case-img\" loading=\"lazy\" src=\"assets/img/p2-g1.webp\" alt=\"Gamified Direct Mail — detail\"><img class=\"d-case-img\" loading=\"lazy\" src=\"assets/img/p2-g2.webp\" alt=\"Gamified Direct Mail — detail\"><img class=\"d-case-img\" loading=\"lazy\" src=\"assets/img/p2-g3.webp\" alt=\"Gamified Direct Mail — detail\"><div class=\"d-case-tags\"><span>Direct Mail</span><span>Interactive</span></div>"}, "work-first-impressions": {"title_en": "Two years of first impressions", "title_de": "Zwei Jahre erste Eindrücke", "html": "<img class=\"d-case-img\" src=\"assets/img/work-3-first-impressions.webp\" alt=\"Two years of first impressions\"><dl class=\"d-case-meta\"><div><dt data-en=\"Client\" data-de=\"Kunde\">Client</dt>\n<dd><span data-en=\"Onlineprinters\" data-de=\"Onlineprinters\">Onlineprinters</span></dd></div><div><dt data-en=\"Year\" data-de=\"Jahr\">Year</dt>\n<dd><span data-en=\"2024–2026\" data-de=\"2024–2026\">2024–2026</span></dd></div><div><dt data-en=\"Role\" data-de=\"Rolle\">Role</dt>\n<dd><span data-en=\"Concept, design\" data-de=\"Konzept, Design\">Concept, design</span></dd></div><div><dt data-en=\"Focus\" data-de=\"Fokus\">Focus</dt>\n<dd><span data-en=\"Newsletter, Digital\" data-de=\"Newsletter, Digital\">Newsletter, Digital</span></dd></div></dl><div class=\"d-case-intro\"><p>Our newsletters are mostly text, with the occasional product shot. That leaves the header doing all the visual work, and it's the one thing every subscriber sees before deciding whether to keep reading.</p><p>A selection from two years of daily business. Promotions, event announcements, product launches, paper sample offers, pricing news. Each one has to carry a different message while staying recognisably ours, and each one has to work at inbox size on a phone.</p></div><img class=\"d-case-img\" loading=\"lazy\" src=\"assets/img/p3-g1.webp\" alt=\"Two years of first impressions — detail\"><img class=\"d-case-img\" loading=\"lazy\" src=\"assets/img/p3-g2.webp\" alt=\"Two years of first impressions — detail\"><img class=\"d-case-img\" loading=\"lazy\" src=\"assets/img/p3-g3.webp\" alt=\"Two years of first impressions — detail\"><img class=\"d-case-img\" loading=\"lazy\" src=\"assets/img/p3-g4.webp\" alt=\"Two years of first impressions — detail\"><div class=\"d-case-tags\"><span>Brand</span><span>Ongoing</span></div>"}, "work-calendars": {"title_en": "Shapes'n'Calendars", "title_de": "Shapes'n'Calendars", "html": "<img class=\"d-case-img\" src=\"assets/img/work-4-calendars.webp\" alt=\"Shapes&#x27;n&#x27;Calendars\"><dl class=\"d-case-meta\"><div><dt data-en=\"Client\" data-de=\"Kunde\">Client</dt>\n<dd><span data-en=\"de-Agentur (charity project)\" data-de=\"de-Agentur (Charity-Projekt)\">de-Agentur (charity project)</span></dd></div><div><dt data-en=\"Year\" data-de=\"Jahr\">Year</dt>\n<dd><span data-en=\"2015\" data-de=\"2015\">2015</span></dd></div><div><dt data-en=\"Role\" data-de=\"Rolle\">Role</dt>\n<dd><span data-en=\"Concept, design\" data-de=\"Konzept, Design\">Concept, design</span></dd></div><div><dt data-en=\"Focus\" data-de=\"Fokus\">Focus</dt>\n<dd><span data-en=\"Print\" data-de=\"Print\">Print</span></dd></div></dl><div class=\"d-case-intro\"><p>The photographers and the printing house behind this project produce a charity calendar together every year, and for each edition they bring in a different agency to design it. That year the choice fell on ours, and I got the job as the junior designer on the team. It went on to win my first award.</p><p>The idea was to let the photography set the rules. For each month, a shape from inside the image gets picked up and rebuilt as a graphic element on the page below it. Twelve months, twelve photographs, twelve different shapes to find.</p><p>The hard part was finding a shape in every single photograph that was strong enough to carry a whole page.</p></div><img class=\"d-case-img\" loading=\"lazy\" src=\"assets/img/p4-g1.webp\" alt=\"Shapes&#x27;n&#x27;Calendars — detail\"><img class=\"d-case-img\" loading=\"lazy\" src=\"assets/img/p4-g2.webp\" alt=\"Shapes&#x27;n&#x27;Calendars — detail\"><img class=\"d-case-img\" loading=\"lazy\" src=\"assets/img/p4-g3.webp\" alt=\"Shapes&#x27;n&#x27;Calendars — detail\"><img class=\"d-case-img\" loading=\"lazy\" src=\"assets/img/p4-g4.webp\" alt=\"Shapes&#x27;n&#x27;Calendars — detail\"><div class=\"d-case-tags\"><span>Print</span><span>Personal</span></div>"}, "work-eva": {"title_en": "Website for Eva", "title_de": "Website for Eva", "html": "<img class=\"d-case-img\" src=\"assets/img/work-6-eva.jpg\" alt=\"Website for Eva\"><dl class=\"d-case-meta\"><div><dt data-en=\"Client\" data-de=\"Kunde\">Client</dt>\n<dd><span data-en=\"Dr. Eva Elisa Schneider\" data-de=\"Dr. Eva Elisa Schneider\">Dr. Eva Elisa Schneider</span></dd></div><div><dt data-en=\"Year\" data-de=\"Jahr\">Year</dt>\n<dd><span data-en=\"2023\" data-de=\"2023\">2023</span></dd></div><div><dt data-en=\"Role\" data-de=\"Rolle\">Role</dt>\n<dd><span data-en=\"Brand strategy, brand design, web design, copy\" data-de=\"Markenstrategie, Brand Design, Webdesign, Text\">Brand strategy, brand design, web design, copy</span></dd></div><div><dt data-en=\"Focus\" data-de=\"Fokus\">Focus</dt>\n<dd><span data-en=\"Branding, Web\" data-de=\"Branding, Web\">Branding, Web</span></dd></div></dl><div class=\"d-case-intro\"><p>Dr. Eva Elisa Schneider is a psychologist and psychotherapist who works with companies on mental health: helping organisations understand the subject, take it seriously and actually act on it. She came to me without a brand, so we started at the beginning.</p><p>I built the corporate design from scratch and the website with it, from positioning through the visual identity to parts of the copy. A brand around mental health in a corporate setting has to be credible to an HR director and approachable to the employee reading it.</p><p>One of my favourite projects from my freelance years. It ran smoothly from the first conversation to launch, and the site is still online today, unchanged since 2023.</p></div><img class=\"d-case-img\" loading=\"lazy\" src=\"assets/img/p6-g1.png\" alt=\"Website for Eva — detail\"><img class=\"d-case-img\" loading=\"lazy\" src=\"assets/img/p6-g2.jpg\" alt=\"Website for Eva — detail\"><img class=\"d-case-img\" loading=\"lazy\" src=\"assets/img/p6-g3.jpg\" alt=\"Website for Eva — detail\"><div class=\"d-case-tags\"><span>Web</span><span>Solo</span></div>"}, "work-fake-brand": {"title_en": "A Real Fake Brand", "title_de": "A Real Fake Brand", "html": "<img class=\"d-case-img\" src=\"assets/img/work-7-fake-brand.jpg\" alt=\"A Real Fake Brand\"><dl class=\"d-case-meta\"><div><dt data-en=\"Client\" data-de=\"Kunde\">Client</dt>\n<dd><span data-en=\"Onlineprinters\" data-de=\"Onlineprinters\">Onlineprinters</span></dd></div><div><dt data-en=\"Year\" data-de=\"Jahr\">Year</dt>\n<dd><span data-en=\"2026\" data-de=\"2026\">2026</span></dd></div><div><dt data-en=\"Role\" data-de=\"Rolle\">Role</dt>\n<dd><span data-en=\"Concept, art direction, design\" data-de=\"Konzept, Art Direction, Design\">Concept, art direction, design</span></dd></div><div><dt data-en=\"Focus\" data-de=\"Fokus\">Focus</dt>\n<dd><span data-en=\"Branding, Generative photography, AI workflows\" data-de=\"Branding, Generative Fotografie, KI-Workflows\">Branding, Generative photography, AI workflows</span></dd></div></dl><div class=\"d-case-intro\"><p>Mockups put us in a bind. Show a product carrying our own branding and it keeps the company front of mind, but the customer never sees what it could look like for them. A baker can't picture their business cards when every example says Onlineprinters.</p><p>My proposal was to build our own fictional customers. Six or seven brands, each fully designed, appearing again and again across our channels over the coming months until they read as recognisable examples rather than stock filler. They cover the range we actually sell to: hospitality, gastronomy, public sector, education, retail and so on.</p><p>This is the first. Refine, a robotics and automation company, aimed at our classic B2B customers in tech and industry. I designed the logo and a rough set of brand guidelines, then built the image world with Claude and Nano Banana Pro. That part took the longest. An editorial photographic style with its own framing, lighting and colour grading, consistent across every single shot, so it reads as one brand's photography instead of a folder of AI images.</p><p>The style is now a Claude skill, so everyone on the team can use it. The next brand doesn't start from zero, and the look stays the same no matter who builds it.</p></div><img class=\"d-case-img\" loading=\"lazy\" src=\"assets/img/p7-g1.jpg\" alt=\"A Real Fake Brand — detail\"><img class=\"d-case-img\" loading=\"lazy\" src=\"assets/img/p7-g2.webp\" alt=\"A Real Fake Brand — detail\"><img class=\"d-case-img\" loading=\"lazy\" src=\"assets/img/p7-g3.webp\" alt=\"A Real Fake Brand — detail\"><img class=\"d-case-img\" loading=\"lazy\" src=\"assets/img/p7-g4.webp\" alt=\"A Real Fake Brand — detail\"><img class=\"d-case-img\" loading=\"lazy\" src=\"assets/img/p7-g5.webp\" alt=\"A Real Fake Brand — detail\"><img class=\"d-case-img\" loading=\"lazy\" src=\"assets/img/p7-g6.webp\" alt=\"A Real Fake Brand — detail\"><img class=\"d-case-img\" loading=\"lazy\" src=\"assets/img/p7-g7.webp\" alt=\"A Real Fake Brand — detail\"><div class=\"d-case-tags\"><span>Brand</span><span>Concept</span></div>"}, "work-liquid-metal": {"title_en": "Liquid Metal", "title_de": "Liquid Metal", "html": "<iframe class=\"d-case-iframe\" src=\"https://neotenist.github.io/liquid-metal-shader/\" title=\"Liquid Metal\" loading=\"lazy\"></iframe><dl class=\"d-case-meta\"><div><dt data-en=\"Type\" data-de=\"Art\">Type</dt>\n<dd><span data-en=\"Generative shader\" data-de=\"Generativer Shader\">Generative shader</span></dd></div><div><dt data-en=\"Year\" data-de=\"Jahr\">Year</dt>\n<dd><span data-en=\"2026\" data-de=\"2026\">2026</span></dd></div><div><dt data-en=\"Role\" data-de=\"Rolle\">Role</dt>\n<dd><span data-en=\"Concept, shader, build\" data-de=\"Konzept, Shader, Umsetzung\">Concept, shader, build</span></dd></div><div><dt data-en=\"Focus\" data-de=\"Fokus\">Focus</dt>\n<dd><span data-en=\"WebGL, GLSL, live parameters\" data-de=\"WebGL, GLSL, Live-Parameter\">WebGL, GLSL, live parameters</span></dd></div><div><dt data-en=\"URL\" data-de=\"URL\">URL</dt>\n<dd><a href=\"https://neotenist.github.io/liquid-metal-shader/\" target=\"_blank\" rel=\"noopener\">Open ↗</a></dd></div><div><dt data-en=\"Code\" data-de=\"Code\">Code</dt>\n<dd><a href=\"https://github.com/neotenist/liquid-metal-shader\" target=\"_blank\" rel=\"noopener\">GitHub ↗</a></dd></div></dl><div class=\"d-case-intro\"><p>A WebGL shader that behaves like liquid metal — dark chrome, catching and bending light as it moves.</p><p>Speed, scale, distortion, how brushed the metal reads, how metallic versus matte it feels, and the base, highlight and mid tones are all parameter-driven in real time. There's no pre-rendered version of this — what's running above is the actual shader.</p><p>It took a few real passes to look right — an early version read more like a distorted mirror than metal, so the lighting got reworked until it actually looked like chrome.</p></div><div class=\"d-case-tags\"><span>Shader</span><span>AI-built</span></div>"}, "work-vibe-code": {"title_en": "When in doubt, vibe code it!", "title_de": "When in doubt, vibe code it!", "html": "<iframe class=\"d-case-iframe\" src=\"https://neotenist.github.io/trichrome/\" title=\"When in doubt, vibe code it!\" loading=\"lazy\"></iframe><dl class=\"d-case-meta\"><div><dt data-en=\"Type\" data-de=\"Art\">Type</dt>\n<dd><span data-en=\"Local web app\" data-de=\"Lokale Web-App\">Local web app</span></dd></div><div><dt data-en=\"Year\" data-de=\"Jahr\">Year</dt>\n<dd><span data-en=\"2026\" data-de=\"2026\">2026</span></dd></div><div><dt data-en=\"Role\" data-de=\"Rolle\">Role</dt>\n<dd><span data-en=\"Concept, build\" data-de=\"Konzept, Umsetzung\">Concept, build</span></dd></div><div><dt data-en=\"Focus\" data-de=\"Fokus\">Focus</dt>\n<dd><span data-en=\"Client-side image processing\" data-de=\"Client-seitige Bildverarbeitung\">Client-side image processing</span></dd></div><div><dt data-en=\"URL\" data-de=\"URL\">URL</dt>\n<dd><a href=\"https://neotenist.github.io/trichrome/\" target=\"_blank\" rel=\"noopener\">Open ↗</a></dd></div><div><dt data-en=\"Code\" data-de=\"Code\">Code</dt>\n<dd><a href=\"https://github.com/neotenist/trichrome\" target=\"_blank\" rel=\"noopener\">GitHub ↗</a></dd></div></dl><div class=\"d-case-intro\"><p>A local image converter — drop in PNG, JPG, or WEBP, batch-convert between formats, and compare file sizes side by side. Nothing leaves the browser.</p><p>Up to 40 images at once, each converted and measured in real time across all three formats, so the actual size trade-off is visible before exporting anything.</p><p>A genuinely useful tool I kept needing myself — asset prep that used to mean several browser tabs and manual exports is now one page.</p></div><div class=\"d-case-tags\"><span>Tool</span><span>AI-built</span></div>"}, "work-wordmark-scatter": {"title_en": "Wordmark Scatter", "title_de": "Wordmark Scatter", "html": "<iframe class=\"d-case-iframe\" src=\"https://neotenist.github.io/wordmark-scatter/\" title=\"Wordmark Scatter\" loading=\"lazy\"></iframe><dl class=\"d-case-meta\"><div><dt data-en=\"Type\" data-de=\"Art\">Type</dt>\n<dd><span data-en=\"Generative shader\" data-de=\"Generativer Shader\">Generative shader</span></dd></div><div><dt data-en=\"Year\" data-de=\"Jahr\">Year</dt>\n<dd><span data-en=\"2026\" data-de=\"2026\">2026</span></dd></div><div><dt data-en=\"Role\" data-de=\"Rolle\">Role</dt>\n<dd><span data-en=\"Concept, build\" data-de=\"Konzept, Umsetzung\">Concept, build</span></dd></div><div><dt data-en=\"Focus\" data-de=\"Fokus\">Focus</dt>\n<dd><span data-en=\"Canvas, particle physics, live parameters\" data-de=\"Canvas, Partikelphysik, Live-Parameter\">Canvas, particle physics, live parameters</span></dd></div><div><dt data-en=\"URL\" data-de=\"URL\">URL</dt>\n<dd><a href=\"https://neotenist.github.io/wordmark-scatter/\" target=\"_blank\" rel=\"noopener\">Open ↗</a></dd></div><div><dt data-en=\"Code\" data-de=\"Code\">Code</dt>\n<dd><a href=\"https://github.com/neotenist/wordmark-scatter\" target=\"_blank\" rel=\"noopener\">GitHub ↗</a></dd></div></dl><div class=\"d-case-intro\"><p>This site's own wordmark, rasterized into a grid of dots that spring back to place — nudge it with the cursor, click for a ripple that cycles through the site's own five folder colors.</p><p>Everything is parameter-driven: dot size and spacing, pointer radius and strength, spring stiffness and damping, and how far a ripple has to travel before its color cycle completes.</p><p>It was actually built for this site's own hero, standing in for the big wordmark on load — pulled out here on its own so it's easier to keep tuning without touching the live homepage.</p></div><div class=\"d-case-tags\"><span>Shader</span><span>AI-built</span></div>"}, "cv-0": {"title_en": "Senior Brand Designer", "title_de": "Senior Brand Designerin", "html": "<div class=\"cv-bento\">\n<div class=\"cv-bento-col\">\n<div class=\"cv-bento-meta\"> <h4 data-de=\"Kontext\" data-en=\"Context\">Context</h4>\n<p class=\"body-text max-w-none text-ink\" data-de=\"Onlinedruck für den europäischen Markt, B2B und B2C. Eine der größten Online-Druckereien Europas mit Hauptsitz in Neustadt an der Aisch und Produktionsstandorten in Deutschland, Großbritannien, Dänemark, Polen und Spanien. Hervorgegangen aus einem 1984 gegründeten Familienbetrieb.\" data-en=\"Online printing for the European market, B2B and B2C. One of the largest online print shops in Europe, headquartered in Neustadt an der Aisch, with production sites across Germany, the UK, Denmark, Poland and Spain. Grew out of a family-run print business founded in 1984.\">Online printing for the European market, B2B and B2C. One of the largest online print shops in Europe, headquartered in Neustadt an der Aisch, with production sites across Germany, the UK, Denmark, Poland and Spain. Grew out of a family-run print business founded in 1984.</p>\n</div>\n<div class=\"cv-bento-desc\"> <h4 data-de=\"Was ich gemacht habe\" data-en=\"What I did\">What I did</h4>\n<div class=\"cv-bento-desc-group\">\n<h5 data-de=\"Operativ\" data-en=\"Hands-on\">Hands-on</h5>\n<ul class=\"bullet-list\">\n<li><span data-de=\"Key Visuals für Newsletter und die dazugehörigen Landingpages\" data-en=\"Key visuals for newsletters and their landing pages\">Key visuals for newsletters and their landing pages</span></li>\n<li><span data-de=\"Newsletter-Konzepte und redaktionelle Planung\" data-en=\"Newsletter concepts and editorial planning\">Newsletter concepts and editorial planning</span></li>\n<li><span data-de=\"UI-Design für Newsletter und Onlineshop\" data-en=\"UI design for newsletters and the online shop\">UI design for newsletters and the online shop</span></li>\n<li><span data-de=\"Printmailings, von der Idee bis zur Druckfreigabe\" data-en=\"Print mailings, end to end\">Print mailings, end to end</span></li>\n<li><span data-de=\"Social-Media-Content-Strategie\" data-en=\"Social media content strategy\">Social media content strategy</span></li>\n</ul>\n</div>\n<div class=\"cv-bento-desc-group\">\n<h5 data-de=\"Strategisch\" data-en=\"Strategy\">Strategy</h5>\n<ul class=\"bullet-list\">\n<li><span data-de=\"Weiterentwicklung des Corporate Designs\" data-en=\"Evolving the corporate design\">Evolving the corporate design</span></li>\n<li><span data-de=\"Aufbau und Pflege der Brand Guidelines\" data-en=\"Building and maintaining the brand guidelines\">Building and maintaining the brand guidelines</span></li>\n<li><span data-de=\"Mitarbeit an der Markenpositionierung\" data-en=\"Supporting the development of brand positioning\">Supporting the development of brand positioning</span></li>\n<li><span data-de=\"Markenkonsistenz über alle Kanäle hinweg\" data-en=\"Keeping the brand coherent across every channel\">Keeping the brand coherent across every channel</span></li>\n<li><span data-de=\"Vermarktung der B2B-Softwarelösungen\" data-en=\"Go-to-market work for the B2B software products\">Go-to-market work for the B2B software products</span></li>\n</ul>\n</div>\n<div class=\"cv-bento-desc-group\">\n<h5 data-de=\"Führung &amp; Prozesse\" data-en=\"Leadership &amp; process\">Leadership &amp; process</h5>\n<ul class=\"bullet-list\">\n<li><span data-de=\"Fachliche Führung des Designteams\" data-en=\"Design lead for the team\">Design lead for the team</span></li>\n<li><span data-de=\"Ausbildung der Mediengestalter-Azubis\" data-en=\"Training media design apprentices\">Training media design apprentices</span></li>\n<li><span data-de=\"Einführung von KI-Tools und Workflows im Grafikbereich\" data-en=\"Introducing AI tools and workflows into the graphics department\">Introducing AI tools and workflows into the graphics department</span></li>\n</ul>\n</div>\n</div>\n</div>\n<div class=\"cv-bento-col\">\n<div class=\"cv-bento-worth\"> <h4 data-de=\"Besonders erwähnenswert\" data-en=\"Worth mentioning\">Worth mentioning</h4>\n<p class=\"body-text text-ink\" data-de=\"Von einer Messe kam ich mit einer unbequemen Beobachtung zurück: Unsere B2B-Softwarelösungen waren richtig gut, und man merkte es der Art, wie wir über sie sprachen, kaum an. Niemand hat mich gebeten, das zu ändern – ich habe es trotzdem aufgebaut. Ein neues Websitekonzept, gebaut um das, was die Zielgruppe tatsächlich wissen muss, und formuliert in der Sprache, die sie selbst benutzt. Strategie, UX, Contentstruktur und Design in einem Aufwasch.\" data-en=\"I came back from a trade fair with an uncomfortable observation: our B2B software solutions were genuinely good and almost nobody could tell from the way we talked about them. Nobody asked me to fix it, so I built the case anyway — a new website concept built around what the target group actually needed to know, positioning the products in language they use themselves. Strategy, UX, content structure and design in one piece of work.\">I came back from a trade fair with an uncomfortable observation: our B2B software solutions were genuinely good and almost nobody could tell from the way we talked about them. Nobody asked me to fix it, so I built the case anyway — a new website concept built around what the target group actually needed to know, positioning the products in language they use themselves. Strategy, UX, content structure and design in one piece of work.</p>\n<p class=\"body-text text-ink\" data-de=\"Das Zweite, worauf ich hier stolz bin, ist leiser: Ich habe KI-Bildgenerierung sauber in den Grafik-Workflow gebracht – Briefing, Generierung, Retusche, Markenkonformität, dokumentiert, damit das Team wirklich damit arbeiten kann. Das Ergebnis ist, dass wir kein Fotostudio mehr brauchen. Aktuell richte ich denselben Ansatz auf die Markenentwicklung selbst.\" data-en=\"The second thing I'm proud of here is quieter: I built AI image generation into the graphics workflow properly — briefing, generation, retouching, brand compliance, all of it documented so the team could actually use it. The result is that we no longer need a photo studio. Right now I'm pointing the same approach at brand development itself.\">The second thing I'm proud of here is quieter: I built AI image generation into the graphics workflow properly — briefing, generation, retouching, brand compliance, all of it documented so the team could actually use it. The result is that we no longer need a photo studio. Right now I'm pointing the same approach at brand development itself.</p>\n</div>\n<div class=\"cv-bento-tools\">\n<h4 data-de=\"Werkzeuge\" data-en=\"Tools\">Tools</h4>\n<div class=\"cv-bento-desc-group\">\n<h5 data-de=\"Software\" data-en=\"Software\">Software</h5>\n<div class=\"flex flex-wrap gap-2\">\n<span class=\"pill font-bold\">Adobe Creative Cloud</span><span class=\"pill font-bold\">Photoshop</span><span class=\"pill font-bold\">InDesign</span><span class=\"pill font-bold\">Illustrator</span><span class=\"pill font-bold\">Lightroom</span><span class=\"pill font-bold\">Premiere Pro</span><span class=\"pill font-bold\">Figma</span><span class=\"pill font-bold\">Canva</span>\n</div>\n</div>\n<div class=\"cv-bento-desc-group\">\n<h5 data-de=\"Technologie\" data-en=\"Technology\">Technology</h5>\n<div class=\"flex flex-wrap gap-2\">\n<span class=\"pill font-bold\">Hotjar</span><span class=\"pill font-bold\">HTML</span><span class=\"pill font-bold\">CSS</span><span class=\"pill font-bold\">Inxmail</span>\n</div>\n</div>\n<div class=\"cv-bento-desc-group\">\n<h5 data-de=\"Workflow\" data-en=\"Workflow\">Workflow</h5>\n<div class=\"flex flex-wrap gap-2\">\n<span class=\"pill font-bold\">Miro</span><span class=\"pill font-bold\">FigJam</span><span class=\"pill font-bold\">Wireframing</span><span class=\"pill font-bold\">Prototyping</span><span class=\"pill font-bold\">UX/UI</span><span class=\"pill font-bold\">Jira</span><span class=\"pill font-bold\">Confluence</span><span class=\"pill font-bold\">Asana</span><span class=\"pill font-bold\">Microsoft Teams</span><span class=\"pill font-bold\">Microsoft Office</span>\n</div>\n</div>\n<div class=\"cv-bento-desc-group\">\n<h5 data-de=\"KI\" data-en=\"AI\">AI</h5>\n<div class=\"flex flex-wrap gap-2\">\n<span class=\"pill font-bold\">Lovable</span><span class=\"pill font-bold\">Claude Code</span><span class=\"pill font-bold\">FloraFauna AI</span><span class=\"pill font-bold\">ChatGPT</span><span class=\"pill font-bold\">Midjourney</span><span class=\"pill font-bold\">Make</span>\n</div>\n</div>\n</div>\n</div>\n</div>"}, "cv-1": {"title_en": "Freelance Brand Strategist & Web Designer", "title_de": "Freelance Brand Strategin & Webdesignerin", "html": "<div class=\"cv-bento\">\n<div class=\"cv-bento-col\">\n<div class=\"cv-bento-meta\"> <h4 data-de=\"Kontext\" data-en=\"Context\">Context</h4>\n<p class=\"body-text max-w-none text-ink\" data-de=\"Markenstrategie und Webdesign für kleinere B2B-Unternehmen und Einzelunternehmer:innen – Positionierung, Markenidentität, Marketing und die Website, die das alles trägt.\" data-en=\"Brand strategy and web design for smaller B2B companies and independent entrepreneurs — positioning, brand identity, marketing, and the website to carry it all.\">Brand strategy and web design for smaller B2B companies and independent entrepreneurs — positioning, brand identity, marketing, and the website to carry it all.</p>\n</div>\n<div class=\"cv-bento-desc\"> <h4 data-de=\"Was ich gemacht habe\" data-en=\"What I did\">What I did</h4>\n<ul class=\"bullet-list\">\n<li><span data-de=\"Markenidentitäten aufbauen und weiterentwickeln – Positionierung, Markenbotschaften, visuelles Erscheinungsbild\" data-en=\"Building and evolving brand identities — positioning, messaging, visual identity\">Building and evolving brand identities — positioning, messaging, visual identity</span></li>\n<li><span data-de=\"Beratung zu Markenauftritt, Kommunikation und digitaler Präsenz, mit Konsistenz als rotem Faden\" data-en=\"Advising companies on brand presence, communication and digital presence, with consistency as the through-line\">Advising companies on brand presence, communication and digital presence, with consistency as the through-line</span></li>\n<li><span data-de=\"Websites als Markenkommunikation, nicht als Dekoration: Strategie, Wireframes, Umsetzung\" data-en=\"Websites as brand communication, not decoration: strategy, wireframes, build\">Websites as brand communication, not decoration: strategy, wireframes, build</span></li>\n<li><span data-de=\"UX-Konzepte und deren laufende Optimierung entlang definierter Unternehmens- und Nutzerziele\" data-en=\"UX concepts, then continuous optimisation against defined business and user goals\">UX concepts, then continuous optimisation against defined business and user goals</span></li>\n<li><span data-de=\"Steuerung von Kundenprojekten und Koordination externer Freelancer\" data-en=\"Running client projects and coordinating external freelancers and partners\">Running client projects and coordinating external freelancers and partners</span></li>\n<li><span data-de=\"Und der ganze Rest: Geschäftsentwicklung, Vertrieb, Budgetplanung, Projektmanagement, Kundenbetreuung\" data-en=\"And the rest of it: business development, sales, budgeting, project management, client care\">And the rest of it: business development, sales, budgeting, project management, client care</span></li>\n</ul>\n</div>\n</div>\n<div class=\"cv-bento-col\">\n<div class=\"cv-bento-worth\"> <h4 data-de=\"Besonders erwähnenswert\" data-en=\"Worth mentioning\">Worth mentioning</h4>\n<p class=\"body-text text-ink\" data-de=\"Die Projekte waren gut. Die Selbstständigkeit war besser.\" data-en=\"The projects were good. The self-employment was better.\">The projects were good. The self-employment was better.</p>\n<p class=\"body-text text-ink\" data-de=\"Drei Jahre eigenes Unternehmen haben mir Dinge beigebracht, die kein Angestelltenverhältnis geliefert hätte: ein ganzes Projekt gleichzeitig im Kopf behalten, Preise machen, Nein sagen – und was eine Kundin wirklich meint, wenn sie sagt, es soll knalliger werden. Ich bin daraus flexibler, unternehmerischer und deutlich schwerer aus der Ruhe zu bringen herausgekommen.\" data-en='Three years running my own business taught me things no design job would have: how to hold a whole project in my head at once, how to price work, how to say no, and what a client actually means when they say \"make it pop.\" I came out of it more flexible, more commercially minded and considerably harder to unsettle.'>Three years running my own business taught me things no design job would have: how to hold a whole project in my head at once, how to price work, how to say no, and what a client actually means when they say \"make it pop.\" I came out of it more flexible, more commercially minded and considerably harder to unsettle.</p>\n<p class=\"body-text text-ink\" data-de=\"Ich habe mich als Webdesignerin vermarktet, nicht als Brand-Strategin – mit Absicht. Branding ist abstrakt, und viele Gründer:innen in einer frühen Phase wissen noch nicht recht, was sie damit anfangen sollen oder wofür sie dafür bezahlen würden. Damit vorneweg zu starten, hat bei kleineren Kund:innen nie funktioniert. Eine Website dagegen ist konkret. Sobald ich mit jemandem tatsächlich über die eigene Seite im Gespräch war, konnte ich die Markenstrategie dahinter mit einbringen – und meistens ließen sie sich überzeugen, weil man eine Website ohnehin nicht gut gestalten kann, ohne eine Marke dahinter zu haben.\" data-en=\"I marketed myself as a web designer, not a brand strategist — on purpose. Branding is abstract, and a lot of early-stage entrepreneurs don't yet know what to do with it or why they'd pay for it, so leading with it never landed with smaller clients. A website is concrete. Once I was actually talking to someone about their site, that's when I could make the case for the brand strategy underneath it — and by then they were usually convinced, because you can't design a website well without one.\">I marketed myself as a web designer, not a brand strategist — on purpose. Branding is abstract, and a lot of early-stage entrepreneurs don't yet know what to do with it or why they'd pay for it, so leading with it never landed with smaller clients. A website is concrete. Once I was actually talking to someone about their site, that's when I could make the case for the brand strategy underneath it — and by then they were usually convinced, because you can't design a website well without one.</p>\n</div>\n<div class=\"cv-bento-tools\">\n<h4 data-de=\"Werkzeuge\" data-en=\"Tools\">Tools</h4>\n<div class=\"cv-bento-desc-group\">\n<h5 data-de=\"Software\" data-en=\"Software\">Software</h5>\n<div class=\"flex flex-wrap gap-2\">\n<span class=\"pill font-bold\">Adobe Creative Cloud</span><span class=\"pill font-bold\">Photoshop</span><span class=\"pill font-bold\">Illustrator</span><span class=\"pill font-bold\">InDesign</span><span class=\"pill font-bold\">Premiere Pro</span><span class=\"pill font-bold\">Figma</span><span class=\"pill font-bold\">Canva</span>\n</div>\n</div>\n<div class=\"cv-bento-desc-group\">\n<h5 data-de=\"Technologie\" data-en=\"Technology\">Technology</h5>\n<div class=\"flex flex-wrap gap-2\">\n<span class=\"pill font-bold\">HTML</span><span class=\"pill font-bold\">CSS</span><span class=\"pill font-bold\">JavaScript</span><span class=\"pill font-bold\">WordPress</span><span class=\"pill font-bold\">Webflow</span><span class=\"pill font-bold\">Statamic</span><span class=\"pill font-bold\">Google Analytics</span><span class=\"pill font-bold\">Plausible</span><span class=\"pill font-bold\">Google Search Console</span><span class=\"pill font-bold\">SEO</span><span class=\"pill font-bold\">SEM</span><span class=\"pill font-bold\">Shopify</span>\n</div>\n</div>\n<div class=\"cv-bento-desc-group\">\n<h5 data-de=\"Workflow\" data-en=\"Workflow\">Workflow</h5>\n<div class=\"flex flex-wrap gap-2\">\n<span class=\"pill font-bold\">FigJam</span><span class=\"pill font-bold\">Wireframing</span><span class=\"pill font-bold\">Prototyping</span><span class=\"pill font-bold\">UX/UI</span><span class=\"pill font-bold\">Notion</span><span class=\"pill font-bold\">Asana</span><span class=\"pill font-bold\">ClickUp</span><span class=\"pill font-bold\">Slack</span><span class=\"pill font-bold\">Google Workspace</span>\n</div>\n</div>\n<div class=\"cv-bento-desc-group\">\n<h5 data-de=\"KI\" data-en=\"AI\">AI</h5>\n<div class=\"flex flex-wrap gap-2\">\n<span class=\"pill font-bold\">Lovable</span><span class=\"pill font-bold\">AI Workflows</span><span class=\"pill font-bold\">Automations</span><span class=\"pill font-bold\">Zapier</span><span class=\"pill font-bold\">Make</span><span class=\"pill font-bold\">Midjourney</span><span class=\"pill font-bold\">ChatGPT</span>\n</div>\n</div>\n</div>\n</div>\n</div>"}, "cv-2": {"title_en": "Designer", "title_de": "Designerin", "html": "<div class=\"cv-bento\">\n<div class=\"cv-bento-col\">\n<div class=\"cv-bento-meta\"> <h4 data-de=\"Kontext\" data-en=\"Context\">Context</h4>\n<p class=\"body-text max-w-none italic text-ink\" data-de=\"Teilzeit, parallel zur Selbstständigkeit.\" data-en=\"Part-time, alongside self-employment.\">Part-time, alongside self-employment.</p>\n<p class=\"body-text max-w-none text-ink\" data-de=\"E-Commerce-Händler für medizinisches Zubehör und Ausrüstung, B2B und B2C. Handelt über den Onlineshop Fenomed mit Ausrüstung für Medizin und Feuerwehr – von Diagnosebasics wie Stethoskopen und Pulsoximetern bis zu Erste-Hilfe- und Notfallausrüstung. Sitz in Immenstaad am Bodensee.\" data-en=\"E-commerce retailer for medical equipment and supplies, B2B and B2C. Trades equipment for the medical and fire-brigade sectors — from diagnostic basics like stethoscopes and pulse oximeters to first-aid and emergency supplies — through its Fenomed online shop. Based in Immenstaad am Bodensee.\">E-commerce retailer for medical equipment and supplies, B2B and B2C. Trades equipment for the medical and fire-brigade sectors — from diagnostic basics like stethoscopes and pulse oximeters to first-aid and emergency supplies — through its Fenomed online shop. Based in Immenstaad am Bodensee.</p>\n</div>\n<div class=\"cv-bento-desc\"> <h4 data-de=\"Was ich gemacht habe\" data-en=\"What I did\">What I did</h4>\n<ul class=\"bullet-list\">\n<li><span data-de=\"Projektmanagement für sämtliche Marketingaktivitäten\" data-en=\"Project management for all marketing activity\">Project management for all marketing activity</span></li>\n<li><span data-de=\"Grafiken und Banner für den Onlineshop\" data-en=\"Graphics and banners for the online shop\">Graphics and banners for the online shop</span></li>\n<li><span data-de=\"Landingpages für SEO und Paid\" data-en=\"Landing pages for SEO and paid campaigns\">Landing pages for SEO and paid campaigns</span></li>\n<li><span data-de=\"Alle Werbemittel: Paketbeilagen, Flyer, Aufkleber und was sonst anfiel\" data-en=\"Every piece of promotional material: package inserts, flyers, stickers and the rest\">Every piece of promotional material: package inserts, flyers, stickers and the rest</span></li>\n<li><span data-de=\"Content für Social Media und Verwaltung der Kanäle\" data-en=\"Social media content and channel management\">Social media content and channel management</span></li>\n</ul>\n</div>\n</div>\n<div class=\"cv-bento-col\">\n<div class=\"cv-bento-worth\"> <h4 data-de=\"Besonders erwähnenswert\" data-en=\"Worth mentioning\">Worth mentioning</h4>\n<p class=\"body-text text-ink\" data-de=\"Docmedical musste kurzfristig rebranden – und zwar in der Sorte Kurzfristigkeit, die man in Tagen misst, nicht in Quartalen. Ich habe das komplette Branding inklusive neuem Logo entwickelt und anschließend den Onlineshop, alle Social-Media-Kanäle und sämtliche Werbemittel nachgezogen.\" data-en='Docmedical had to rebrand at short notice — the kind of \"short notice\" that gets measured in days, not quarters. I built the complete branding including a new logo, then pulled the online shop, every social channel and all promotional material across to match it.'>Docmedical had to rebrand at short notice — the kind of \"short notice\" that gets measured in days, not quarters. I built the complete branding including a new logo, then pulled the online shop, every social channel and all promotional material across to match it.</p>\n<p class=\"body-text text-ink\" data-de=\"Ich war die einzige dort angestellte Designerin. Es war pünktlich fertig und im Budget.\" data-en=\"I was the only designer employed there. It landed on time and on budget.\">I was the only designer employed there. It landed on time and on budget.</p>\n</div>\n<div class=\"cv-bento-tools\">\n<h4 data-de=\"Werkzeuge\" data-en=\"Tools\">Tools</h4>\n<div class=\"cv-bento-desc-group\">\n<h5 data-de=\"Software\" data-en=\"Software\">Software</h5>\n<div class=\"flex flex-wrap gap-2\">\n<span class=\"pill font-bold\">Adobe Creative Cloud</span><span class=\"pill font-bold\">Photoshop</span><span class=\"pill font-bold\">InDesign</span><span class=\"pill font-bold\">Illustrator</span><span class=\"pill font-bold\">Lightroom</span><span class=\"pill font-bold\">Sketch</span><span class=\"pill font-bold\">Adobe XD</span>\n</div>\n</div>\n<div class=\"cv-bento-desc-group\">\n<h5 data-de=\"Technologie\" data-en=\"Technology\">Technology</h5>\n<div class=\"flex flex-wrap gap-2\">\n<span class=\"pill font-bold\">HTML</span><span class=\"pill font-bold\">CSS</span><span class=\"pill font-bold\">Google Analytics</span><span class=\"pill font-bold\">Google Search Console</span><span class=\"pill font-bold\">SEO</span><span class=\"pill font-bold\">SEM</span><span class=\"pill font-bold\">Plentymarkets</span>\n</div>\n</div>\n<div class=\"cv-bento-desc-group\">\n<h5 data-de=\"Workflow\" data-en=\"Workflow\">Workflow</h5>\n<div class=\"flex flex-wrap gap-2\">\n<span class=\"pill font-bold\">Wireframing</span><span class=\"pill font-bold\">Prototyping</span><span class=\"pill font-bold\">UX/UI</span><span class=\"pill font-bold\">Asana</span><span class=\"pill font-bold\">Microsoft Office</span>\n</div>\n</div>\n</div>\n</div>\n</div>"}, "cv-3": {"title_en": "UX/UI Designer, Marketing & Co-Founder", "title_de": "UX/UI Designerin, Marketing & Co-Founderin", "html": "<div class=\"cv-bento\">\n<div class=\"cv-bento-col\">\n<div class=\"cv-bento-meta\"> <h4 data-de=\"Kontext\" data-en=\"Context\">Context</h4>\n<p class=\"body-text max-w-none italic text-ink\" data-de=\"Nebentätigkeit parallel zur Vollzeitstelle bei Hinke.\" data-en=\"Alongside my full-time role at Hinke GmbH.\">Alongside my full-time role at Hinke GmbH.</p>\n<p class=\"body-text max-w-none text-ink\" data-de=\"SaaS-Startup mit einer Plattform für einfache Kursbuchungen. 2019 in München gegründet, betrieb es einen Online-Marktplatz für Kurse, Workshops und Coachings sowie allgemeine Webentwicklungsdienstleistungen.\" data-en=\"SaaS startup building a platform for simple course bookings. Founded in Munich in 2019, it ran an online marketplace connecting people with courses, workshops and coaching, alongside general web-development services.\">SaaS startup building a platform for simple course bookings. Founded in Munich in 2019, it ran an online marketplace connecting people with courses, workshops and coaching, alongside general web-development services.</p>\n</div>\n<div class=\"cv-bento-desc\"> <h4 data-de=\"Was ich gemacht habe\" data-en=\"What I did\">What I did</h4>\n<ul class=\"bullet-list\">\n<li><span data-de=\"Wireframing der User Journey\" data-en=\"Wireframing the user journey\">Wireframing the user journey</span></li>\n<li><span data-de=\"UX-Research und Requirements Engineering\" data-en=\"UX research and requirements engineering\">UX research and requirements engineering</span></li>\n<li><span data-de=\"High-Fidelity-Prototypen in Figma\" data-en=\"High-fidelity prototypes in Figma\">High-fidelity prototypes in Figma</span></li>\n<li><span data-de=\"Umsetzung des UI in HTML und CSS zur Übergabe an das Dev-Team\" data-en=\"Translating the UI into HTML and CSS for handover to the dev team\">Translating the UI into HTML and CSS for handover to the dev team</span></li>\n<li><span data-de=\"Planung und Durchführung der Marketingaktivitäten, online und offline\" data-en=\"Planning and running marketing, online and offline\">Planning and running marketing, online and offline</span></li>\n<li><span data-de=\"Content- und Blogkonzept\" data-en=\"Content and blog concept\">Content and blog concept</span></li>\n<li><span data-de=\"Social-Media-Strategie von der Konzeption bis zur Umsetzung\" data-en=\"Social media strategy, from concept to execution\">Social media strategy, from concept to execution</span></li>\n<li><span data-de=\"Entwurf und Versand von Newslettern\" data-en=\"Newsletter design and dispatch\">Newsletter design and dispatch</span></li>\n<li><span data-de=\"Überwachung der relevanten Marketingkennzahlen\" data-en=\"Tracking the marketing metrics that mattered\">Tracking the marketing metrics that mattered</span></li>\n</ul>\n</div>\n</div>\n<div class=\"cv-bento-col\">\n<div class=\"cv-bento-worth\"> <h4 data-de=\"Besonders erwähnenswert\" data-en=\"Worth mentioning\">Worth mentioning</h4>\n<p class=\"body-text text-ink\" data-de=\"Ich wurde als Marketingverantwortliche und Co-Founderin an Bord geholt. Dann habe ich die Software tatsächlich benutzt.\" data-en=\"I was brought in to run marketing and co-found the company. Then I actually used the software.\">I was brought in to run marketing and co-found the company. Then I actually used the software.</p>\n<p class=\"body-text text-ink\" data-de=\"Es gab gravierende Usability-Probleme – die Sorte, bei der jeder Euro Marketingbudget direkt wieder herausläuft. Bevor ich also die Aufgabe machen konnte, für die ich geholt worden war, habe ich die ersten Monate in einem Spagat aus Product Ownership und UX/UI-Design damit verbracht, das Produkt selbst in Ordnung zu bringen. Marketing trägt ein Produkt nur so weit, wie das Produkt überzeugt. Die Verbesserungen sind zeitnah in ein MVP geflossen.\" data-en=\"There were serious usability problems — the kind that would have made every euro of marketing spend leak straight back out. So before I did the job I was hired for, I spent the first months somewhere between product ownership and UX/UI design, fixing the thing itself. Marketing can only carry a product so far if the product doesn't hold up. The improvements made it into an MVP shortly afterwards.\">There were serious usability problems — the kind that would have made every euro of marketing spend leak straight back out. So before I did the job I was hired for, I spent the first months somewhere between product ownership and UX/UI design, fixing the thing itself. Marketing can only carry a product so far if the product doesn't hold up. The improvements made it into an MVP shortly afterwards.</p>\n</div>\n<div class=\"cv-bento-tools\">\n<h4 data-de=\"Werkzeuge\" data-en=\"Tools\">Tools</h4>\n<div class=\"cv-bento-desc-group\">\n<h5 data-de=\"Software\" data-en=\"Software\">Software</h5>\n<div class=\"flex flex-wrap gap-2\">\n<span class=\"pill font-bold\">Adobe Creative Cloud</span><span class=\"pill font-bold\">Photoshop</span><span class=\"pill font-bold\">InDesign</span><span class=\"pill font-bold\">Illustrator</span><span class=\"pill font-bold\">Lightroom</span><span class=\"pill font-bold\">Figma</span>\n</div>\n</div>\n<div class=\"cv-bento-desc-group\">\n<h5 data-de=\"Technologie\" data-en=\"Technology\">Technology</h5>\n<div class=\"flex flex-wrap gap-2\">\n<span class=\"pill font-bold\">HTML</span><span class=\"pill font-bold\">CSS</span><span class=\"pill font-bold\">JavaScript</span><span class=\"pill font-bold\">WordPress</span><span class=\"pill font-bold\">Google Analytics</span><span class=\"pill font-bold\">SEO</span><span class=\"pill font-bold\">Google Search Console</span><span class=\"pill font-bold\">Inxmail</span>\n</div>\n</div>\n<div class=\"cv-bento-desc-group\">\n<h5 data-de=\"Workflow\" data-en=\"Workflow\">Workflow</h5>\n<div class=\"flex flex-wrap gap-2\">\n<span class=\"pill font-bold\">Wireframing</span><span class=\"pill font-bold\">Prototyping</span><span class=\"pill font-bold\">UX/UI</span><span class=\"pill font-bold\">Requirements Engineering</span><span class=\"pill font-bold\">Asana</span><span class=\"pill font-bold\">Google Workspace</span>\n</div>\n</div>\n</div>\n</div>\n</div>"}, "cv-4": {"title_en": "Designer", "title_de": "Designerin", "html": "<div class=\"cv-bento\">\n<div class=\"cv-bento-col\">\n<div class=\"cv-bento-meta\"> <h4 data-de=\"Kontext\" data-en=\"Context\">Context</h4>\n<p class=\"body-text max-w-none text-ink\" data-de=\"Textileinzelhandel mit Onlineshop und stationären Geschäften, B2C. Firmiert unter der Marke Pfundskerl, einem bayerischen Label für Herrenmode in Übergrößen (3XL–10XL), gegründet 1994 mit Sitz in Neufahrn bei Freising.\" data-en=\"Textile retail with an online shop and physical stores, B2C. Trades under the brand Pfundskerl, a Bavarian menswear label specialising in oversized clothing (3XL–10XL), founded in 1994 and based in Neufahrn bei Freising.\">Textile retail with an online shop and physical stores, B2C. Trades under the brand Pfundskerl, a Bavarian menswear label specialising in oversized clothing (3XL–10XL), founded in 1994 and based in Neufahrn bei Freising.</p>\n</div>\n<div class=\"cv-bento-desc\"> <h4 data-de=\"Was ich gemacht habe\" data-en=\"What I did\">What I did</h4>\n<ul class=\"bullet-list\">\n<li><span data-de=\"Fachliche Führung der Abteilung\" data-en=\"Design lead for the department\">Design lead for the department</span></li>\n<li><span data-de=\"Ausbildungsverantwortung\" data-en=\"Responsible for apprentice training\">Responsible for apprentice training</span></li>\n<li><span data-de=\"Koordination von Dienstleistern, allgemeines Projektmanagement\" data-en=\"Coordinating service providers, general project management\">Coordinating service providers, general project management</span></li>\n<li><span data-de=\"Korrekte Umsetzung der Corporate-Design-Guidelines\" data-en=\"Making sure the corporate design guidelines were implemented properly\">Making sure the corporate design guidelines were implemented properly</span></li>\n<li><span data-de=\"Steuerung sämtlicher Werbemittel, online und offline\" data-en=\"Steering all promotional material, online and offline\">Steering all promotional material, online and offline</span></li>\n<li><span data-de=\"Kampagnenkonzepte entlang der Produktpalette, in Kooperation mit dem Einkauf\" data-en=\"Campaign concepts built around the product range, in cooperation with Purchasing\">Campaign concepts built around the product range, in cooperation with Purchasing</span></li>\n<li><span data-de=\"Planung und Durchführung der Marketingaktivitäten, online und offline\" data-en=\"Planning and running marketing activity, online and offline\">Planning and running marketing activity, online and offline</span></li>\n<li><span data-de=\"Screendesign für Landingpages und Content für die CMS-Seiten im Shop\" data-en=\"Screen design for landing pages and CMS content in the shop\">Screen design for landing pages and CMS content in the shop</span></li>\n<li><span data-de=\"Entwurf und Versand von Newslettern\" data-en=\"Newsletter design and dispatch\">Newsletter design and dispatch</span></li>\n<li><span data-de=\"Überwachung der Marketingkennzahlen\" data-en=\"Tracking marketing metrics\">Tracking marketing metrics</span></li>\n<li><span data-de=\"Gestaltung, Reinzeichnung und Druckdatenmanagement\" data-en=\"Design, artwork and print data management\">Design, artwork and print data management</span></li>\n</ul>\n</div>\n</div>\n<div class=\"cv-bento-col\">\n<div class=\"cv-bento-worth\"> <h4 data-de=\"Besonders erwähnenswert\" data-en=\"Worth mentioning\">Worth mentioning</h4>\n<p class=\"body-text text-ink\" data-de=\"Die Marke Pfundskerl hat ein Rebranding durchlaufen, und der Onlineshop musste nachziehen – angepasst an die neue Identität und nach aktuellen UX-Standards conversion-optimiert.\" data-en=\"The Pfundskerl brand went through a rebrand, and the online shop needed to follow — matched to the new identity and rebuilt to current UX and conversion standards.\">The Pfundskerl brand went through a rebrand, and the online shop needed to follow — matched to the new identity and rebuilt to current UX and conversion standards.</p>\n<p class=\"body-text text-ink\" data-de=\"Ich habe das neue UX- und UI-Design verantwortet und das Projektmanagement für den kompletten Relaunch übernommen. Nach dem Go-live lag die Conversion Rate um 150 % höher.\" data-en=\"I owned the new UX and UI design and ran the project management for the entire relaunch. After go-live, conversion rate was up 150%.\">I owned the new UX and UI design and ran the project management for the entire relaunch. After go-live, conversion rate was up 150%.</p>\n</div>\n<div class=\"cv-bento-tools\">\n<h4 data-de=\"Werkzeuge\" data-en=\"Tools\">Tools</h4>\n<div class=\"cv-bento-desc-group\">\n<h5 data-de=\"Software\" data-en=\"Software\">Software</h5>\n<div class=\"flex flex-wrap gap-2\">\n<span class=\"pill font-bold\">Adobe Creative Cloud</span><span class=\"pill font-bold\">Photoshop</span><span class=\"pill font-bold\">InDesign</span><span class=\"pill font-bold\">Illustrator</span><span class=\"pill font-bold\">Lightroom</span><span class=\"pill font-bold\">Adobe XD</span>\n</div>\n</div>\n<div class=\"cv-bento-desc-group\">\n<h5 data-de=\"Technologie\" data-en=\"Technology\">Technology</h5>\n<div class=\"flex flex-wrap gap-2\">\n<span class=\"pill font-bold\">HTML</span><span class=\"pill font-bold\">CSS</span><span class=\"pill font-bold\">JavaScript</span><span class=\"pill font-bold\">Oxid</span><span class=\"pill font-bold\">Google Analytics</span><span class=\"pill font-bold\">Google Search Console</span><span class=\"pill font-bold\">Inxmail</span><span class=\"pill font-bold\">SEO</span>\n</div>\n</div>\n<div class=\"cv-bento-desc-group\">\n<h5 data-de=\"Workflow\" data-en=\"Workflow\">Workflow</h5>\n<div class=\"flex flex-wrap gap-2\">\n<span class=\"pill font-bold\">Wireframing</span><span class=\"pill font-bold\">Prototyping</span><span class=\"pill font-bold\">UX/UI</span><span class=\"pill font-bold\">Asana</span><span class=\"pill font-bold\">Microsoft Office</span><span class=\"pill font-bold\">Slack</span>\n</div>\n</div>\n</div>\n</div>\n</div>"}, "cv-5": {"title_en": "Media Designer, Digital & Print", "title_de": "Mediengestalterin Digital & Print", "html": "<div class=\"cv-bento\">\n<div class=\"cv-bento-col\">\n<div class=\"cv-bento-meta\"> <h4 data-de=\"Kontext\" data-en=\"Context\">Context</h4>\n<p class=\"body-text max-w-none text-ink\" data-de=\"Fullservice-Werbeagentur für national und international tätige B2B-Kunden. 1996 in Schwandorf gegründet, mit Leistungen von Werbeplanung über Gestaltung bis zur Kampagnenumsetzung in Print und Digital.\" data-en=\"Full-service agency for national and international B2B clients. Founded in 1996 in Schwandorf, offering advertising planning, design and campaign execution across print and digital.\">Full-service agency for national and international B2B clients. Founded in 1996 in Schwandorf, offering advertising planning, design and campaign execution across print and digital.</p>\n</div>\n<div class=\"cv-bento-desc\"> <h4 data-de=\"Was ich gemacht habe\" data-en=\"What I did\">What I did</h4>\n<ul class=\"bullet-list\">\n<li><span data-de=\"Screendesign und technische Umsetzung von Onlineprojekten: Websites, Newsletter, Banner, Intranets\" data-en=\"Screen design and technical implementation for online projects: websites, newsletters, banners, intranets\">Screen design and technical implementation for online projects: websites, newsletters, banners, intranets</span></li>\n<li><span data-de=\"Layout, Reinzeichnung und Druckdatenmanagement: Flyer, Briefbögen, Plakate, Anzeigen, Broschüren, Werbeartikel, Mailings\" data-en=\"Layout, artwork and print data management: flyers, letterheads, posters, ads, brochures, promotional items, mailings\">Layout, artwork and print data management: flyers, letterheads, posters, ads, brochures, promotional items, mailings</span></li>\n<li><span data-de=\"Konzeption und Erstellung von Grafiken und Illustrationen\" data-en=\"Graphics and illustration, concept through execution\">Graphics and illustration, concept through execution</span></li>\n<li><span data-de=\"Entwicklung von Corporate Designs und CD-Guides\" data-en=\"Corporate design development and CD guidelines\">Corporate design development and CD guidelines</span></li>\n<li><span data-de=\"Koordination von Dienstleistern, Projektmanagement\" data-en=\"Coordinating service providers, project management\">Coordinating service providers, project management</span></li>\n<li><span data-de=\"Aufbau und Betreuung von Social-Media-Profilen\" data-en=\"Setting up and running social media profiles\">Setting up and running social media profiles</span></li>\n<li><span data-de=\"Erstellung und Versand von E-Mail-Newslettern\" data-en=\"Email newsletter creation and dispatch\">Email newsletter creation and dispatch</span></li>\n<li><span data-de=\"SEO und SEM\" data-en=\"SEO and SEM\">SEO and SEM</span></li>\n<li><span data-de=\"Produkt-, People- und Reportagefotografie\" data-en=\"Product, people and reportage photography\">Product, people and reportage photography</span></li>\n<li><span data-de=\"Bildretusche und Fotomontage\" data-en=\"Retouching and photo composites\">Retouching and photo composites</span></li>\n<li><span data-de=\"Kundenberatung und -kontakt\" data-en=\"Client consultation and account contact\">Client consultation and account contact</span></li>\n</ul>\n</div>\n</div>\n<div class=\"cv-bento-col\">\n<div class=\"cv-bento-worth\"> <h4 data-de=\"Besonders erwähnenswert\" data-en=\"Worth mentioning\">Worth mentioning</h4>\n<p class=\"body-text text-ink\" data-de=\"Frisch aus der Ausbildung bekam ich die Produktfotografie für einen Konzernkunden im B2B-Bereich. Der Kunde hatte einen Wettbewerber übernommen, die neue Produktreihe musste komplett neu fotografiert werden.\" data-en=\"Fresh out of my apprenticeship, I was handed the product photography for a corporate B2B client. They had acquired a competitor and the new product line needed shooting from scratch.\">Fresh out of my apprenticeship, I was handed the product photography for a corporate B2B client. They had acquired a competitor and the new product line needed shooting from scratch.</p>\n<p class=\"body-text text-ink\" data-de=\"Das Produkt war technisch komplex, und es ging genau darum, die Verarbeitungsqualität sichtbar zu machen. Zwei zuvor gebuchte Fotografen hatten das nicht geschafft. Ich habe darum gebeten, es versuchen zu dürfen. Die Ergebnisse haben die Konzernleitung überzeugt.\" data-en=\"The product was technically complex and the whole point was to make the build quality visible. Two previously booked photographers hadn't managed it. I asked to try. The results convinced the client's board.\">The product was technically complex and the whole point was to make the build quality visible. Two previously booked photographers hadn't managed it. I asked to try. The results convinced the client's board.</p>\n<p class=\"body-text text-ink\" data-de=\"Das Projekt, für das die Fotos entstanden, wurde 2016 mit dem German Brand Award ausgezeichnet. Ein weiteres Projekt unter meiner Federführung erhielt 2015 einen Designpreis.\" data-en=\"The project the photos were made for won a German Brand Award in 2016. A second project I led on took a design award in 2015.\">The project the photos were made for won a German Brand Award in 2016. A second project I led on took a design award in 2015.</p>\n<div class=\"cv-award-row\">\n<div class=\"cv-award\"><span class=\"cv-award-badge\">16</span><p class=\"meta text-ink\">German Brand Award — Winner · 2016</p></div>\n<div class=\"cv-award\"><span class=\"cv-award-badge\">15</span><p class=\"meta text-ink\">German Design Award — Special Mention · 2015</p></div>\n</div>\n</div>\n<div class=\"cv-bento-tools\">\n<h4 data-de=\"Werkzeuge\" data-en=\"Tools\">Tools</h4>\n<div class=\"cv-bento-desc-group\">\n<h5 data-de=\"Software\" data-en=\"Software\">Software</h5>\n<div class=\"flex flex-wrap gap-2\">\n<span class=\"pill font-bold\">Adobe Creative Cloud</span><span class=\"pill font-bold\">Photoshop</span><span class=\"pill font-bold\">InDesign</span><span class=\"pill font-bold\">Illustrator</span><span class=\"pill font-bold\">Lightroom</span><span class=\"pill font-bold\">Sketch</span>\n</div>\n</div>\n<div class=\"cv-bento-desc-group\">\n<h5 data-de=\"Technologie\" data-en=\"Technology\">Technology</h5>\n<div class=\"flex flex-wrap gap-2\">\n<span class=\"pill font-bold\">HTML</span><span class=\"pill font-bold\">CSS</span><span class=\"pill font-bold\">JavaScript</span><span class=\"pill font-bold\">TYPO3</span><span class=\"pill font-bold\">Google Analytics</span><span class=\"pill font-bold\">Google Search Console</span><span class=\"pill font-bold\">SEO</span><span class=\"pill font-bold\">SEM</span>\n</div>\n</div>\n<div class=\"cv-bento-desc-group\">\n<h5 data-de=\"Workflow\" data-en=\"Workflow\">Workflow</h5>\n<div class=\"flex flex-wrap gap-2\">\n<span class=\"pill font-bold\">Wireframing</span><span class=\"pill font-bold\">Prototyping</span><span class=\"pill font-bold\">UX/UI</span><span class=\"pill font-bold\">Microsoft Office</span>\n</div>\n</div>\n</div>\n</div>\n</div>"}, "cv-6": {"title_en": "Apprentice, Media Designer Digital", "title_de": "Auszubildende, Mediengestalterin Digital", "html": "<div class=\"cv-bento\">\n<div class=\"cv-bento-col\">\n<div class=\"cv-bento-meta\"> <h4 data-de=\"Kontext\" data-en=\"Context\">Context</h4>\n<p class=\"body-text max-w-none italic text-ink\" data-de=\"Fachrichtung Gestaltung und Technik.\" data-en=\"Specialism: design and technology.\">Specialism: design and technology.</p>\n<p class=\"body-text max-w-none text-ink\" data-de=\"Fullservice-Werbeagentur mit Fokus auf B2B-Kunden. 1996 in Schwandorf gegründet, mit Leistungen von Werbeplanung über Gestaltung bis zur Kampagnenumsetzung in Print und Digital.\" data-en=\"Full-service agency focused on B2B clients. Founded in 1996 in Schwandorf, offering advertising planning, design and campaign execution across print and digital.\">Full-service agency focused on B2B clients. Founded in 1996 in Schwandorf, offering advertising planning, design and campaign execution across print and digital.</p>\n</div>\n<div class=\"cv-bento-worth\"> <h4 data-de=\"Besonders erwähnenswert\" data-en=\"Worth mentioning\">Worth mentioning</h4>\n<p class=\"body-text text-ink\" data-de=\"Ich habe meine Ausbildung als Kammerbeste der IHK Regensburg abgeschlossen, mit einem Notendurchschnitt von 1,2, und wurde dafür von der IHK geehrt.\" data-en=\"I finished as the top apprentice of my year at the Regensburg Chamber of Commerce, with a grade average of 1.2, and was honoured by the IHK for it.\">I finished as the top apprentice of my year at the Regensburg Chamber of Commerce, with a grade average of 1.2, and was honoured by the IHK for it.</p>\n<div class=\"cv-award-row\">\n<div class=\"cv-award\"><span class=\"cv-award-badge\">14</span><p class=\"meta text-ink\" data-de=\"IHK Regensburg — Kammerbeste · 2014\" data-en=\"IHK Regensburg — Top apprentice of the year · 2014\">IHK Regensburg — Top apprentice of the year · 2014</p></div>\n</div>\n</div>\n</div>\n<div class=\"cv-bento-col\">\n<div class=\"cv-bento-tools\">\n<h4 data-de=\"Werkzeuge\" data-en=\"Tools\">Tools</h4>\n<div class=\"cv-bento-desc-group\">\n<h5 data-de=\"Software\" data-en=\"Software\">Software</h5>\n<div class=\"flex flex-wrap gap-2\">\n<span class=\"pill font-bold\">Adobe Creative Cloud</span><span class=\"pill font-bold\">Photoshop</span><span class=\"pill font-bold\">InDesign</span><span class=\"pill font-bold\">Illustrator</span><span class=\"pill font-bold\">Lightroom</span><span class=\"pill font-bold\">Sketch</span>\n</div>\n</div>\n<div class=\"cv-bento-desc-group\">\n<h5 data-de=\"Technologie\" data-en=\"Technology\">Technology</h5>\n<div class=\"flex flex-wrap gap-2\">\n<span class=\"pill font-bold\">HTML</span><span class=\"pill font-bold\">CSS</span><span class=\"pill font-bold\">JavaScript</span><span class=\"pill font-bold\">TYPO3</span><span class=\"pill font-bold\">Google Analytics</span><span class=\"pill font-bold\">Google Search Console</span><span class=\"pill font-bold\">SEO</span><span class=\"pill font-bold\">SEM</span>\n</div>\n</div>\n<div class=\"cv-bento-desc-group\">\n<h5 data-de=\"Workflow\" data-en=\"Workflow\">Workflow</h5>\n<div class=\"flex flex-wrap gap-2\">\n<span class=\"pill font-bold\">Wireframing</span><span class=\"pill font-bold\">Prototyping</span><span class=\"pill font-bold\">UX/UI</span><span class=\"pill font-bold\">Microsoft Office</span>\n</div>\n</div>\n</div>\n</div>\n</div>"}}</script>
+  <script>
+  (() => {
+    const root = document.documentElement;
+
+    // ---- work-stack scale/rotate on scroll (desktop/tablet only) ----
+    const projects = [...document.querySelectorAll('.d-project')];
+    let queued = false;
+    function updateStack() {
+      queued = false;
+      if (window.innerWidth <= 560) { projects.forEach(p => p.style.transform = 'none'); return; }
+      projects.forEach((p, i) => {
+        const next = projects[i + 1];
+        const t = next
+          ? Math.min(1, Math.max(0, (innerHeight - next.getBoundingClientRect().top) / (innerHeight - 100)))
+          : 0;
+        p.style.transform = `scale(${1 - t * .04}) rotate(${-t * 1.2}deg)`;
+      });
+    }
+    addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(updateStack); } }, { passive: true });
+    addEventListener('resize', updateStack);
+    updateStack();
+
+    // ---- localize a dynamically-injected fragment (dialog content) --
+    // reuses the SAME data-en/data-de convention the rest of the site uses.
+    function localizeFragment(container, lang) {
+      container.querySelectorAll('[data-' + lang + ']').forEach(el => {
+        const t = el.getAttribute('data-' + lang);
+        if (t !== null) el.textContent = t;
+      });
+    }
+
+    // ---- modals ----
+    const dialog = document.querySelector('.d-dialog');
+    const modalData = JSON.parse(document.getElementById('d-modal-data').textContent);
+    const titleEl = document.getElementById('d-case-title');
+    const contentEl = document.getElementById('d-case-content');
+    let lastFocus = null, currentEntry = null;
+
+    function currentLang() { return root.getAttribute('data-lang') || 'en'; }
+
+    function openModal(key) {
+      const entry = modalData[key];
+      if (!entry) return;
+      currentEntry = entry;
+      const lang = currentLang();
+      titleEl.textContent = lang === 'de' ? entry.title_de : entry.title_en;
+      contentEl.innerHTML = entry.html;
+      localizeFragment(contentEl, lang);
+      dialog.showModal();
+      document.body.style.overflow = 'hidden';
+      dialog.scrollTop = 0;
+    }
+    document.querySelectorAll('[data-open]').forEach(b => b.addEventListener('click', () => { lastFocus = b; openModal(b.dataset.open); }));
+    document.querySelector('.d-close').addEventListener('click', () => dialog.close());
+    dialog.addEventListener('click', e => {
+      if (e.target === dialog) {
+        const r = dialog.getBoundingClientRect();
+        if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) dialog.close();
+      }
+    });
+    dialog.addEventListener('close', () => { document.body.style.overflow = ''; lastFocus && lastFocus.focus(); });
+    // real site.js already dispatches this on every language switch -- just
+    // listen for it, don't build a second language switcher.
+    document.addEventListener('site:langchange', e => {
+      if (dialog.open && currentEntry) {
+        titleEl.textContent = e.detail.lang === 'de' ? currentEntry.title_de : currentEntry.title_en;
+        localizeFragment(contentEl, e.detail.lang);
+      }
+    });
+  })();
+  </script>
 </body>
 </html>
