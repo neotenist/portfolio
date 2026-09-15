@@ -226,6 +226,30 @@ document.addEventListener('DOMContentLoaded', function () {
       var full = state.lang === 'de'
         ? ('Hey ' + state.name + ',\nlass uns reden!')
         : ('Hey ' + state.name + ',\nlet\'s talk!');
+
+      var idx = full.indexOf(state.name);
+      var before = full.slice(0, idx);
+      var after = full.slice(idx + state.name.length);
+      var finalHTML = before +
+        '<span class="underline-word">' + colorizeName(state.name) +
+        '<svg viewBox="0 0 200 12" preserveAspectRatio="none" aria-hidden="true">' +
+        '<path d="M2 9c38-4 92-7 196-3" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" fill="none"></path>' +
+        '</svg></span>' + after;
+
+      /* Whether this wraps to two or three lines depends on name length and
+         viewport width, and the typewriter effect below only ever renders the
+         REVEALED PREFIX of the text -- so without this, the heading (and the
+         box around it) visibly grows mid-animation as later characters push
+         it onto a line that isn't there yet. Briefly render the fully-typed
+         result to measure its real height, then reset to empty -- both
+         happen before this function returns, so nothing paints in between --
+         and lock that height in as a floor before a single character types. */
+      var contactHeading = contactTyped.closest('.contact-heading');
+      contactHeading.style.minHeight = '';
+      contactTyped.innerHTML = finalHTML;
+      contactHeading.style.minHeight = contactHeading.getBoundingClientRect().height + 'px';
+      contactTyped.innerHTML = '';
+
       var proxy = { n: 0 };
       gsap.to(proxy, {
         n: full.length,
@@ -236,14 +260,7 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         onComplete: function () {
           contactTyped.dataset.done = '1';
-          var idx = full.indexOf(state.name);
-          var before = full.slice(0, idx);
-          var after = full.slice(idx + state.name.length);
-          contactTyped.innerHTML = before +
-            '<span class="underline-word">' + colorizeName(state.name) +
-            '<svg viewBox="0 0 200 12" preserveAspectRatio="none" aria-hidden="true">' +
-            '<path d="M2 9c38-4 92-7 196-3" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" fill="none"></path>' +
-            '</svg></span>' + after;
+          contactTyped.innerHTML = finalHTML;
           if (contactSub) contactSub.classList.add('is-in');
         }
       });
