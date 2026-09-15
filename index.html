@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Maxine Hargrove — Portfolio</title>
   <link rel="stylesheet" href="css/tailwind.css?v=5">
-  <link rel="stylesheet" href="css/style.css?v=130">
+  <link rel="stylesheet" href="css/style.css?v=132">
 
   <style>
   /* ================= Work + Experience sections (added) =================
@@ -173,18 +173,12 @@
 
   /* ================= Page-wide color reconciliation (added) =====
      Fixes reported after the first pass: the new muted palette above only
-     applied to the two new sections, so it clashed with take-on-folders' and
-     off-the-clock's old saturated/earthy colors. --page-bg and .paper-grid
-     themselves are already fixed directly in css/style.css (shared by every
-     page); only the take-on-folders/off-the-clock overrides below remain
-     page-scoped since those sections only exist here. */
-  .take-on-folders {
-    --folder-blue-back: #6f9cb5;   --folder-blue-front: #a8c9db;
-  --folder-red-back: #c9654f;   --folder-red-front: #e49b85;
-  --folder-yellow-back: #d4ac2e;   --folder-yellow-front: #eed151;
-  --folder-green-back: #4c6b45;   --folder-green-front: #8aab74;
-  --folder-pink-back: #d98aab;   --folder-pink-front: #f1abc8;
-  }
+     applied to the two new sections, so it clashed with off-the-clock's old
+     saturated/earthy colors. --page-bg and .paper-grid themselves are already
+     fixed directly in css/style.css (shared by every page); only the
+     off-the-clock override below remains page-scoped since that section only
+     exists here. (What I take on's own folder-color override lived here too,
+     but that section is now the .d-fieldnotes grid -- see css/style.css.) */
   .oc-dot[data-oc-index="0"] { --oc-ring-color: #6f9cb5; }
   .oc-dot[data-oc-index="1"] { --oc-ring-color: #c9654f; }
   .oc-dot[data-oc-index="2"] { --oc-ring-color: #4c6b45; }
@@ -364,95 +358,61 @@
       </div>
 
       <!-- WHAT I TAKE ON — folder carousel -->
-      <section class="take-on-folders">
-        <div class="container-page">
-          <div class="meta d-section-eyebrow d-section-eyebrow-pair d-take-on-eyebrow">
-            <span data-en="02 / What I take on" data-de="02 / Was ich übernehme">02 / What I take on</span>
-            <span data-en="Take your pick." data-de="Wähl dir was aus.">Take your pick.</span>
-          </div>
-          <h2 class="h2-display text-center take-on-heading" id="take-on-heading" data-en="What I take on" data-de="Was ich übernehme">What I take on</h2>
-        </div>
-        <div class="folder-stage" id="folder-stage" role="region" aria-roledescription="carousel" aria-label="What I take on">
-          <div class="folder-fan" id="folder-fan">
-
-            <div class="folder-position">
-              <article class="folder folder-blue">
-                <svg class="folder-back" viewBox="0 0 449 362" aria-hidden="true"><path d="M151.21 0C158.934 0 166.521 2.03308 173.21 5.89489L211.679 28.1051C218.368 31.9669 225.956 34 233.679 34H399C423.301 34 443 53.6995 443 78V285C443 309.301 423.301 329 399 329H44C19.6995 329 0 309.301 0 285V44C0 19.6995 19.6995 0 44 0H151.21Z"></path></svg>
-                <div class="folder-paper">
-                  <h3>Art Direction</h3>
-                  <p data-en="Setting the look and holding the line on it, across every channel and every deadline." data-de="Den Look setzen und ihn halten – über alle Kanäle und alle Deadlines hinweg.">Setting the look and holding the line on it, across every channel and every deadline.</p>
-                </div>
-                <svg class="folder-front" viewBox="0 0 449 362" aria-hidden="true">
-                  <rect y="67" width="443" height="295" rx="44"></rect>
-                  <rect class="folder-detail" x="242" y="262" width="154" height="19" rx="9.5"></rect>
-                  <rect class="folder-detail" x="242" y="296" width="154" height="19" rx="9.5"></rect>
-                </svg>
-              </article>
-            </div>
-
-            <div class="folder-position">
-              <article class="folder folder-red">
-                <svg class="folder-back" viewBox="0 0 449 362" aria-hidden="true"><path d="M151.21 0C158.934 0 166.521 2.03308 173.21 5.89489L211.679 28.1051C218.368 31.9669 225.956 34 233.679 34H399C423.301 34 443 53.6995 443 78V285C443 309.301 423.301 329 399 329H44C19.6995 329 0 309.301 0 285V44C0 19.6995 19.6995 0 44 0H151.21Z"></path></svg>
-                <div class="folder-paper">
-                  <h3>Techie Stuff</h3>
-                  <p data-en="HTML, CSS and JavaScript aren't foreign languages to me. I design with a clear sense of what actually works in the browser — and can make ideas run myself." data-de="HTML, CSS und JavaScript sind für mich keine Fremdsprachen. Ich gestalte mit einem Verständnis dafür, was im Browser wirklich funktioniert – und kann Ideen selbst zum Laufen bringen.">HTML, CSS and JavaScript aren't foreign languages to me. I design with a clear sense of what actually works in the browser — and can make ideas run myself.</p>
-                </div>
-                <svg class="folder-front" viewBox="0 0 449 362" aria-hidden="true">
-                  <rect y="67" width="443" height="295" rx="44"></rect>
-                  <rect class="folder-detail" x="242" y="262" width="154" height="19" rx="9.5"></rect>
-                  <rect class="folder-detail" x="242" y="296" width="154" height="19" rx="9.5"></rect>
-                </svg>
-              </article>
-            </div>
-
-            <div class="folder-position">
-              <article class="folder folder-yellow">
-                <svg class="folder-back" viewBox="0 0 449 362" aria-hidden="true"><path d="M151.21 0C158.934 0 166.521 2.03308 173.21 5.89489L211.679 28.1051C218.368 31.9669 225.956 34 233.679 34H399C423.301 34 443 53.6995 443 78V285C443 309.301 423.301 329 399 329H44C19.6995 329 0 309.301 0 285V44C0 19.6995 19.6995 0 44 0H151.21Z"></path></svg>
-                <div class="folder-paper">
-                  <h3>Mentorship</h3>
-                  <p data-en="I've been an AEVO-certified trainer since 2016, coaching juniors and leading design teams with clear direction, honest feedback and no bottlenecks." data-de="Seit 2016 bilde ich nach AEVO aus, coache Juniors und führe Designteams – mit klarer Richtung, ehrlichem Feedback und ohne selbst zum Nadelöhr zu werden.">I've been an AEVO-certified trainer since 2016, coaching juniors and leading design teams with clear direction, honest feedback and no bottlenecks.</p>
-                </div>
-                <svg class="folder-front" viewBox="0 0 449 362" aria-hidden="true">
-                  <rect y="67" width="443" height="295" rx="44"></rect>
-                  <rect class="folder-detail" x="242" y="262" width="154" height="19" rx="9.5"></rect>
-                  <rect class="folder-detail" x="242" y="296" width="154" height="19" rx="9.5"></rect>
-                </svg>
-              </article>
-            </div>
-
-            <div class="folder-position">
-              <article class="folder folder-green">
-                <svg class="folder-back" viewBox="0 0 449 362" aria-hidden="true"><path d="M151.21 0C158.934 0 166.521 2.03308 173.21 5.89489L211.679 28.1051C218.368 31.9669 225.956 34 233.679 34H399C423.301 34 443 53.6995 443 78V285C443 309.301 423.301 329 399 329H44C19.6995 329 0 309.301 0 285V44C0 19.6995 19.6995 0 44 0H151.21Z"></path></svg>
-                <div class="folder-paper">
-                  <h3>UX/UI</h3>
-                  <p data-en="Digital products that don't just look good, but feel clear — from user journeys and information architecture to the final, precise interface." data-de="Digitale Produkte, die sich nicht nur gut ansehen, sondern klar anfühlen – von Nutzerführung und Informationsarchitektur bis zum präzisen Interface.">Digital products that don't just look good, but feel clear — from user journeys and information architecture to the final, precise interface.</p>
-                </div>
-                <svg class="folder-front" viewBox="0 0 449 362" aria-hidden="true">
-                  <rect y="67" width="443" height="295" rx="44"></rect>
-                  <rect class="folder-detail" x="242" y="262" width="154" height="19" rx="9.5"></rect>
-                  <rect class="folder-detail" x="242" y="296" width="154" height="19" rx="9.5"></rect>
-                </svg>
-              </article>
-            </div>
-
-            <div class="folder-position">
-              <article class="folder folder-pink">
-                <svg class="folder-back" viewBox="0 0 449 362" aria-hidden="true"><path d="M151.21 0C158.934 0 166.521 2.03308 173.21 5.89489L211.679 28.1051C218.368 31.9669 225.956 34 233.679 34H399C423.301 34 443 53.6995 443 78V285C443 309.301 423.301 329 399 329H44C19.6995 329 0 309.301 0 285V44C0 19.6995 19.6995 0 44 0H151.21Z"></path></svg>
-                <div class="folder-paper">
-                  <h3>AI Enablement</h3>
-                  <p data-en="Building generative tools into a workflow so the output stays on brand without anyone policing it." data-de="Generative Tools so in einen Workflow bauen, dass das Ergebnis markenkonform bleibt, ohne dass jemand hinterherräumt.">Building generative tools into a workflow so the output stays on brand without anyone policing it.</p>
-                </div>
-                <svg class="folder-front" viewBox="0 0 449 362" aria-hidden="true">
-                  <rect y="67" width="443" height="295" rx="44"></rect>
-                  <rect class="folder-detail" x="242" y="262" width="154" height="19" rx="9.5"></rect>
-                  <rect class="folder-detail" x="242" y="296" width="154" height="19" rx="9.5"></rect>
-                </svg>
-              </article>
-            </div>
-
-          </div>
-        </div>
-      </section>
+      <section class="container-page section d-fieldnotes" id="what-i-take-on" aria-labelledby="fieldnotes-heading">
+  <div class="meta d-section-eyebrow d-section-eyebrow-pair fn-eyebrow">
+    <span data-en="02 / What I take on" data-de="02 / Was ich übernehme">02 / What I take on</span>
+    <span data-en="Take your pick." data-de="Wähl dir was aus.">Take your pick.</span>
+  </div>
+  <h2 class="h2-display fn-heading" id="fieldnotes-heading" data-en="What I take on" data-de="Was ich übernehme">What I take on</h2>
+  <p class="lead fn-intro" data-en="Digital at heart. Curious by default. Here’s where I can help." data-de="Im Herzen digital. Von Natur aus neugierig. Hier kann ich unterstützen.">Digital at heart. Curious by default. Here’s where I can help.</p>
+  <ul class="fn-grid" role="list">
+        <li class="fn-slot">
+          <article class="fn-note" style="--fn-color:#8aab74; --fn-tilt:-1.5deg" aria-labelledby="fn-title-1">
+            <span class="fn-number">01 / DESIGN &amp; TECH</span>
+            <h3 class="h3-display fn-title" id="fn-title-1">UX/UI</h3>
+            <div class="fn-art" aria-hidden="true"><div class="fn-ui"><span class="fn-ui-line"></span><div class="fn-ui-blocks"><i></i><i></i><i></i></div></div></div>
+            <p class="body-text fn-description" data-en="Digital products that don&#x27;t just look good, but feel clear — from user journeys and information architecture to the final, precise interface." data-de="Digitale Produkte, die sich nicht nur gut ansehen, sondern klar anfühlen – von Nutzerführung und Informationsarchitektur bis zum präzisen Interface.">Digital products that don&#x27;t just look good, but feel clear — from user journeys and information architecture to the final, precise interface.</p>
+            <p class="fn-tag" data-en="Clarity, by design" data-de="Klarheit durch Design">Clarity, by design</p>
+          </article>
+        </li>
+        <li class="fn-slot">
+          <article class="fn-note" style="--fn-color:#a8c9db; --fn-tilt:1.5deg" aria-labelledby="fn-title-2">
+            <span class="fn-number">02 / DESIGN &amp; TECH</span>
+            <h3 class="h3-display fn-title" id="fn-title-2">Art Direction</h3>
+            <div class="fn-art" aria-hidden="true"><span class="fn-lettering">Aa</span></div>
+            <p class="body-text fn-description" data-en="Setting the look and holding the line on it, across every channel and every deadline." data-de="Den Look setzen und ihn halten – über alle Kanäle und alle Deadlines hinweg.">Setting the look and holding the line on it, across every channel and every deadline.</p>
+            <p class="fn-tag" data-en="A coherent point of view" data-de="Eine klare gestalterische Haltung">A coherent point of view</p>
+          </article>
+        </li>
+        <li class="fn-slot">
+          <article class="fn-note" style="--fn-color:#e49b85; --fn-tilt:-1deg" aria-labelledby="fn-title-3">
+            <span class="fn-number">03 / DESIGN &amp; TECH</span>
+            <h3 class="h3-display fn-title" id="fn-title-3">Techie Stuff</h3>
+            <div class="fn-art" aria-hidden="true"><div class="fn-code"><span>&lt;idea&gt;</span><br>&nbsp;make it real_<br><span>&lt;/idea&gt;</span></div></div>
+            <p class="body-text fn-description" data-en="HTML, CSS and JavaScript aren&#x27;t foreign languages to me. I design with a clear sense of what actually works in the browser — and can make ideas run myself." data-de="HTML, CSS und JavaScript sind für mich keine Fremdsprachen. Ich gestalte mit einem Verständnis dafür, was im Browser wirklich funktioniert – und kann Ideen selbst zum Laufen bringen.">HTML, CSS and JavaScript aren&#x27;t foreign languages to me. I design with a clear sense of what actually works in the browser — and can make ideas run myself.</p>
+            <p class="fn-tag" data-en="From idea to browser" data-de="Von der Idee in den Browser">From idea to browser</p>
+          </article>
+        </li>
+        <li class="fn-slot">
+          <article class="fn-note" style="--fn-color:#f1abc8; --fn-tilt:2deg" aria-labelledby="fn-title-4">
+            <span class="fn-number">04 / DESIGN &amp; TECH</span>
+            <h3 class="h3-display fn-title" id="fn-title-4">AI Enablement</h3>
+            <div class="fn-art" aria-hidden="true"><div class="fn-flow"><span class="fn-flow-mark">✳</span><span>→</span><span class="fn-flow-mark">✦</span></div></div>
+            <p class="body-text fn-description" data-en="Building generative tools into a workflow so the output stays on brand without anyone policing it." data-de="Generative Tools so in einen Workflow bauen, dass das Ergebnis markenkonform bleibt, ohne dass jemand hinterherräumt.">Building generative tools into a workflow so the output stays on brand without anyone policing it.</p>
+            <p class="fn-tag" data-en="Tools with a purpose" data-de="Tools mit Sinn">Tools with a purpose</p>
+          </article>
+        </li>
+        <li class="fn-slot">
+          <article class="fn-note" style="--fn-color:#eed151; --fn-tilt:-1deg" aria-labelledby="fn-title-5">
+            <span class="fn-number">05 / DESIGN &amp; TECH</span>
+            <h3 class="h3-display fn-title" id="fn-title-5">Mentorship</h3>
+            <div class="fn-art" aria-hidden="true"><div class="fn-talk"><span>hey.</span><span>aha!</span></div></div>
+            <p class="body-text fn-description" data-en="I&#x27;ve been an AEVO-certified trainer since 2016, coaching juniors and leading design teams with clear direction, honest feedback and no bottlenecks." data-de="Seit 2016 bilde ich nach AEVO aus, coache Juniors und führe Designteams – mit klarer Richtung, ehrlichem Feedback und ohne selbst zum Nadelöhr zu werden.">I&#x27;ve been an AEVO-certified trainer since 2016, coaching juniors and leading design teams with clear direction, honest feedback and no bottlenecks.</p>
+            <p class="fn-tag" data-en="Knowledge, shared" data-de="Wissen weitergeben">Knowledge, shared</p>
+          </article>
+        </li>
+  </ul>
+</section>
 
 
       <!-- EXPERIENCE / CV (added) -->
@@ -893,7 +853,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="js/site.js?v=12"></script>
-  <script src="js/main.js?v=48"></script>
+  <script src="js/main.js?v=49"></script>
 
   <!-- WORK/CV MODAL (added) -->
   <dialog class="d-dialog" aria-labelledby="d-case-title">
@@ -913,6 +873,22 @@
 
     // ---- work-stack scale/rotate on scroll (desktop/tablet only) ----
     const projects = [...document.querySelectorAll('.d-project')];
+    // A card that's fully covered by the next one in the stack is still
+    // "onscreen" as far as getBoundingClientRect/IntersectionObserver are
+    // concerned -- sticky keeps its box pinned there, only the LATER card is
+    // painted on top of it. A heavy embed underneath would otherwise keep
+    // rendering, unseen, for as long as the rest of the stack takes to
+    // scroll past. covered/wasCovered below tracks that transition per card
+    // so a heavy embed unloads once actually covered and reloads if the
+    // visitor scrolls back up and uncovers it again -- both directions,
+    // independent of the geometric load/unload observers further down,
+    // which only see a real viewport-boundary crossing (still needed for
+    // the initial approach and for mobile, where this loop bails out early).
+    const heavyFrameByProject = new Map();
+    projects.forEach(p => {
+      const frame = p.querySelector('.d-heavy-frame');
+      if (frame) heavyFrameByProject.set(p, { frame, wasCovered: false });
+    });
     let queued = false;
     function updateStack() {
       queued = false;
@@ -923,6 +899,16 @@
           ? Math.min(1, Math.max(0, (innerHeight - next.getBoundingClientRect().top) / (innerHeight - 100)))
           : 0;
         p.style.transform = `scale(${1 - t * .04}) rotate(${-t * 1.2}deg)`;
+        const heavy = heavyFrameByProject.get(p);
+        if (heavy) {
+          const covered = t >= 1;
+          if (covered && !heavy.wasCovered && heavy.frame.getAttribute('src')) {
+            heavy.frame.removeAttribute('src');
+          } else if (!covered && heavy.wasCovered && !heavy.frame.getAttribute('src') && heavy.frame.dataset.src) {
+            heavy.frame.src = heavy.frame.dataset.src;
+          }
+          heavy.wasCovered = covered;
+        }
       });
     }
     addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(updateStack); } }, { passive: true });
@@ -935,19 +921,34 @@
     // once scrolled past, which is what made later sections feel laggy.
     // Clearing src tears the embedded page down completely (stops its loop);
     // restoring it from data-src reloads fresh when it scrolls back into view.
+    // rootMargin is generous on purpose: creating a WebGL context and compiling
+    // shaders is a genuine one-time stall (measured ~230ms), so loading needs
+    // to start roughly a card's-scroll-worth early, while the visitor is still
+    // scrolling through the preceding card, or that stall lands mid-scroll --
+    // which is exactly the jank reported here. Unloading here stays tight
+    // (only once truly out of view) and mainly covers mobile, where the
+    // sticky stack above is disabled so there's no "covered but technically
+    // still onscreen" state to worry about -- updateStack's covered/wasCovered
+    // check handles that desktop/tablet case earlier and more precisely.
     const heavyFrames = document.querySelectorAll('.d-heavy-frame');
     if (heavyFrames.length) {
-      const frameObserver = new IntersectionObserver(entries => {
+      const loadObserver = new IntersectionObserver(entries => {
         entries.forEach(entry => {
           const frame = entry.target;
-          if (entry.isIntersecting) {
-            if (!frame.getAttribute('src') && frame.dataset.src) frame.src = frame.dataset.src;
-          } else if (frame.getAttribute('src')) {
+          if (entry.isIntersecting && !frame.getAttribute('src') && frame.dataset.src) {
+            frame.src = frame.dataset.src;
+          }
+        });
+      }, { rootMargin: '1200px 0px' });
+      const unloadObserver = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          const frame = entry.target;
+          if (!entry.isIntersecting && frame.getAttribute('src')) {
             frame.removeAttribute('src');
           }
         });
       }, { rootMargin: '200px 0px' });
-      heavyFrames.forEach(frame => frameObserver.observe(frame));
+      heavyFrames.forEach(frame => { loadObserver.observe(frame); unloadObserver.observe(frame); });
     }
 
     // ---- localize a dynamically-injected fragment (dialog content) --
