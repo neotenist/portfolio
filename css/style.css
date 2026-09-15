@@ -216,23 +216,13 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
   text-align: center;
 }
 
+/* Positioning only now -- the visible button styling comes from the shared
+   .nav-lang .lang-btn rule below, same as the homepage nav, since the gate's
+   language switcher is meant to look identical to it. */
 .gate-lang {
   position: absolute;
   top: 28px;
   right: 32px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-family: var(--font-display);
-  font-weight: 500;
-  font-size: 14px;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-}
-
-.gate-lang-label {
-  color: var(--ink);
-  margin-right: 4px;
 }
 
 .lang-btn {
@@ -405,13 +395,13 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 48px;
-  height: 36px;
-  padding: 0 15px;
+  min-width: 52px;
+  height: 40px;
+  padding: 0 16px;
   border-radius: var(--radius-pill);
   border: none;
   font-family: var(--font-mono);
-  font-size: 15px;
+  font-size: 16px;
   letter-spacing: 0.02em;
   line-height: 1;
   color: var(--ink);
@@ -612,23 +602,19 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
 .hero-wordmark-slot.is-in .hero-role { opacity: 1; }
 
 .hero-head-slot {
-  margin: auto auto 0;
-  margin-top: auto;
-  /* Pulls the head up over the wordmark's bottom edge for a real, visible
-     overlap. z-index above .hero-wordmark-slot (55) so the head paints in
-     front of the text where they cross, which is what actually makes the
-     overlap read as an overlap rather than the text just covering the head.
-     A percentage, not a fixed rem: translateY% resolves against this box's
-     OWN height (62vh), so the overlap stays the same fraction of the head's
-     size everywhere -- a fixed rem pull looked fine at whatever viewport it
-     was tuned on, but at any shorter viewport (62vh itself shrinks) that
-     same fixed amount ate a much bigger share of a now-smaller head, and at
-     a taller one barely registered. */
-  transform: translateY(-12%);
-  z-index: 56;
-  height: 62vh;
+  /* Sized in JS (sizeHeroHead in main.js) to exactly the largest SQUARE that
+     fits both the width cap below and whatever vertical space the greeting/
+     wordmark above leave in the viewport -- the source photo is a square
+     crop, so stretching this box to fill the remaining height outright (a
+     plain flex-grow) would letterbox it on any narrower-than-tall viewport
+     instead of the head actually filling the space. This starting size is
+     just the pre-JS fallback; inline width/height from JS override it. */
   width: min(86vh, 90vw);
+  aspect-ratio: 1 / 1;
+  margin: 0 auto;
+  z-index: 56;
   position: relative;
+  flex-shrink: 0;
 }
 .hero-photo {
   position: absolute;
@@ -652,7 +638,13 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
   min-height: 120vh;
   overflow: hidden;
   padding-top: max(6rem, 14vh);
-  padding-bottom: max(6rem, 14vh);
+  padding-bottom: max(3rem, 7vh);
+}
+
+/* Halves the shared .section top padding just for this one boundary --
+   the short-version-to-fieldnotes gap read as too big at the full amount. */
+#what-i-take-on {
+  padding-top: clamp(2.25rem, 4.5vw, 4rem);
 }
 
 .short-version-inner {
@@ -668,9 +660,9 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
   margin-left: 1.25rem;
   aspect-ratio: 1 / 1;
   height: auto;
-  width: min(14vw, 12rem);
+  width: min(28vw, 24rem);
   shape-outside: ellipse(48% 50% at 52% 50%);
-  shape-margin: 1.25rem;
+  shape-margin: 1.75rem;
 }
 
 .short-version-heading {
@@ -1079,6 +1071,7 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
   height: 100%; width: 100%;
   object-fit: cover;
 }
+.oc-media { cursor: pointer; }
 .oc-media-ph { display: flex; align-items: center; justify-content: center; }
 .oc-ph-0 { background: linear-gradient(155deg, #1c5a3f, #4c9470); }
 .oc-ph-1 { background: linear-gradient(155deg, #3a4f2e, #7c9a5c); }
@@ -1536,7 +1529,7 @@ footer p, footer a { font-family: var(--font-mono); }
 /* ---------- Responsive ---------- */
 @media (max-width: 639px) {
   .hero-role { writing-mode: vertical-rl; transform: rotate(180deg); }
-  .nav-lang .lang-btn { min-width: 38px; height: 30px; padding: 0 12px; font-size: 12px; }
+  .nav-lang .lang-btn { min-width: 40px; height: 32px; padding: 0 13px; font-size: 13px; }
   .menu-btn { height: 64px; width: 64px; }
   .menu-btn-lines { height: 20.8px; width: 48px; }
   .take-on-folders { padding-block: clamp(0.75rem, 4vw, 1.5rem) 2rem; }

@@ -1,10 +1,15 @@
 document.addEventListener('DOMContentLoaded', function () {
-  var DEFAULT_NAME = 'Stranger';
+  /* Language-aware: the visitor's own typed name is used as-is regardless of
+     language, but the FALLBACK name (skip the gate, or submit it empty) is
+     part of the greeting sentence itself, so it needs to match whichever
+     language that sentence is actually in. */
+  var DEFAULT_NAME = { en: 'Stranger', de: 'Fremde' };
   var storedName = null;
   try { storedName = sessionStorage.getItem('site_name'); } catch (e) {}
   var storedLang = null;
   try { storedLang = localStorage.getItem('site_lang'); } catch (e) {}
-  var state = { lang: 'en', name: storedName || DEFAULT_NAME };
+  var initialLang = storedLang === 'en' ? 'en' : 'de';
+  var state = { lang: initialLang, name: storedName || DEFAULT_NAME[initialLang] };
   var root = document.documentElement;
 
   /* .reveal-text paragraphs (short-version body copy) carry data-en/data-de too, but
@@ -42,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
-  applyLang(storedLang === 'de' ? 'de' : 'en');
+  applyLang(initialLang);
 
   /* ---------- NAME COLORING ----------
      Wherever the visitor's typed-in name is displayed (hero greeting, contact
@@ -149,8 +154,12 @@ document.addEventListener('DOMContentLoaded', function () {
       var gateInput = document.getElementById('gate-input');
       var gateSkip = document.getElementById('gate-skip');
 
+      function capitalizeFirst(s) {
+        return s.charAt(0).toUpperCase() + s.slice(1);
+      }
+
       function closeGate(name) {
-        state.name = name || DEFAULT_NAME;
+        state.name = name ? capitalizeFirst(name) : DEFAULT_NAME[state.lang];
         try {
           sessionStorage.setItem('site_gate_done', '1');
           sessionStorage.setItem('site_name', state.name);
@@ -171,7 +180,7 @@ document.addEventListener('DOMContentLoaded', function () {
         closeGate(gateInput.value.trim());
       });
       gateSkip.addEventListener('click', function () {
-        closeGate(DEFAULT_NAME);
+        closeGate(DEFAULT_NAME[state.lang]);
       });
     }
   } else {

@@ -16,11 +16,30 @@ document.addEventListener('DOMContentLoaded', function () {
        pops open at full hero size, then the docking scroll-trigger
        immediately snaps it down into the header the instant it evaluates
        the actual scroll position. Landing already docked, with no
-       animation, matches what the visitor is actually looking at. */
-    if (document.querySelector('.hero').getBoundingClientRect().bottom <= 0) {
-      skipHeroIntroToFinalState();
+       animation, matches what the visitor is actually looking at.
+
+       The scroll position this depends on isn't reliable yet the instant
+       this event fires -- the browser's own scroll-restoration-on-reload can
+       still be pending (site.js dispatches this on a same-session reload via
+       a same-tick setTimeout), so reading it immediately can see scrollY 0
+       and wrongly decide to play the full intro even though the visitor is
+       about to land mid-page. Waiting for the page to finish loading, plus
+       one more frame for that restore/paint to settle, is what makes this
+       read the real, final position instead. */
+    function decideHeroEntrance() {
+      if (document.querySelector('.hero').getBoundingClientRect().bottom <= 0) {
+        skipHeroIntroToFinalState();
+      } else {
+        startHeroSequence();
+      }
+    }
+    function afterSettle() {
+      requestAnimationFrame(function () { requestAnimationFrame(decideHeroEntrance); });
+    }
+    if (document.readyState === 'complete') {
+      afterSettle();
     } else {
-      startHeroSequence();
+      window.addEventListener('load', afterSettle);
     }
   });
 
@@ -42,6 +61,8 @@ document.addEventListener('DOMContentLoaded', function () {
   var wordmark = document.getElementById('hero-wordmark');
   var heroPills = document.getElementById('hero-pills');
   var heroPhoto = document.querySelector('.hero-photo');
+  var heroHeadSlot = document.querySelector('.hero-head-slot');
+  var heroInner = document.querySelector('.hero-inner');
   var navRight = document.getElementById('nav-right');
   var heroStarted = false;
 
@@ -93,11 +114,33 @@ document.addEventListener('DOMContentLoaded', function () {
     wordmarkSlot.style.marginTop = Math.max(0, neededMargin) + 'px';
   }
 
+  /* The source photo is a square crop (see INTRO_FRAMES etc. below), so it
+     can't just stretch to fill whatever vertical space is left below the
+     wordmark -- on any viewport narrower than it is tall (most phones),
+     that would either letterbox the square image inside a taller box (dead
+     space above/below the actual photo) or require cropping, which isn't
+     wanted here. Sizing the slot itself to the largest square that fits
+     both the width cap and the real remaining height -- measured fresh,
+     the same way alignGreetingGap measures its own gap -- makes the box
+     hug the photo with no dead space, at every breakpoint. */
+  function sizeHeroHead() {
+    var innerBottomPadding = parseFloat(getComputedStyle(heroInner).paddingBottom) || 0;
+    var availableHeight = (heroInner.getBoundingClientRect().bottom - innerBottomPadding) - wordmarkSlot.getBoundingClientRect().bottom;
+    var widthCap = Math.min(window.innerHeight * 0.86, window.innerWidth * 0.90);
+    var size = Math.max(0, Math.min(widthCap, availableHeight));
+    heroHeadSlot.style.width = size + 'px';
+    heroHeadSlot.style.height = size + 'px';
+  }
+
   /* By the time the wordmark's own open animation finishes, the greeting has
      also finished typing (0.9s wordmark animation vs typically well under
      that to type a name) -- the right moment to align the greeting gap
-     against its real, settled size. */
-  wordmark.addEventListener('animationend', alignGreetingGap);
+     against its real, settled size, and to size the head against that
+     final layout. */
+  wordmark.addEventListener('animationend', function () {
+    alignGreetingGap();
+    sizeHeroHead();
+  });
 
   /* Stop-motion face frames: 1-4 play once on entry, 5-7 play while the head travels on scroll */
   var INTRO_FRAMES = ['assets/img/1.webp?v=2', 'assets/img/2.webp?v=2', 'assets/img/3.webp?v=2', 'assets/img/4-stop.webp?v=2'];
@@ -178,6 +221,10 @@ document.addEventListener('DOMContentLoaded', function () {
     heroPills.classList.add('is-in');
     navRight.classList.add('is-visible');
     heroPhoto.classList.add('is-visible');
+    /* This path never fires the wordmark's animationend (no .is-open
+       animation runs), which is what normally triggers sizeHeroHead --
+       call it directly so the head is still sized correctly. */
+    sizeHeroHead();
   }
 
   /* ---------- SCROLL: HERO WORDMARK SHRINKS INTO THE HEADER LOGO ----------
@@ -310,6 +357,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   window.addEventListener('load', function () {
     captureWordBase();
+    sizeHeroHead();
     ScrollTrigger.refresh();
   });
 
@@ -430,6 +478,7 @@ document.addEventListener('DOMContentLoaded', function () {
   });
   window.addEventListener('resize', function () {
     if (!shrunk) captureWordBase();
+    sizeHeroHead();
     ScrollTrigger.refresh();
   });
 
@@ -469,7 +518,7 @@ document.addEventListener('DOMContentLoaded', function () {
       { ph: 'oc-ph-1',
         thumb: 'assets/img/off-the-clock/oc-dog-2.webp',
         title: { en: 'My dog Poppy', de: 'Mein Hund Poppy' },
-        text: { en: "Keeps me on my toes. She's only 1.5 years old and already running the show.", de: 'Hält mich auf Trab. Sie ist erst 1,5 Jahre alt und führt schon das Regiment.' },
+        text: { en: "Poppy keeps me on my toes. She also seems to think she's in charge. We're still discussing that.", de: 'Poppy hält mich auf Trab. Sie denkt offenbar auch, dass sie das Sagen hat. Darüber sind wir uns noch nicht einig.' },
         items: [
           { type: 'photo', src: 'assets/img/off-the-clock/oc-dog-1.webp', duration: 3000 },
           { type: 'photo', src: 'assets/img/off-the-clock/oc-dog-2.webp', duration: 3000 },
@@ -481,7 +530,7 @@ document.addEventListener('DOMContentLoaded', function () {
       { ph: 'oc-ph-2',
         thumb: 'assets/img/off-the-clock/oc-cycling-2.webp',
         title: { en: 'Cycling', de: 'Radeln' },
-        text: { en: "I'm serious about it. Gravel bike and eMTB, both ready to get dirty.", de: 'Ich nehme das ernst. Gravelbike und eMTB, beide bereit, schmutzig zu werden.' },
+        text: { en: "I'm serious about it — gravel bike for the long days, eMTB for the technical stuff.", de: 'Ich nehme das ernst – Gravelbike für die langen Tage, eMTB für die technischen Trails.' },
         items: [
           { type: 'photo', src: 'assets/img/off-the-clock/oc-cycling-1.webp', duration: 3000 },
           { type: 'photo', src: 'assets/img/off-the-clock/oc-cycling-2.webp', duration: 3000 },
@@ -517,7 +566,7 @@ document.addEventListener('DOMContentLoaded', function () {
       { ph: 'oc-ph-5',
         thumb: 'assets/img/off-the-clock/oc-coffee-3.webp',
         title: { en: 'Coffee nerd', de: 'Kaffee-Nerd' },
-        text: { en: 'Yes, the obnoxious type. Italian-style espresso machine, keeps me up and running.', de: 'Ja, der lästige Typ. Italienische Espressomaschine, hält mich wach und am Laufen.' },
+        text: { en: 'Yes, the person with opinions about your espresso. An Italian-style machine keeps me up and running.', de: 'Ja, die Person mit Meinungen zu deinem Espresso. Eine italienische Siebträgermaschine hält mich wach und am Laufen.' },
         items: [
           { type: 'photo', src: 'assets/img/off-the-clock/oc-coffee-1.webp', duration: 3000 },
           { type: 'photo', src: 'assets/img/off-the-clock/oc-coffee-2.webp', duration: 3000 },
@@ -644,6 +693,21 @@ document.addEventListener('DOMContentLoaded', function () {
        duration above -- harmless if both fire, since ocShowItem() clears the
        pending timer as soon as it's called either way. */
     ocMediaVideo.addEventListener('ended', function () { ocShowItem(ocItemIndex + 1); });
+
+    /* Instagram-style tap zones: right half of the media advances to the next
+       item, left half goes back -- same ocShowItem() the timer/video-end cues
+       already use, so a manual tap resets the per-item timer exactly like
+       those do, and stays looping within the current highlight only, same as
+       the timer (a tap never jumps to a different highlight -- only a dot
+       click does that). */
+    var ocMediaEl = ocStage.querySelector('.oc-media');
+    if (ocMediaEl) {
+      ocMediaEl.addEventListener('click', function (e) {
+        var rect = ocMediaEl.getBoundingClientRect();
+        var isRight = (e.clientX - rect.left) > rect.width / 2;
+        ocShowItem(ocItemIndex + (isRight ? 1 : -1));
+      });
+    }
 
     document.addEventListener('site:langchange', ocRenderCaption);
 
