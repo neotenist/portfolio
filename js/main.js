@@ -66,7 +66,13 @@ document.addEventListener('DOMContentLoaded', function () {
   var navRight = document.getElementById('nav-right');
   var heroStarted = false;
 
+  /* An empty name means the gate was skipped -- state.name stays '' rather
+     than falling back to a placeholder like "Stranger", so this can't
+     accidentally read as someone's actual, real name. Nameless has its own
+     literal wording per language instead of just splicing '' into the
+     normal template, which would leave a stray "Hi !" double-space. */
   function getGreetText(lang, name) {
+    if (!name) return lang === 'de' ? 'Hi! Ich bin' : 'Hi! I\'m';
     return lang === 'de' ? ('Hi ' + name + '! Ich bin') : ('Hi ' + name + '! I\'m');
   }
 
@@ -510,7 +516,7 @@ document.addEventListener('DOMContentLoaded', function () {
       { ph: 'oc-ph-0',
         thumb: 'assets/img/off-the-clock/oc-music-1.webp',
         title: { en: 'Music & DJing', de: 'Musik & DJing' },
-        text: { en: 'Teaching myself how to DJ on the weekends. Work in progress, but the neighbours are surprisingly supportive.', de: 'Lehre mich am Wochenende das DJing. Work in progress, aber die Nachbarn sind überraschend geduldig.' },
+        text: { en: 'Teaching myself how to DJ on the weekends. Work in progress, but the neighbours are surprisingly supportive.', de: 'Am Wochenende bringe ich mir das DJing bei. Noch ausbaufähig. Die Nachbarn zeigen erstaunlich viel Verständnis.' },
         items: [
           { type: 'video', src: 'assets/video/off-the-clock/oc-music-2.mp4', duration: 15333 },
           { type: 'photo', src: 'assets/img/off-the-clock/oc-music-1.webp', duration: 3000 }
@@ -530,7 +536,7 @@ document.addEventListener('DOMContentLoaded', function () {
       { ph: 'oc-ph-2',
         thumb: 'assets/img/off-the-clock/oc-cycling-2.webp',
         title: { en: 'Cycling', de: 'Radeln' },
-        text: { en: "I'm serious about it — gravel bike for the long days, eMTB for the technical stuff.", de: 'Ich nehme das ernst – Gravelbike für die langen Tage, eMTB für die technischen Trails.' },
+        text: { en: 'Gravel bike or eMTB, depending on the route. Fresh air either way. Clean shoes, less likely.', de: 'Je nach Strecke mit dem Gravelbike oder dem E-MTB. Frische Luft gibt’s immer. Saubere Schuhe eher selten.' },
         items: [
           { type: 'photo', src: 'assets/img/off-the-clock/oc-cycling-1.webp', duration: 3000 },
           { type: 'photo', src: 'assets/img/off-the-clock/oc-cycling-2.webp', duration: 3000 },
@@ -541,7 +547,7 @@ document.addEventListener('DOMContentLoaded', function () {
       { ph: 'oc-ph-3',
         thumb: 'assets/img/off-the-clock/oc-cooking-3.webp',
         title: { en: 'Cooking & fermenting', de: 'Kochen & Fermentieren' },
-        text: { en: "Eating is also a hobby, but you're not supposed to say that out loud. I ferment anything that stands still long enough.", de: 'Essen ist auch ein Hobby, aber das sagt man nicht so laut. Fermentiere nebenbei alles, was lange genug stillsteht.' },
+        text: { en: "Eating is also a hobby, but you're not supposed to say that out loud. I ferment anything that stands still long enough.", de: 'Essen ist auch ein Hobby. Sagt man nur nicht so gern. Ich fermentiere alles, was lange genug stillhält.' },
         items: [
           { type: 'photo', src: 'assets/img/off-the-clock/oc-cooking-1.webp', duration: 3000 },
           { type: 'photo', src: 'assets/img/off-the-clock/oc-cooking-2.webp', duration: 3000 },
@@ -555,7 +561,7 @@ document.addEventListener('DOMContentLoaded', function () {
       { ph: 'oc-ph-4',
         thumb: 'assets/img/off-the-clock/oc-hiking-2.webp',
         title: { en: 'Hiking', de: 'Wandern' },
-        text: { en: 'More like a long walk, really. But being outside is the whole point.', de: 'Eher ein langer Spaziergang, ehrlich gesagt. Aber draußen sein zählt.' },
+        text: { en: 'More like a long walk, really. But being outside is the whole point.', de: 'Meistens ist es eher ein ausgedehnter Spaziergang. Aber Hauptsache draußen.' },
         items: [
           { type: 'photo', src: 'assets/img/off-the-clock/oc-hiking-1.webp', duration: 3000 },
           { type: 'photo', src: 'assets/img/off-the-clock/oc-hiking-2.webp', duration: 3000 },
@@ -566,7 +572,7 @@ document.addEventListener('DOMContentLoaded', function () {
       { ph: 'oc-ph-5',
         thumb: 'assets/img/off-the-clock/oc-coffee-3.webp',
         title: { en: 'Coffee nerd', de: 'Kaffee-Nerd' },
-        text: { en: 'Yes, the person with opinions about your espresso. An Italian-style machine keeps me up and running.', de: 'Ja, die Person mit Meinungen zu deinem Espresso. Eine italienische Siebträgermaschine hält mich wach und am Laufen.' },
+        text: { en: 'Yes, the person with opinions about your espresso. An Italian-style machine keeps me up and running.', de: 'Ja, die mit der Meinung zu deinem Espresso. Eine italienische Siebträgermaschine hält mich am Laufen.' },
         items: [
           { type: 'photo', src: 'assets/img/off-the-clock/oc-coffee-1.webp', duration: 3000 },
           { type: 'photo', src: 'assets/img/off-the-clock/oc-coffee-2.webp', duration: 3000 },

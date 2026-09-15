@@ -163,6 +163,10 @@ h1, h2, h3, h4, h5, h6 { color: var(--heading-color) !important; }
   line-height: 1.4;
 }
 .shelf-year { font-family: var(--font-mono); }
+/* The award name itself was borrowing .h3-display (a real heading style,
+   clamp(1.45rem,2.1vw,1.85rem)) for what's actually a compact label inside
+   a small card -- badly oversized next to its own year. */
+.shelf-name { font-family: var(--font-mono); font-size: 0.9375rem; font-weight: 700; line-height: 1.4; }
 .section { padding-block: clamp(4.5rem, 9vw, 8rem); }
 /* Half the gap specifically between the intro section and the one right after
    it (CV's timeline, Work's folder stack) -- halving both sides so the total
@@ -1638,8 +1642,14 @@ footer p, footer a { font-family: var(--font-mono); }
    last. The first card in each column keeps its natural height -- only the
    last one stretches, so a short "Context" note doesn't itself get inflated
    with dead space. */
-.cv-bento { display: flex; gap: 0.75rem; align-items: stretch; }
-.cv-bento-col { display: flex; flex-direction: column; gap: 0.75rem; flex: 1 1 0; min-width: 0; }
+/* This gap -- between separate cv-bento-* boxes (Context, What I did, Worth
+   mentioning, Tools) -- has to read as clearly bigger than the h4
+   margin-bottom below (the gap from a box's OWN heading down to its OWN
+   paragraph), or a heading looks like it belongs to the box above it
+   instead of the one it actually opens. Was smaller than that margin
+   (0.75rem vs 1.25rem) -- exactly backwards. */
+.cv-bento { display: flex; gap: 3rem; align-items: stretch; }
+.cv-bento-col { display: flex; flex-direction: column; gap: 3rem; flex: 1 1 0; min-width: 0; }
 .cv-bento-col > *:last-child { flex: 1 1 auto; }
 /* card-bg, not page-bg -- the page itself already sits on page-bg, so a cell
    filled with that same color rendered as invisible whitespace instead of a

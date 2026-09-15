@@ -9,7 +9,13 @@ document.addEventListener('DOMContentLoaded', function () {
   var storedLang = null;
   try { storedLang = localStorage.getItem('site_lang'); } catch (e) {}
   var initialLang = storedLang === 'en' ? 'en' : 'de';
-  var state = { lang: initialLang, name: storedName || DEFAULT_NAME[initialLang] };
+  /* storedName !== null, not storedName || ... -- sessionStorage.getItem
+     returns null only when the key was never set at all (a genuinely first
+     load, before the gate has even had a chance to run); an empty string
+     is itself a valid, deliberately-stored value (skipped the gate this
+     session) and needs to survive a reload as nameless, not get silently
+     replaced by the DEFAULT_NAME placeholder because '' is falsy. */
+  var state = { lang: initialLang, name: storedName !== null ? storedName : DEFAULT_NAME[initialLang] };
   var root = document.documentElement;
 
   /* .reveal-text paragraphs (short-version body copy) carry data-en/data-de too, but
@@ -17,6 +23,8 @@ document.addEventListener('DOMContentLoaded', function () {
      per-word <span> reveal markup. */
   var i18nEls = document.querySelectorAll('[data-en]:not(.reveal-text)');
   var i18nPlaceholders = document.querySelectorAll('[data-en-placeholder]');
+  var i18nAriaLabels = document.querySelectorAll('[data-en-aria-label]');
+  var i18nAlts = document.querySelectorAll('[data-en-alt]');
   var langBtns = document.querySelectorAll('[data-lang-btn]');
 
   function applyLang(lang) {
@@ -32,6 +40,10 @@ document.addEventListener('DOMContentLoaded', function () {
     i18nPlaceholders.forEach(function (el) {
       var text = el.getAttribute('data-' + lang + '-placeholder');
       if (text !== null) el.setAttribute('placeholder', text);
+    });
+    i18nAriaLabels.forEach(function (el) {
+      var text = el.getAttribute('data-' + lang + '-aria-label');
+      if (text !== null) el.setAttribute('aria-label', text);
     });
     langBtns.forEach(function (btn) {
       var active = btn.getAttribute('data-lang-btn') === lang;
@@ -158,8 +170,14 @@ document.addEventListener('DOMContentLoaded', function () {
         return s.charAt(0).toUpperCase() + s.slice(1);
       }
 
+      /* Skipping (or submitting a blank name) leaves state.name as '' rather
+         than falling back to a placeholder like "Stranger"/"Fremde" -- a
+         real visitor could actually be named that, and the greeting/contact
+         heading each render a dedicated nameless wording instead (see
+         getGreetText in main.js and typeContact below) rather than reusing
+         the normal "Hi {name}!" template with a fake name spliced in. */
       function closeGate(name) {
-        state.name = name ? capitalizeFirst(name) : DEFAULT_NAME[state.lang];
+        state.name = name ? capitalizeFirst(name) : '';
         try {
           sessionStorage.setItem('site_gate_done', '1');
           sessionStorage.setItem('site_name', state.name);
@@ -180,7 +198,7 @@ document.addEventListener('DOMContentLoaded', function () {
         closeGate(gateInput.value.trim());
       });
       gateSkip.addEventListener('click', function () {
-        closeGate(DEFAULT_NAME[state.lang]);
+        closeGate('');
       });
     }
   } else {
@@ -231,19 +249,29 @@ document.addEventListener('DOMContentLoaded', function () {
     function typeContact() {
       /* Forced break right after the name (not just left to wrap) so the heading
          is always two lines -- otherwise a short name fits on one line and the
-         card's height visibly jumps depending on what the visitor typed. */
+         card's height visibly jumps depending on what the visitor typed.
+         An empty state.name means the gate was skipped -- there's no name to
+         underline then, so this drops both the leading space before the
+         name slot and the underline-word wrapper entirely instead of
+         decorating the whole sentence by accident. */
+      var hasName = !!state.name;
       var full = state.lang === 'de'
-        ? ('Hey ' + state.name + ',\nlass uns reden!')
-        : ('Hey ' + state.name + ',\nlet\'s talk!');
+        ? (hasName ? 'Hey ' + state.name + ',\nlass uns reden!' : 'Hey,\nlass uns reden!')
+        : (hasName ? 'Hey ' + state.name + ',\nlet\'s talk!' : 'Hey,\nlet\'s talk!');
 
-      var idx = full.indexOf(state.name);
-      var before = full.slice(0, idx);
-      var after = full.slice(idx + state.name.length);
-      var finalHTML = before +
-        '<span class="underline-word">' + colorizeName(state.name) +
-        '<svg viewBox="0 0 200 12" preserveAspectRatio="none" aria-hidden="true">' +
-        '<path d="M2 9c38-4 92-7 196-3" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" fill="none"></path>' +
-        '</svg></span>' + after;
+      var finalHTML;
+      if (hasName) {
+        var idx = full.indexOf(state.name);
+        var before = full.slice(0, idx);
+        var after = full.slice(idx + state.name.length);
+        finalHTML = before +
+          '<span class="underline-word">' + colorizeName(state.name) +
+          '<svg viewBox="0 0 200 12" preserveAspectRatio="none" aria-hidden="true">' +
+          '<path d="M2 9c38-4 92-7 196-3" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" fill="none"></path>' +
+          '</svg></span>' + after;
+      } else {
+        finalHTML = escapeHtml(full);
+      }
 
       /* Whether this wraps to two or three lines depends on name length and
          viewport width, and the typewriter effect below only ever renders the
