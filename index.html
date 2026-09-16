@@ -4,6 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
+  <script>
+  /* Mobile browsers (Safari in particular) restore the previous scroll
+     offset on reload by default -- on a page whose hero height settles
+     over a couple of animation/layout passes, that stored offset easily
+     lands short of or past the true top, which reads as "the page never
+     loads at the top." A single-page site like this has no legitimate
+     reason to remember scroll position across loads, so opt out and just
+     start at the top every time, same as a plain hash-free page load. */
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  if (!location.hash) window.scrollTo(0, 0);
+  </script>
   <title>Maxine Hargrove — Portfolio</title>
   <link rel="stylesheet" href="css/tailwind.css?v=5">
   <link rel="stylesheet" href="css/style.css?v=137">
@@ -890,7 +901,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="js/site.js?v=16"></script>
-  <script src="js/main.js?v=53"></script>
+  <script src="js/main.js?v=54"></script>
 
   <!-- WORK/CV MODAL (added) -->
   <dialog class="d-dialog" aria-labelledby="d-case-title">

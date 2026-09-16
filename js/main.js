@@ -131,7 +131,16 @@ document.addEventListener('DOMContentLoaded', function () {
      hug the photo with no dead space, at every breakpoint. */
   function sizeHeroHead() {
     var innerBottomPadding = parseFloat(getComputedStyle(heroInner).paddingBottom) || 0;
-    var availableHeight = (heroInner.getBoundingClientRect().bottom - innerBottomPadding) - wordmarkSlot.getBoundingClientRect().bottom;
+    /* heroInner's own bottom edge isn't a safe ceiling here: .hero-inner has
+       no fixed height, so it auto-grows to fit whatever size the head slot
+       was last set to -- feeding that back in as "available height" just
+       re-confirms the previous size instead of bounding it, letting the head
+       balloon past one viewport on wide/short screens. .hero's min-height is
+       100vh (this section is meant to BE the fold), so window.innerHeight is
+       the real ceiling; heroInner.bottom only still matters on viewports
+       where content is legitimately shorter than that. */
+    var heroBottomCap = Math.min(heroInner.getBoundingClientRect().bottom, window.innerHeight);
+    var availableHeight = (heroBottomCap - innerBottomPadding) - wordmarkSlot.getBoundingClientRect().bottom;
     var widthCap = Math.min(window.innerHeight * 0.86, window.innerWidth * 0.90);
     var size = Math.max(0, Math.min(widthCap, availableHeight));
     heroHeadSlot.style.width = size + 'px';
