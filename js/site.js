@@ -250,28 +250,23 @@ document.addEventListener('DOMContentLoaded', function () {
       /* Forced break right after the name (not just left to wrap) so the heading
          is always two lines -- otherwise a short name fits on one line and the
          card's height visibly jumps depending on what the visitor typed.
-         An empty state.name means the gate was skipped -- there's no name to
-         underline then, so this drops both the leading space before the
-         name slot and the underline-word wrapper entirely instead of
-         decorating the whole sentence by accident. */
-      var hasName = !!state.name;
+         An empty state.name means the gate was skipped -- "Stranger" fills
+         the name slot then instead, literally in both languages (mirrors
+         main.js's own greetName for the hero), so the underline/color
+         treatment below still has a real word to decorate. */
+      var displayName = state.name || 'Stranger';
       var full = state.lang === 'de'
-        ? (hasName ? 'Hey ' + state.name + ',\nlass uns reden!' : 'Hey,\nlass uns reden!')
-        : (hasName ? 'Hey ' + state.name + ',\nlet\'s talk!' : 'Hey,\nlet\'s talk!');
+        ? ('Hey ' + displayName + ',\nlass uns reden!')
+        : ('Hey ' + displayName + ',\nlet\'s talk!');
 
-      var finalHTML;
-      if (hasName) {
-        var idx = full.indexOf(state.name);
-        var before = full.slice(0, idx);
-        var after = full.slice(idx + state.name.length);
-        finalHTML = before +
-          '<span class="underline-word">' + colorizeName(state.name) +
-          '<svg viewBox="0 0 200 12" preserveAspectRatio="none" aria-hidden="true">' +
-          '<path d="M2 9c38-4 92-7 196-3" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" fill="none"></path>' +
-          '</svg></span>' + after;
-      } else {
-        finalHTML = escapeHtml(full);
-      }
+      var idx = full.indexOf(displayName);
+      var before = full.slice(0, idx);
+      var after = full.slice(idx + displayName.length);
+      var finalHTML = before +
+        '<span class="underline-word">' + colorizeName(displayName) +
+        '<svg viewBox="0 0 200 12" preserveAspectRatio="none" aria-hidden="true">' +
+        '<path d="M2 9c38-4 92-7 196-3" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" fill="none"></path>' +
+        '</svg></span>' + after;
 
       /* Whether this wraps to two or three lines depends on name length and
          viewport width, and the typewriter effect below only ever renders the
@@ -293,7 +288,7 @@ document.addEventListener('DOMContentLoaded', function () {
         duration: Math.max(0.6, full.length * 0.04),
         ease: 'none',
         onUpdate: function () {
-          contactTyped.innerHTML = typedColoredHTML(full, state.name, Math.round(proxy.n));
+          contactTyped.innerHTML = typedColoredHTML(full, displayName, Math.round(proxy.n));
         },
         onComplete: function () {
           contactTyped.dataset.done = '1';
