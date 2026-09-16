@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function () {
       var greetTypedEl = document.getElementById('greet-typed');
       if (greetTypedEl) {
         var fullText = getGreetText(state.lang, state.name);
-        greetTypedEl.innerHTML = window.Site.typedColoredHTML(fullText, state.name, fullText.length);
+        greetTypedEl.innerHTML = window.Site.typedColoredHTML(fullText, greetName(state.name), fullText.length);
       }
     }
     buildRevealText();
@@ -66,14 +66,18 @@ document.addEventListener('DOMContentLoaded', function () {
   var navRight = document.getElementById('nav-right');
   var heroStarted = false;
 
-  /* An empty name means the gate was skipped -- state.name stays '' rather
-     than falling back to a placeholder like "Stranger", so this can't
-     accidentally read as someone's actual, real name. Nameless has its own
-     literal wording per language instead of just splicing '' into the
-     normal template, which would leave a stray "Hi !" double-space. */
+  /* An empty state.name means the gate was skipped -- kept as '' (not
+     defaulted at storage time) so a returning nameless visitor can't get
+     misread as someone whose real name happens to be "Stranger". "Stranger"
+     only fills the greeting's name slot here, at display time, and stays
+     the literal English word in both languages rather than "Fremde". */
+  function greetName(name) {
+    return name || 'Stranger';
+  }
+
   function getGreetText(lang, name) {
-    if (!name) return lang === 'de' ? 'Hi! Ich bin' : 'Hi! I\'m';
-    return lang === 'de' ? ('Hi ' + name + '! Ich bin') : ('Hi ' + name + '! I\'m');
+    var display = greetName(name);
+    return lang === 'de' ? ('Hi ' + display + '! Ich bin') : ('Hi ' + display + '! I\'m');
   }
 
   function typeGreeting(fullText, el, duration) {
@@ -83,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function () {
       duration: duration,
       ease: 'none',
       onUpdate: function () {
-        el.innerHTML = window.Site.typedColoredHTML(fullText, state.name, Math.round(proxy.n));
+        el.innerHTML = window.Site.typedColoredHTML(fullText, greetName(state.name), Math.round(proxy.n));
       }
     });
   }
@@ -228,7 +232,7 @@ document.addEventListener('DOMContentLoaded', function () {
   function skipHeroIntroToFinalState() {
     heroStarted = true;
     var fullText = getGreetText(state.lang, state.name);
-    greetTyped.innerHTML = window.Site.typedColoredHTML(fullText, state.name, fullText.length);
+    greetTyped.innerHTML = window.Site.typedColoredHTML(fullText, greetName(state.name), fullText.length);
     gsap.set(greetCursor, { autoAlpha: 0 });
     wordmark.style.animation = 'none';
     gsap.set(wordmark, { opacity: 1 });
